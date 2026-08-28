@@ -77,7 +77,8 @@ _HEADERS = {
 
 # --- HTTP with retry -------------------------------------------------------
 
-def _request(method: str, url: str, *, params: dict | None = None) -> object:
+def _request(method: str, url: str, *, params: dict | None = None,
+             json_body: dict | None = None) -> object:
     """One Alpaca call with retry on transient failure.
 
     Retries connection errors, timeouts and 5xx up to _MAX_RETRIES times with
@@ -90,7 +91,7 @@ def _request(method: str, url: str, *, params: dict | None = None) -> object:
             time.sleep(_BACKOFF_BASE * (2 ** (attempt - 1)))
         try:
             resp = requests.request(
-                method, url, headers=_HEADERS, params=params,
+                method, url, headers=_HEADERS, params=params, json=json_body,
                 timeout=_REQUEST_TIMEOUT,
             )
         except (requests.ConnectionError, requests.Timeout) as exc:
@@ -219,6 +220,41 @@ def list_assets() -> list[dict]:
         }
         for a in data
     ]
+
+
+def submit_notional_order(symbol: str, side: str, notional: float) -> dict:
+    """Submit a NOTIONAL market order. The only function here that spends money.
+
+    Notional (a dollar amount) rather than a share count: Alpaca supports
+    fractional shares, which removes the rounding error that otherwise causes
+    an order to be rejected for being a few cents short (ADR 0003).
+
+    Regular hours, day time-in-force. No extended-hours trading - the free data
+    feed is 15 minutes delayed (ADR 0001), so this system has no business
+    trading thin sessions.
+    """
+    if side not in ("buy", "sell"):
+        raise BrokerError(f"side must be 'buy' or 'sell', got {side!r}")
+    if not isinstance(notional, (int, float)) or notional <= 0:
+        raise BrokerError(f"notional must be a positive number, got {notional!r}")
+
+    payload = {
+        "symbol": symbol,
+        "notional": round(float(notional), 2),
+        "side": side,
+        "type": "market",
+        "time_in_force": "day",
+        "extended_hours": False,
+    }
+    data = _request("POST", f"{PAPER_HOST}/v2/orders", json_body=payload)
+    return {
+        "order_id": data["id"],
+        "symbol": data["symbol"],
+        "side": data["side"],
+        "notional": _to_optional_float(data.get("notional")),
+        "status": data["status"],
+        "submitted_at": _normalise_ts(data["submitted_at"]),
+    }
 
 
 def is_trading_day(day: datetime.date) -> bool:

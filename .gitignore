@@ -22,3 +22,6 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# dry-run previews are disposable, not decisions
+data/dry-runs/

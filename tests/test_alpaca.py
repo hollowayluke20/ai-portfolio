@@ -26,7 +26,7 @@ class FakeResp:
 def _patch_transport(monkeypatch, status_sequence):
     calls = {"n": 0}
 
-    def fake_request(method, url, headers=None, params=None, timeout=None):
+    def fake_request(method, url, headers=None, params=None, timeout=None, json=None):
         i = calls["n"]
         calls["n"] += 1
         return FakeResp(status_sequence[min(i, len(status_sequence) - 1)])

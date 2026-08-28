@@ -24,6 +24,10 @@
     "concentration_trim_target": 0.063
   },
 
+  "ai": {
+    "model": "gemini-3.6-flash"
+  },
+
   "broad_us_equity_cap": {
     "limit": 0.40,
     "tickers": ["SPY", "VOO", "QQQ"]
