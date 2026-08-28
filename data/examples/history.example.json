@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "rows": [
+    {
+      "date": "2026-09-01",
+      "portfolio_value": 100000.0,
+      "portfolio_return_pct": 0.0,
+      "benchmark_price": 771.1,
+      "benchmark_return_pct": 0.0,
+      "cash": 100000.0
+    },
+    {
+      "date": "2026-09-02",
+      "portfolio_value": 100118.42,
+      "portfolio_return_pct": 0.0012,
+      "benchmark_price": 773.02,
+      "benchmark_return_pct": 0.0025,
+      "cash": 5031.88
+    },
+    {
+      "date": "2026-09-03",
+      "portfolio_value": 99874.05,
+      "portfolio_return_pct": -0.0013,
+      "benchmark_price": 769.44,
+      "benchmark_return_pct": -0.0022,
+      "cash": 5031.88
+    },
+    {
+      "date": "2026-09-11",
+      "portfolio_value": 101166.61,
+      "portfolio_return_pct": 0.0117,
+      "benchmark_price": 774.55,
+      "benchmark_return_pct": 0.0045,
+      "cash": 5024.11
+    }
+  ]
+}

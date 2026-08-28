@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "cycle_id": "2026-09-11-weekly",
+  "decided_at": "2026-09-11T21:05:00Z",
+  "portfolio_value_at_decision": 101166.61,
+  "commentary": "Portfolio is 95.0% invested across 15 equal-weighted S&P 500 names, cash at the 5.0% floor. NVDA is the largest position at 6.5% after a strong fortnight but remains well inside the 12% trim threshold. UNH is the weakest holding at -5.0% from entry, roughly a quarter of the way to the -20% stop; the thesis has not broken and no action is taken. The main portfolio-level risk is that six of fifteen holdings are mega-cap technology, so the book is less diversified than a count of positions suggests.",
+  "decisions": [
+    {
+      "ticker": "NVDA",
+      "action": "HOLD",
+      "target_weight": 0.0633,
+      "notional": null,
+      "thesis": "Data-centre demand remains supply-constrained rather than demand-constrained, and guidance assumes no China contribution, so the China risk is already excluded from the numbers rather than sitting on top of them.",
+      "risks": "Concentration - a single customer cohort drives most incremental revenue. Any easing of the supply constraint compresses pricing quickly.",
+      "reason_for_action": "Thesis intact and weight at 6.5% is inside the 12% trim threshold. No action required.",
+      "trigger": "ai",
+      "status": "skipped",
+      "order_id": null,
+      "rejection_reason": null
+    },
+    {
+      "ticker": "UNH",
+      "action": "HOLD",
+      "target_weight": 0.0626,
+      "notional": null,
+      "thesis": "Managed-care cost ratios normalising from an elevated base, with pricing power intact in the employer segment.",
+      "risks": "Regulatory intervention on pricing is a step-change risk, not a gradual one, and would not be visible in advance.",
+      "reason_for_action": "Down 5.0% from entry, well short of the -20% stop. Weakness is sector-wide rather than company-specific, so the thesis has not broken.",
+      "trigger": "ai",
+      "status": "skipped",
+      "order_id": null,
+      "rejection_reason": null
+    },
+    {
+      "ticker": "TSLA",
+      "action": "BUY",
+      "target_weight": 0.0633,
+      "notional": 6363.87,
+      "thesis": "Illustrative example only - shows how a rejected order is recorded.",
+      "risks": "Illustrative example only.",
+      "reason_for_action": "Illustrative example only.",
+      "trigger": "ai",
+      "status": "rejected",
+      "order_id": null,
+      "rejection_reason": "cash_floor: order would leave cash at 4.1%, below the 5% floor"
+    }
+  ]
+}
