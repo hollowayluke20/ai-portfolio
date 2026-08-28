@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-28T10:52:42Z",
-  "market_data_as_of": "2026-08-27T20:02:22Z",
+  "generated_at": "2026-08-28T12:44:21Z",
+  "market_data_as_of": "2026-08-28T12:36:56Z",
   "currency": "USD",
   "run": {
-    "id": "72c530d922a5",
-    "trigger": "schedule",
+    "id": "83a5add66473",
+    "trigger": "manual",
     "workflow": "update-state"
   },
   "account": {
     "cash": 100000.0,
     "equity": 100000.0,
-    "buying_power": 400000.0,
+    "buying_power": 399975.0,
     "status": "ACTIVE"
   },
   "totals": {

@@ -69,6 +69,31 @@ Fully replaced every run. Never appended to.
 Each `positions[]` entry: `ticker`, `qty`, `avg_entry_price`, `current_price`,
 `market_value`, `weight`, `unrealized_pl`, `unrealized_pl_pct`, `opened_at`.
 
+### Pending orders are part of the state
+
+**Added 2026-08-28 after testing.** The original schema had `positions` and it
+had `cash`, and nowhere to record that an order was in flight. With two orders
+queued outside market hours, `state.json` reported *"0 positions, 100% cash"*
+— true, and dangerously incomplete. An AI handed that document has no way to
+know it has already committed the money.
+
+`state.json` therefore carries:
+
+| Field | Type | Notes |
+|---|---|---|
+| `pending_orders[]` | array | One per open/unfilled order |
+| `totals.committed_cash` | number | Total notional of pending **buy** orders |
+| `totals.available_cash` | number | `cash - committed_cash` — what may actually be spent |
+
+Each `pending_orders[]` entry: `symbol`, `side`, `notional`, `qty`, `status`,
+`submitted_at`, `order_id`.
+
+`cash` stays as Alpaca reports it, so the raw broker figure is never lost.
+`available_cash` is the derived number every decision uses (ADR 0003).
+
+Position weights continue to use `total_value`; pending orders do **not** count
+toward weights, because nothing has been bought yet.
+
 ### Staleness is a first-class concern
 
 A static dashboard shows whatever was last written, and a silently failed

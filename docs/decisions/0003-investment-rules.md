@@ -96,6 +96,35 @@ the real answer, and it is deliberately not being built yet — it belongs after
 the pipeline exists to feed it, not before. Recorded here so the stopgap is not
 mistaken for the intended design.
 
+### Available cash is not the same as cash
+
+Discovered by testing on 2026-08-28, before any of this was implemented.
+
+Two manual orders were placed while the market was closed. Alpaca's response:
+
+```
+cash                         100000      unchanged
+buying_power                 399975      dropped by exactly the order value
+non_marginable_buying_power  99987.50
+```
+
+**`cash` does not move for a pending order. `buying_power` does.**
+
+The original rule — *size from `cash`, never `buying_power`* — protects against
+4x margin but has a hole: `cash` is blind to money already committed. A second
+run before the first order fills would read the full cash balance, conclude it
+was all available, and commit it again. Every individual check would pass while
+the position was ordered twice.
+
+The rule is therefore:
+
+```
+available_cash = cash - (total notional of pending BUY orders)
+```
+
+Still never `buying_power`. But `cash` alone is not enough either. **All sizing
+and the 5% cash floor are computed against `available_cash`.**
+
 ### Why a concentration trim rather than a take-profit
 
 Selling a position *because it rose* systematically removes the best holdings.
@@ -170,3 +199,7 @@ overlap-disclosure requirement in theses. Prompted by Luke's observation that a
 portfolio drawn from the S&P and benchmarked against the S&P leaves the system
 playing an artificially narrow game. Correlation-based diversification
 constraints deferred to a later ADR.
+
+**2026-08-28 (second amendment)** — Position sizing and the cash floor now use
+`available_cash` (cash net of pending buy orders) rather than `cash`. Found by
+placing two orders outside market hours and observing that `cash` did not move.
