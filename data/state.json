@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-28T10:51:35Z",
+  "market_data_as_of": "2026-08-27T20:02:22Z",
+  "currency": "USD",
+  "run": {
+    "id": "f38bb1df5d84",
+    "trigger": "manual",
+    "workflow": "update-state"
+  },
+  "account": {
+    "cash": 100000.0,
+    "equity": 100000.0,
+    "buying_power": 400000.0,
+    "status": "ACTIVE"
+  },
+  "totals": {
+    "total_value": 100000.0,
+    "invested_value": 0.0,
+    "cash_weight": 1.0,
+    "position_count": 0
+  },
+  "positions": [],
+  "performance": null,
+  "benchmark": null,
+  "health": {
+    "ok": true,
+    "warnings": []
+  }
+}

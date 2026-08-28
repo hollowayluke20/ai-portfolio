@@ -1,0 +1,43 @@
+name: Refresh investable universe
+
+# Monthly. S&P 500 membership changes a handful of times a year, and the diff
+# in git history becomes a record of those changes over time (ADR 0002).
+on:
+  schedule:
+    - cron: '40 7 1 * *'
+      timezone: America/New_York
+  workflow_dispatch:
+
+concurrency:
+  group: portfolio-universe
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Rebuild universe
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+          APCA_API_BASE_URL: ${{ vars.APCA_API_BASE_URL }}
+        run: python scripts/refresh_universe.py
+      - name: Commit if anything changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add config/universe.json
+          if git diff --staged --quiet; then
+            echo "Universe unchanged - nothing to commit."
+            exit 0
+          fi
+          git commit -m "data: refresh investable universe $(date -u +%Y-%m-%d)"
+          git push

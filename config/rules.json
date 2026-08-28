@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "_comment": "Every number from ADR 0003, as data. Two consumers: the order validator and the AI prompt. One file so they cannot drift. Weights are decimal fractions (ADR 0004): 0.063 means 6.3%.",
+
+  "position_count": {
+    "target": 15,
+    "minimum": 8,
+    "maximum": 20
+  },
+
+  "position_weight": {
+    "target": 0.063,
+    "hard_cap": 0.10
+  },
+
+  "cash": {
+    "floor": 0.05,
+    "ceiling": 0.15
+  },
+
+  "sell_triggers": {
+    "stop_loss_pct": -0.20,
+    "concentration_trim_threshold": 0.12,
+    "concentration_trim_target": 0.063
+  },
+
+  "broad_us_equity_cap": {
+    "limit": 0.40,
+    "tickers": ["SPY", "VOO", "QQQ"]
+  },
+
+  "etf_universe": [
+    "SPY", "VOO", "QQQ",
+    "VEA", "EFA",
+    "VWO", "EEM",
+    "IEF", "AGG", "TLT",
+    "GLD",
+    "VNQ", "REET",
+    "DBC", "USO"
+  ]
+}
