@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-28T13:13:02Z",
+  "generated_at": "2026-08-28T13:13:48Z",
   "market_data_as_of": "2026-08-28T12:36:56Z",
   "currency": "USD",
   "run": {
-    "id": "b3d5fb87d2eb",
+    "id": "a91bc9ba107a",
     "trigger": "manual",
     "workflow": "update-state"
   },
