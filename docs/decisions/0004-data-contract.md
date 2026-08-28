@@ -101,6 +101,21 @@ permanently.
 inception and then treated as constants. Recomputing a baseline each run is how
 a benchmark comparison silently drifts.
 
+**One benchmark only: SPY.** A blended or custom benchmark was considered and
+rejected — a benchmark's job is to be the obvious thing you could have done
+instead, and a bespoke blend is just another active choice, which makes
+"I beat it" meaningless.
+
+Note the deliberate asymmetry this creates: after ADR 0003's amendment the
+portfolio may hold bonds, gold, real estate and emerging markets, while the
+benchmark is pure US equity. **This is intentional and must be labelled on the
+dashboard.** It measures "did this portfolio beat simply owning US stocks?" —
+an honest and interesting question — rather than isolating decision quality
+within a matched opportunity set. It will flatter the portfolio when equities
+fall and penalise it when they rise. Saying so plainly is the requirement; a
+second, mix-matched benchmark can be added later if that question becomes
+worth answering.
+
 Comparison is **price return against price return**. Alpaca paper accounts do
 not pay dividends (ADR 0001), so measuring the portfolio ex-dividend against a
 total-return benchmark would understate performance for no real reason.

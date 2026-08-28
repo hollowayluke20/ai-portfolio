@@ -39,7 +39,7 @@ and unconstrained AI trading breaches §4.
 
 | Rule | Value |
 |---|---|
-| **Universe** | Current S&P 500 constituents. US-listed only. No leveraged or inverse ETFs, no OTC, no options, no crypto |
+| **Universe** | Current S&P 500 constituents **plus a curated list of liquid US-listed ETFs** (see below). US-listed only. No leveraged or inverse ETFs, no OTC, no options, no crypto |
 | **Target positions** | 15 (minimum 8, maximum 20) |
 | **Sizing** | Equal weight, ~6.3% of portfolio each. The AI does not choose position size |
 | **Hard position cap** | 10% of portfolio at entry (backstop; should never bind under equal weighting) |
@@ -49,6 +49,52 @@ and unconstrained AI trading breaches §4.
 | **Sell — stop loss** | Hard exit at −20% from entry price |
 | **Sell — concentration trim** | Position above 12% of portfolio is trimmed back to ~6.3% |
 | **Sell — thesis change** | The AI may sell at a decision cycle with written reasoning |
+| **Broad-US-equity cap** | SPY, VOO and QQQ **combined** may not exceed 40% of the portfolio |
+
+### The ETF sleeve
+
+The universe includes a short, fixed list of liquid US-listed ETFs so the AI
+can take positions in asset classes and regions, not only individual US large
+caps:
+
+| Exposure | Tickers |
+|---|---|
+| US broad market | SPY, VOO |
+| US growth / tech | QQQ |
+| International developed | VEA, EFA |
+| Emerging markets | VWO, EEM |
+| Government / aggregate bonds | IEF, AGG, TLT |
+| Gold | GLD |
+| Real estate | VNQ, REET |
+| Broad commodities | DBC, USO |
+
+The same rules apply to ETFs and single stocks alike — one universe, one
+ruleset. An ETF position is sized, stopped and trimmed exactly like a stock.
+
+**Why widen it at all.** With a universe of S&P 500 stocks benchmarked against
+the S&P 500, the only thing the system can ever demonstrate is stock selection
+inside a single index. Widening it gives the AI genuinely different kinds of
+decision to make — the case for emerging markets at a given valuation is a
+different sort of reasoning from the case for a single company — which is what
+§3 is asking for when it says the LLM should be used meaningfully.
+
+### The overlap problem, and why the cap is a stopgap
+
+Position count measures **tickers, not exposures**. SPY + QQQ + MSFT + NVDA
+reads as four diversified positions and is substantially one bet on US mega-cap
+technology. Nothing in the position-count or per-position-weight rules catches
+this.
+
+The 40% combined cap on SPY/VOO/QQQ is a **crude mechanical stopgap**, not a
+solution. Alongside it, the AI is required to state, in any thesis for opening a
+position, **what existing exposure the new position overlaps with**. That is a
+prompt-level requirement, not a validation check.
+
+**Deferred to a later ADR: proper diversification mathematics.** Measuring
+correlation between holdings and constraining the portfolio on that basis is
+the real answer, and it is deliberately not being built yet — it belongs after
+the pipeline exists to feed it, not before. Recorded here so the stopgap is not
+mistaken for the intended design.
 
 ### Why a concentration trim rather than a take-profit
 
@@ -113,3 +159,14 @@ behaviour under uncertainty is to do nothing.
 - Weekly decisions mean roughly 50 decision cycles a year — enough history for
   the dashboard to be interesting, few enough that each can be reasoned about
   properly.
+
+---
+
+## Amendments
+
+**2026-08-28** — Universe widened from S&P 500 constituents only to include a
+curated ETF list; added the 40% combined broad-US-equity cap and the
+overlap-disclosure requirement in theses. Prompted by Luke's observation that a
+portfolio drawn from the S&P and benchmarked against the S&P leaves the system
+playing an artificially narrow game. Correlation-based diversification
+constraints deferred to a later ADR.
