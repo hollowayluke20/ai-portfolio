@@ -12,7 +12,8 @@ def _fraction(value):
 
 
 def build_state(account, positions, spy_price, spy_as_of,
-                rules, inception, generated_at, run, health=None):
+                rules, inception, generated_at, run, pending_orders=None,
+                health=None):
     """Build an ADR 0004 state document without reading external state.
 
     ``rules`` is deliberately accepted as part of the pipeline interface even
@@ -52,6 +53,37 @@ def build_state(account, positions, spy_price, spy_as_of,
         )
     cash_weight = _fraction(cash / total_value if total_value else 0.0)
 
+    output_orders = []
+    warnings = list((health or {}).get("warnings", []))
+    prices = {position["symbol"]: float(position["current_price"]) for position in positions}
+    committed_cash = 0.0
+    for order in pending_orders or []:
+        notional = order.get("notional")
+        qty = order.get("qty")
+        output_orders.append({
+            "symbol": order["symbol"],
+            "side": order["side"],
+            "notional": _money(notional) if notional is not None else None,
+            "qty": float(qty) if qty is not None else None,
+            "status": order["status"],
+            "submitted_at": order["submitted_at"],
+            "order_id": order["order_id"],
+        })
+        if order["side"].lower() != "buy":
+            continue
+        if notional is not None:
+            committed_cash += float(notional)
+        elif qty is not None and order["symbol"] in prices:
+            committed_cash += float(qty) * prices[order["symbol"]]
+        else:
+            warnings.append(
+                f"Cannot determine committed cash for pending buy {order['symbol']} "
+                "because it has quantity but no current position price"
+            )
+
+    committed_cash = _money(committed_cash)
+    available_cash = _money(cash - committed_cash)
+
     if inception is None:
         performance = None
         benchmark = None
@@ -90,13 +122,16 @@ def build_state(account, positions, spy_price, spy_as_of,
             "invested_value": invested_value,
             "cash_weight": cash_weight,
             "position_count": len(output_positions),
+            "committed_cash": committed_cash,
+            "available_cash": available_cash,
         },
         "positions": output_positions,
+        "pending_orders": output_orders,
         "performance": performance,
         "benchmark": benchmark,
         # The dashboard reads this to decide whether to trust the numbers,
         # so a degraded run must be able to say so (ADR 0004).
-        "health": health if health is not None else {"ok": True, "warnings": []},
+        "health": {"ok": not warnings, "warnings": warnings},
     }
 
 

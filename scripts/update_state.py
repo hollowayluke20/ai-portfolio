@@ -42,6 +42,7 @@ def main() -> int:
 
     account = alpaca.get_account()
     positions = alpaca.get_positions()
+    pending_orders = alpaca.get_orders()
     spy_price, spy_as_of = alpaca.get_latest_price(BENCHMARK)
 
     # Warn if the feed itself is stale. Distinct from the dashboard's own
@@ -74,6 +75,7 @@ def main() -> int:
             "trigger": "schedule" if len(sys.argv) > 1 and sys.argv[1] == "--scheduled" else "manual",
             "workflow": "update-state",
         },
+        pending_orders=pending_orders,
         health=health,
     )
 
@@ -98,10 +100,15 @@ def main() -> int:
 
     print(f"state      : ${total:,.2f}  ({doc['totals']['position_count']} positions, "
           f"{doc['totals']['cash_weight']:.1%} cash)")
+    committed = doc["totals"]["committed_cash"]
+    print(f"pending    : {len(doc['pending_orders'])} orders, ${committed:,.2f} committed cash")
+    if doc["totals"]["available_cash"] != doc["account"]["cash"]:
+        print(f"available  : ${doc['totals']['available_cash']:,.2f} "
+              f"(cash is ${doc['account']['cash']:,.2f})")
     print(f"benchmark  : {BENCHMARK} {spy_price} as of {spy_as_of}")
     print(f"{history_note}")
-    print(f"health     : {'ok' if health['ok'] else 'DEGRADED'}")
-    for w in warnings:
+    print(f"health     : {'ok' if doc['health']['ok'] else 'DEGRADED'}")
+    for w in doc["health"]["warnings"]:
         print(f"  warning: {w}")
     return 0
 

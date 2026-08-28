@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-28T12:44:21Z",
+  "generated_at": "2026-08-28T12:57:23Z",
   "market_data_as_of": "2026-08-28T12:36:56Z",
   "currency": "USD",
   "run": {
-    "id": "83a5add66473",
+    "id": "16fd99cf5bfd",
     "trigger": "manual",
     "workflow": "update-state"
   },
@@ -18,9 +18,31 @@
     "total_value": 100000.0,
     "invested_value": 0.0,
     "cash_weight": 1.0,
-    "position_count": 0
+    "position_count": 0,
+    "committed_cash": 25.0,
+    "available_cash": 99975.0
   },
   "positions": [],
+  "pending_orders": [
+    {
+      "symbol": "NVDA",
+      "side": "buy",
+      "notional": 20.0,
+      "qty": null,
+      "status": "accepted",
+      "submitted_at": "2026-08-28T12:43:25Z",
+      "order_id": "91fb1137-4aba-40ee-9ab6-f024a23c3d96"
+    },
+    {
+      "symbol": "MSTR",
+      "side": "buy",
+      "notional": 5.0,
+      "qty": null,
+      "status": "accepted",
+      "submitted_at": "2026-08-28T12:42:49Z",
+      "order_id": "ada1aee4-e791-409e-b59f-e16f9f7532bb"
+    }
+  ],
   "performance": null,
   "benchmark": null,
   "health": {

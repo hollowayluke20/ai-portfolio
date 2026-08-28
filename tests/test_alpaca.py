@@ -62,6 +62,21 @@ def test_no_retry_on_403(monkeypatch):
     assert calls["n"] == 1  # a wrong key is not fixed by retrying
 
 
+def test_get_orders_preserves_nullable_notional_and_qty(monkeypatch):
+    payload = [{
+        "id": "order-1", "symbol": "NVDA", "side": "buy", "notional": None,
+        "qty": "2.5", "status": "accepted",
+        "submitted_at": "2026-08-28T12:43:25.123Z", "filled_qty": "0",
+    }]
+    monkeypatch.setattr(alpaca, "_request", lambda *args, **kwargs: payload)
+
+    assert alpaca.get_orders() == [{
+        "order_id": "order-1", "symbol": "NVDA", "side": "buy", "notional": None,
+        "qty": 2.5, "status": "accepted", "submitted_at": "2026-08-28T12:43:25Z",
+        "filled_qty": 0.0,
+    }]
+
+
 def test_import_rejects_live_endpoint():
     """The paper-endpoint assertion (ADR 0001) must raise on a live URL.
 

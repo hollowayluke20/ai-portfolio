@@ -52,6 +52,42 @@ def test_empty_portfolio_is_valid_and_has_no_performance():
     assert state["totals"] == {
         "total_value": 100000.0, "invested_value": 0.0,
         "cash_weight": 1.0, "position_count": 0,
+        "committed_cash": 0.0, "available_cash": 100000.0,
     }
+    assert state["pending_orders"] == []
     assert state["performance"] is None
     assert state["benchmark"] is None
+
+
+def test_pending_buys_reduce_available_cash_without_affecting_weights():
+    account = {"cash": 100, "equity": 150, "buying_power": 400, "status": "ACTIVE"}
+    positions = [{"symbol": "MSFT", "qty": 1, "avg_entry_price": 50,
+                  "current_price": 50, "market_value": 50, "unrealized_pl": 0}]
+    orders = [
+        {"order_id": "buy", "symbol": "NVDA", "side": "buy", "notional": 20,
+         "qty": None, "status": "accepted", "submitted_at": "2026-08-28T12:00:00Z"},
+        {"order_id": "sell", "symbol": "MSFT", "side": "sell", "notional": 30,
+         "qty": None, "status": "accepted", "submitted_at": "2026-08-28T12:00:00Z"},
+    ]
+    state = build_state(account, positions, 700, "2026-08-28T20:00:00Z", {}, None,
+                        "2026-08-28T21:00:00Z", {"id": "r", "trigger": "manual", "workflow": "x"},
+                        pending_orders=orders)
+
+    assert state["totals"]["committed_cash"] == 20.0
+    assert state["totals"]["available_cash"] == 80.0
+    assert state["totals"]["total_value"] == 150.0
+    assert state["positions"][0]["weight"] == round(50 / 150, 4)
+
+
+def test_unknown_quantity_order_warns_instead_of_assuming_zero_commitment():
+    state = build_state(
+        {"cash": 100, "equity": 100, "buying_power": 400, "status": "ACTIVE"}, [], 700,
+        "2026-08-28T20:00:00Z", {}, None, "2026-08-28T21:00:00Z",
+        {"id": "r", "trigger": "manual", "workflow": "x"},
+        pending_orders=[{"order_id": "buy", "symbol": "NVDA", "side": "buy", "notional": None,
+                         "qty": 2, "status": "accepted", "submitted_at": "2026-08-28T12:00:00Z"}],
+    )
+
+    assert state["totals"]["committed_cash"] == 0.0
+    assert state["health"]["ok"] is False
+    assert "Cannot determine committed cash" in state["health"]["warnings"][0]

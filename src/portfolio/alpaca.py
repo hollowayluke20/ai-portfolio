@@ -131,6 +131,11 @@ def _to_float(value: object, field: str = "value") -> float:
     return float(value)
 
 
+def _to_optional_float(value: object) -> float | None:
+    """Coerce optional Alpaca order quantities and notionals without guessing."""
+    return None if value is None else float(value)
+
+
 # --- the five interface functions ----------------------------------------
 
 def get_account() -> dict:
@@ -156,6 +161,24 @@ def get_positions() -> list[dict]:
             "unrealized_pl": _to_float(p["unrealized_pl"], f"{p['symbol']}.unrealized_pl"),
         }
         for p in data
+    ]
+
+
+def get_orders(status: str = "open") -> list[dict]:
+    """Return open orders, preserving nullable notional and quantity fields."""
+    data = _request("GET", f"{PAPER_HOST}/v2/orders", params={"status": status})
+    return [
+        {
+            "order_id": order["id"],
+            "symbol": order["symbol"],
+            "side": order["side"],
+            "notional": _to_optional_float(order.get("notional")),
+            "qty": _to_optional_float(order.get("qty")),
+            "status": order["status"],
+            "submitted_at": _normalise_ts(order["submitted_at"]),
+            "filled_qty": _to_float(order["filled_qty"], f"{order['symbol']}.filled_qty"),
+        }
+        for order in data
     ]
 
 
