@@ -37,6 +37,7 @@ def build_state(account, positions, spy_price, spy_as_of,
         unrealized_pl_pct = unrealized_pl / cost_basis if cost_basis else 0.0
         output_positions.append({
             "ticker": position["symbol"],
+            "name": position.get("name"),
             "qty": qty,
             "avg_entry_price": avg_entry_price,
             "current_price": current_price,

@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-29T10:08:10Z",
+  "generated_at": "2026-08-29T10:11:46Z",
   "market_data_as_of": "2026-08-28T19:59:59Z",
   "currency": "USD",
   "run": {
-    "id": "da2b11f67964",
+    "id": "959026c4e554",
     "trigger": "manual",
     "workflow": "update-state"
   },
@@ -25,6 +25,7 @@
   "positions": [
     {
       "ticker": "MSTR",
+      "name": "Strategy Inc Common Stock Class A",
       "qty": 0.037238805,
       "avg_entry_price": 134.0,
       "current_price": 127.31,
@@ -39,6 +40,7 @@
     },
     {
       "ticker": "NVDA",
+      "name": "NVIDIA Corporation Common Stock",
       "qty": 0.088057794,
       "avg_entry_price": 227.01,
       "current_price": 217.55,

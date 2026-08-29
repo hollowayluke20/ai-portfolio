@@ -151,10 +151,17 @@ def get_account() -> dict:
 
 
 def get_positions() -> list[dict]:
+    """Current holdings, each carrying its company name.
+
+    Costs one extra request per position, because Alpaca's positions endpoint
+    returns no name. Bounded by the 20-position maximum in ADR 0003, against a
+    200 requests/minute limit, so the cost is not worth optimising away.
+    """
     data = _request("GET", f"{PAPER_HOST}/v2/positions")
     return [
         {
             "symbol": p["symbol"],
+            "name": get_asset(p["symbol"]).get("name"),
             "qty": _to_float(p["qty"], f"{p['symbol']}.qty"),
             "avg_entry_price": _to_float(p["avg_entry_price"], f"{p['symbol']}.avg_entry_price"),
             "current_price": _to_float(p["current_price"], f"{p['symbol']}.current_price"),
@@ -163,6 +170,22 @@ def get_positions() -> list[dict]:
         }
         for p in data
     ]
+
+
+def get_asset(symbol: str) -> dict:
+    """One asset's metadata. The only place a company NAME is available.
+
+    Alpaca's /v2/positions returns a symbol and no name, so the dashboard's
+    company column has nothing to show without this lookup.
+    """
+    data = _request("GET", f"{PAPER_HOST}/v2/assets/{symbol}")
+    return {
+        "symbol": data["symbol"],
+        "name": data.get("name"),
+        "tradable": bool(data["tradable"]),
+        "fractionable": bool(data["fractionable"]),
+        "exchange": data.get("exchange"),
+    }
 
 
 def get_orders(status: str = "open") -> list[dict]:
