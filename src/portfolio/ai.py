@@ -37,7 +37,7 @@ _REQUEST_TIMEOUT = 60  # the model call is slow; give it room but never hang
 
 _VALID_ACTIONS = {"BUY", "SELL", "TRIM", "HOLD"}
 _DECISION_FIELDS = (
-    "ticker", "action", "target_weight", "thesis", "risks", "reason_for_action",
+    "ticker", "action", "target_weight", "thesis", "risks", "reason_for_action", "basis",
 )
 
 # Structured-output schema. Verified working against this key: it returned
@@ -60,6 +60,7 @@ RESPONSE_SCHEMA = {
                     "thesis": {"type": "string"},
                     "risks": {"type": "string"},
                     "reason_for_action": {"type": "string"},
+                    "basis": {"type": "string", "enum": ["momentum", "mean_reversion", "allocation", "thesis_change", "other"]},
                 },
                 "required": list(_DECISION_FIELDS),
             },
@@ -273,6 +274,7 @@ def _parse(text: str) -> dict:
             "thesis": entry["thesis"],
             "risks": entry["risks"],
             "reason_for_action": entry["reason_for_action"],
+            "basis": entry["basis"],
         })
 
     considered = []

@@ -30,18 +30,20 @@ SP500_CSV_URL = (
 )
 
 
-def fetch_sp500() -> list[str]:
+def fetch_sp500() -> tuple[list[str], dict[str, dict[str, str]]]:
     resp = requests.get(SP500_CSV_URL, timeout=30)
     resp.raise_for_status()
     reader = csv.DictReader(io.StringIO(resp.text))
-    return [row["Symbol"].strip() for row in reader if row.get("Symbol")]
+    metadata = {row["Symbol"].strip(): {"name": row.get("Security", "").strip(), "sector": row.get("GICS Sector", "").strip()} for row in reader if row.get("Symbol")}
+    return list(metadata), metadata
 
 
 def main() -> int:
     rules = json.loads(RULES_PATH.read_text(encoding="utf-8"))
     etfs = list(rules["etf_universe"])
 
-    sp500 = fetch_sp500()
+    sp500, metadata = fetch_sp500()
+    metadata.update({ticker: {"name": ticker, "sector": "ETF"} for ticker in etfs})
     # Alpaca uses '.' in class tickers (BRK.B); the dataset CSV uses the same.
     requested: list[str] = []
     seen: set[str] = set()
@@ -66,13 +68,14 @@ def main() -> int:
             kept.append(ticker)
 
     output = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.datetime.now(datetime.timezone.utc)
         .isoformat()
         .replace("+00:00", "Z"),
         "source_url": SP500_CSV_URL,
         "etf_sleeve": etfs,
         "tickers": sorted(kept),
+        "metadata": {ticker: metadata[ticker] for ticker in kept if ticker in metadata},
         "dropped": sorted(dropped, key=lambda d: d["ticker"]),
     }
     UNIVERSE_PATH.write_text(

@@ -21,6 +21,7 @@ RECORDED_RESPONSE = json.dumps({
             "risks": "A renewed inflation surprise would hurt duration.",
             "reason_for_action": "Cash weight is above target and no bond "
                                  "exposure exists yet.",
+            "basis": "allocation",
         },
         {
             "ticker": "MSFT",
@@ -29,6 +30,7 @@ RECORDED_RESPONSE = json.dumps({
             "thesis": "Durable enterprise franchise with AI optionality.",
             "risks": "Multiple compression if AI capex disappoints.",
             "reason_for_action": "Thesis intact; no action needed.",
+            "basis": "thesis_change",
         },
     ],
     "considered": [
@@ -110,7 +112,7 @@ def test_schema_valid_response_parses_into_interface_shape(monkeypatch):
     assert isinstance(first["target_weight"], float)
     assert first["target_weight"] == 0.063
     assert set(first) == {
-        "ticker", "action", "target_weight", "thesis", "risks", "reason_for_action",
+        "ticker", "action", "target_weight", "thesis", "risks", "reason_for_action", "basis",
     }
     assert out["considered"][0] == {
         "ticker": "GLD",
