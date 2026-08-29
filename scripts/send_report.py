@@ -13,7 +13,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from src.portfolio.config import load_dotenv  # noqa: E402
 from src.portfolio.report import build_report  # noqa: E402
+
+# Without this the report worked in GitHub Actions, where secrets arrive as
+# real environment variables, and failed locally - so it could not be tested
+# before being deployed. It deliberately does not import alpaca: sending an
+# email has no business requiring broker credentials.
+load_dotenv()
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -48,6 +55,10 @@ def main(send: bool) -> int:
         smtp.starttls()
         smtp.login(address, password)
         smtp.send_message(message)
+    # Silence on success is indistinguishable from silently doing nothing, both
+    # in a terminal and in an Actions log. Say what was sent and to whom.
+    print(f"sent to {address}")
+    print(f"subject: {subject}")
     return 0
 
 
