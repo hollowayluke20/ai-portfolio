@@ -88,6 +88,20 @@ def test_prompt_with_market_data_has_price_and_company_name():
     assert "Treasury Fund" in prompt
 
 
+def test_propose_sends_market_prompt_and_honours_pre_rendered_prompt(monkeypatch):
+    from src.portfolio.marketdata import TickerFeatures
+    captured = []
+    response = json.dumps({"commentary": "x", "decisions": [], "considered": []})
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    monkeypatch.setattr(ai, "_call_gemini", lambda prompt, *_: captured.append(prompt) or response)
+    feature = TickerFeatures("IEF", 95.5, .01, .1, -.02, .15, True, 253)
+    ai.propose(STATE, RULES, ["IEF"], HELD_THESES, {"IEF": feature},
+               {"IEF": {"name": "Treasury Fund", "sector": "Bond"}}, .5)
+    assert "$95.50" in captured[-1] and "Treasury Fund" in captured[-1]
+    ai.propose(STATE, RULES, ["IEF"], HELD_THESES, prompt="THE EXACT PROMPT")
+    assert captured[-1] == "THE EXACT PROMPT"
+
+
 def test_rules_block_matches_rules_json_exactly():
     block = ai._render_rules(RULES)
     # every leaf value from rules.json appears in the rendered block
