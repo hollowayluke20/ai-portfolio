@@ -51,6 +51,26 @@ and unconstrained AI trading breaches §4.
 | **Sell — thesis change** | The AI may sell at a decision cycle with written reasoning |
 | **Broad-US-equity cap** | SPY, VOO and QQQ **combined** may not exceed 40% of the portfolio |
 
+### The AI sees the entire universe
+
+**Amended 2026-08-29.** Candidate selection previously showed ~30 tickers a
+week: the ETF sleeve, held names, and a rotating 15-name slice of the S&P 500.
+
+That rested on an assumption nobody checked — that 518 tickers was too many to
+put in front of the model. The whole index with company names and sectors is
+about **4,800 tokens, or 0.48% of the context window**.
+
+The rotation was not merely unnecessary, it was harmful: the slice advanced
+**alphabetically**, so in a given week the AI could consider Allegion and
+A.O. Smith but not Microsoft, and it took 34 weeks to see the index once. The
+portfolio's contents were being decided by which letters came up.
+
+The effect was visible immediately. The last rotating cycle proposed
+`NVDA AMZN AMAT AMGN AMP AMT AON` alongside eight ETFs. With the whole universe
+visible the same machinery proposed `AAPL MSFT NVDA AMZN GOOGL JPM LLY XOM PG`
+across six ETFs — a genuinely diversified book rather than an accident of
+the alphabet.
+
 ### The ETF sleeve
 
 The universe includes a short, fixed list of liquid US-listed ETFs so the AI

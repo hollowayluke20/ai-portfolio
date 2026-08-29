@@ -25,7 +25,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.portfolio import alpaca, decisions as dec, executor, state as state_mod  # noqa: E402
 from src.portfolio.ai import propose                                              # noqa: E402
-from src.portfolio.candidates import select_candidates                            # noqa: E402
+from src.portfolio.candidates import select_candidates
+from src.portfolio.triggers import mechanical_decisions                            # noqa: E402
 from src.portfolio.config import load_inception, load_rules, load_universe        # noqa: E402
 from src.portfolio.storage import read_json                                       # noqa: E402
 
@@ -71,12 +72,22 @@ def main(live: bool) -> int:
           f"{st['totals']['position_count']} positions")
     print(f"candidates : {len(candidates)}")
 
-    ai_output = propose(st, rules, candidates, theses)
+    # Mechanical triggers first. They also run daily (scripts/run_triggers.py),
+    # but a weekly cycle must not propose buying something the stop is selling
+    # in the same breath, so they are computed here too and the AI is not
+    # offered those tickers.
+    triggered = mechanical_decisions(st, rules)
+    if triggered:
+        for decision in triggered:
+            print(f"trigger    : {decision['trigger']} {decision['action']} {decision['ticker']}")
+
+    exiting = {d["ticker"] for d in triggered}
+    ai_output = propose(st, rules, [c for c in candidates if c not in exiting], theses)
     proposed = ai_output["decisions"]
     print(f"proposed   : {len(proposed)} decisions, "
           f"{len(ai_output.get('considered', []))} candidates considered")
 
-    executed = executor.execute(proposed, st, rules, dry_run=not live)
+    executed = executor.execute(triggered + proposed, st, rules, universe, dry_run=not live)
 
     # A dry run is a PREVIEW, not a decision. It must not write to the
     # immutable decision record (ADR 0004), both because nothing was decided

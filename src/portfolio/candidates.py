@@ -1,58 +1,46 @@
-"""Candidate selection — which tickers the AI is allowed to look at this week.
+"""Candidate selection — which tickers the AI may consider.
 
-Deliberately dumb. One sentence: **every ETF in the sleeve, every currently-held
-name, plus a rotating 15-name slice of the S&P 500 that advances each week so the
-whole universe is seen over time.**
+**It considers all of them.**
 
-The moment this gets clever it becomes a second, undocumented strategy that
-nobody reviewed. If selection logic ever needs judgment, that belongs in the AI
-prompt, not here.
+This module used to show ~30 tickers a week: every ETF, every held name, and a
+rotating 15-name slice of the S&P 500. That existed on an assumption nobody
+checked — that 518 tickers was too many to put in front of a model.
+
+It is not. The entire S&P 500 with company names and sectors is about 4,800
+tokens, which is 0.48% of the model's context window.
+
+The rotation was not merely unnecessary, it was harmful. The slice advanced
+alphabetically, so in any given week the AI could consider Allegion and
+A.O. Smith but not Microsoft, and it took 34 weeks to see the index once. The
+portfolio's contents were being decided by which letters came up.
+
+If this ever needs narrowing again, narrow it for a reason that can be stated
+in one sentence and defended — not because a long list feels unwieldy.
 """
 
 from __future__ import annotations
 
 from .config import load_rules
 
-SP500_SLICE = 15  # S&P names shown per week
-
 
 def select_candidates(
-    universe: list[str], held: list[str], week_index: int
+    universe: list[str], held: list[str], week_index: int = 0
 ) -> list[str]:
-    """~30 tickers: the ETF sleeve + held names + a rotating S&P slice.
+    """Every tradable ticker: the ETF sleeve first, then everything else.
 
-    Deterministic: the same (universe, held, week_index) always returns the
-    same list, in the same order.
+    `held` and `week_index` are accepted and ignored. They remain in the
+    signature because callers pass them and because a future filter would want
+    them; removing them would be churn for no gain.
+
+    Ordering is deterministic — ETFs first so the asset-class options are
+    visible up front, then the rest alphabetically.
     """
+    del held, week_index
+
     etf_sleeve = load_rules()["etf_universe"]
     universe_set = set(universe)
-    etf_set = set(etf_sleeve)
 
-    result: list[str] = []
-    seen: set[str] = set()
-
-    def add(ticker: str) -> None:
-        if ticker not in seen:
-            seen.add(ticker)
-            result.append(ticker)
-
-    # 1. every ETF in the sleeve that is actually tradable
-    for ticker in etf_sleeve:
-        if ticker in universe_set:
-            add(ticker)
-
-    # 2. every currently-held name still in the universe, so the AI can
-    #    always reassess what it owns
-    for ticker in sorted(held):
-        if ticker in universe_set:
-            add(ticker)
-
-    # 3. a rotating slice of the S&P names, advancing by week_index
-    sp_names = sorted(t for t in universe if t not in etf_set)
-    if sp_names:
-        span = min(SP500_SLICE, len(sp_names))
-        start = (week_index * span) % len(sp_names)
-        for offset in range(span):
-            add(sp_names[(start + offset) % len(sp_names)])
-
-    return result
+    ordered = [ticker for ticker in etf_sleeve if ticker in universe_set]
+    seen = set(ordered)
+    ordered.extend(sorted(t for t in universe if t not in seen))
+    return ordered
