@@ -1,48 +1,52 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-28T13:13:48Z",
-  "market_data_as_of": "2026-08-28T12:36:56Z",
+  "generated_at": "2026-08-29T02:50:53Z",
+  "market_data_as_of": "2026-08-28T19:59:59Z",
   "currency": "USD",
   "run": {
-    "id": "a91bc9ba107a",
-    "trigger": "manual",
+    "id": "c74120de5f4b",
+    "trigger": "schedule",
     "workflow": "update-state"
   },
   "account": {
-    "cash": 100000.0,
-    "equity": 100000.0,
-    "buying_power": 399975.0,
+    "cash": 99975.02,
+    "equity": 99998.92,
+    "buying_power": 399958.46,
     "status": "ACTIVE"
   },
   "totals": {
-    "total_value": 100000.0,
-    "invested_value": 0.0,
-    "cash_weight": 1.0,
-    "position_count": 0,
-    "committed_cash": 25.0,
-    "available_cash": 99975.0
+    "total_value": 99998.92,
+    "invested_value": 23.9,
+    "cash_weight": 0.9998,
+    "position_count": 2,
+    "committed_cash": 0.0,
+    "available_cash": 99975.02
   },
-  "positions": [],
-  "pending_orders": [
+  "positions": [
     {
-      "symbol": "NVDA",
-      "side": "buy",
-      "notional": 20.0,
-      "qty": null,
-      "status": "accepted",
-      "submitted_at": "2026-08-28T12:43:25Z",
-      "order_id": "91fb1137-4aba-40ee-9ab6-f024a23c3d96"
+      "ticker": "MSTR",
+      "qty": 0.037238805,
+      "avg_entry_price": 134.0,
+      "current_price": 127.31,
+      "market_value": 4.74,
+      "unrealized_pl": -0.25,
+      "unrealized_pl_pct": -0.0501,
+      "opened_at": null,
+      "weight": 0.0
     },
     {
-      "symbol": "MSTR",
-      "side": "buy",
-      "notional": 5.0,
-      "qty": null,
-      "status": "accepted",
-      "submitted_at": "2026-08-28T12:42:49Z",
-      "order_id": "ada1aee4-e791-409e-b59f-e16f9f7532bb"
+      "ticker": "NVDA",
+      "qty": 0.088057794,
+      "avg_entry_price": 227.01,
+      "current_price": 217.55,
+      "market_value": 19.16,
+      "unrealized_pl": -0.83,
+      "unrealized_pl_pct": -0.0415,
+      "opened_at": null,
+      "weight": 0.0002
     }
   ],
+  "pending_orders": [],
   "performance": null,
   "benchmark": null,
   "health": {
