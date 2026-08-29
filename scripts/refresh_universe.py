@@ -29,6 +29,24 @@ SP500_CSV_URL = (
     "main/data/constituents.csv"
 )
 
+ETF_METADATA = {
+    "SPY": {"name": "S&P 500 ETF", "sector": "Equity"},
+    "VOO": {"name": "Vanguard S&P 500 ETF", "sector": "Equity"},
+    "QQQ": {"name": "Invesco QQQ Trust", "sector": "Equity"},
+    "VEA": {"name": "Vanguard FTSE Developed Markets ETF", "sector": "International Equity"},
+    "EFA": {"name": "iShares MSCI EAFE ETF", "sector": "International Equity"},
+    "VWO": {"name": "Vanguard FTSE Emerging Markets ETF", "sector": "International Equity"},
+    "EEM": {"name": "iShares MSCI Emerging Markets ETF", "sector": "International Equity"},
+    "IEF": {"name": "iShares 7-10 Year Treasury Bond ETF", "sector": "Bond"},
+    "AGG": {"name": "iShares Core U.S. Aggregate Bond ETF", "sector": "Bond"},
+    "TLT": {"name": "iShares 20+ Year Treasury Bond ETF", "sector": "Bond"},
+    "GLD": {"name": "Gold", "sector": "Commodity"},
+    "VNQ": {"name": "Vanguard Real Estate ETF", "sector": "Real Estate"},
+    "REET": {"name": "iShares Global REIT ETF", "sector": "Real Estate"},
+    "DBC": {"name": "Invesco DB Commodity Index Tracking Fund", "sector": "Commodity"},
+    "USO": {"name": "United States Oil Fund", "sector": "Commodity"},
+}
+
 
 def fetch_sp500() -> tuple[list[str], dict[str, dict[str, str]]]:
     resp = requests.get(SP500_CSV_URL, timeout=30)
@@ -43,7 +61,7 @@ def main() -> int:
     etfs = list(rules["etf_universe"])
 
     sp500, metadata = fetch_sp500()
-    metadata.update({ticker: {"name": ticker, "sector": "ETF"} for ticker in etfs})
+    metadata.update({ticker: ETF_METADATA[ticker] for ticker in etfs})
     # Alpaca uses '.' in class tickers (BRK.B); the dataset CSV uses the same.
     requested: list[str] = []
     seen: set[str] = set()
