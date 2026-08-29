@@ -1,6 +1,9 @@
 # The first live cycle — what to watch
 
-Monday 2026-09-01. The first time this system spends money.
+**Monday 2026-08-31.** The first time this system spends money.
+
+The first *scheduled* cycle is Friday 2026-09-04. Neither date is a US
+market holiday - Labor Day falls on 7 September this year.
 
 Everything else has been tested. This is the only test of whether **Alpaca
 behaves the way the simulator assumed** — the fake broker is a model of the
