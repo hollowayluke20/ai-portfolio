@@ -85,17 +85,23 @@ def build_report(state, history, decisions):
     else:
         lines.append("- No holdings")
 
+    # Rejected orders belong ONLY in the Blocked section. Listing them here too
+    # reads as though the system acted on them - "BUY TSLA" above a line saying
+    # the same buy was blocked, which is the opposite of what happened.
+    blocked = [item for item in decision_items if item.get("status") == "rejected"]
+    acted = [item for item in decision_items if item.get("status") != "rejected"]
+
     lines.extend(["", "Decisions this cycle"])
     if decisions is None:
         lines.append("No cycle has run yet.")
-    elif decision_items:
-        for decision in decision_items:
+    elif acted:
+        for decision in acted:
             lines.append(f"- {decision['action']} {decision['ticker']}: "
                          f"{decision.get('reason_for_action') or 'No reason recorded.'}")
+    elif blocked:
+        lines.append("Nothing was executed - every proposal was blocked, see below.")
     else:
         lines.append("No decisions this cycle.")
-
-    blocked = [item for item in decision_items if item.get("status") == "rejected"]
     lines.extend(["", "Blocked"])
     if blocked:
         lines.extend(f"- {item['action']} {item['ticker']}: {item.get('rejection_reason')}" for item in blocked)

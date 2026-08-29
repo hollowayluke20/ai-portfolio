@@ -29,3 +29,23 @@ def test_warnings_lead_and_short_history_omits_weekly_line():
     _, body = build_report(_state(health={"ok": False, "warnings": ["feed delayed"]}), {"rows": [{"portfolio_value": 1}]}, {"decisions": []})
     assert body.startswith("HEALTH WARNINGS")
     assert "This week:" not in body
+
+
+def test_rejected_orders_appear_only_under_blocked():
+    """A rejected order listed under "Decisions this cycle" reads as though the
+    system acted on it, directly above a line saying it was blocked."""
+    decisions = {
+        "commentary": "x",
+        "decisions": [
+            {"action": "TRIM", "ticker": "XOM", "reason_for_action": "over threshold",
+             "status": "executed", "rejection_reason": None},
+            {"action": "BUY", "ticker": "TSLA", "reason_for_action": "n/a",
+             "status": "rejected", "rejection_reason": "cash_floor: below the 5% floor"},
+        ],
+    }
+    _, body = build_report(_state(), {"rows": []}, decisions)
+    acted, blocked = body.split("Blocked")
+    assert "TRIM XOM" in acted
+    assert "TSLA" not in acted            # must not appear as an action taken
+    assert "TSLA" in blocked
+    assert "cash_floor" in blocked
