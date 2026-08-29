@@ -4,9 +4,15 @@
 being enforced) and ADR 0004 (the shape of state and history).
 
 You build the part that drives a simulated year and checks that nothing has
-gone wrong. Another agent is building the fake market and broker at the same
-time. **`sim/market.py`, `sim/broker.py` and `sim/ai_stub.py` will not exist
-while you work** — code against `INTERFACE.md` and test with your own fixtures.
+gone wrong.
+
+**If Task I has already been completed**, `sim/market.py`, `sim/broker.py`
+and `sim/ai_stub.py` exist — read them, but treat `INTERFACE.md` as the
+contract. Where the code and the interface disagree, say so rather than
+quietly following the code.
+
+**If they do not exist yet**, code against `INTERFACE.md` and test with your
+own fixtures. Do not create them: they belong to Task I.
 
 ## Files you own — create ONLY these
 
