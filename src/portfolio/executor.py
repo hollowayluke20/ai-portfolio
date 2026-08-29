@@ -26,18 +26,19 @@ def _planned_notional(decision, state):
     return round(max(0.0, current - target), 2)
 
 
-def _submit_or_skip(decision, dry_run):
+def _submit_or_skip(decision, dry_run, submit):
     if dry_run:
         decision.update(status="skipped", order_id=None, rejection_reason="dry run")
         return
     side = "sell" if decision["action"] in ("SELL", "TRIM") else "buy"
-    result = submit_order(ticker=decision["ticker"], side=side,
+    result = submit(ticker=decision["ticker"], side=side,
                           notional=decision["notional"])
     decision.update(status="executed", order_id=result.get("order_id"), rejection_reason=None)
 
 
-def execute(decisions, state, rules, universe, dry_run: bool):
+def execute(decisions, state, rules, universe, dry_run: bool, submit=None):
     """Validate, sell/trim first, then buy in the supplied priority order."""
+    submit = submit_order if submit is None else submit
     prepared = []
     for decision in decisions:
         item = deepcopy(decision)
@@ -62,7 +63,7 @@ def execute(decisions, state, rules, universe, dry_run: bool):
                 if reason:
                     decision.update(status="rejected", order_id=None, rejection_reason=reason)
                 else:
-                    _submit_or_skip(decision, dry_run)
+                    _submit_or_skip(decision, dry_run, submit)
                     running_cash -= float(decision["notional"])
             else:
                 # SELL / TRIM. Deliberately does NOT credit the proceeds to
@@ -72,6 +73,6 @@ def execute(decisions, state, rules, universe, dry_run: bool):
                 # against cash that does not exist - which Alpaca would accept
                 # using the 4x margin ADR 0003 declines to use.
                 # Consequence: a sell-to-fund-a-buy rebalance takes two cycles.
-                _submit_or_skip(decision, dry_run)
+                _submit_or_skip(decision, dry_run, submit)
             results.append(decision)
     return results

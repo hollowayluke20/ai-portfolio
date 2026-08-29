@@ -125,6 +125,61 @@ available_cash = cash - (total notional of pending BUY orders)
 Still never `buying_power`. But `cash` alone is not enough either. **All sizing
 and the 5% cash floor are computed against `available_cash`.**
 
+### Told is not enforced — the gap found on 2026-08-29
+
+Simulating a year exposed that **four configured rules were never enforced in
+code**: the stop loss, both halves of the concentration trim, the broad-US-
+equity cap and the cash ceiling. Each appears in `config/rules.json`, in this
+ADR and in the README, and each was injected into the AI's prompt — so the
+model was told, and nothing checked.
+
+That is exactly the distinction this project settled deliberately: an LLM told
+a rule can still break it, so every rule is **told and enforced**. Four of them
+were told only. In the crash simulation a portfolio fell 28.6% with individual
+holdings well past —20% and **no stop ever fired**, because no code existed to
+fire one.
+
+The cause was a specification gap rather than an implementation error. The
+Phase 2 tasks defined validation of *proposals the AI makes*; nothing was ever
+assigned to **generate mechanical decisions from the portfolio's own state**.
+
+### Mechanical triggers run before the AI
+
+Stop losses and trims are not the AI's to propose. They are computed from state
+by deterministic code, prepended to the decision list, and the AI is told which
+positions are already being exited so it does not fight them.
+
+| Trigger | Condition | Action |
+|---|---|---|
+| `stop_loss` | `unrealized_pl_pct` at or below `stop_loss_pct` | SELL the whole position |
+| `concentration_trim` | `weight` above `concentration_trim_threshold` | TRIM back to `concentration_trim_target` |
+
+**A stop loss is never blocked.** Not by the universe, not by the minimum
+position count, not by anything. A safety exit gated by a diversification rule
+is not a safety exit.
+
+### The broad-US-equity cap is a validation check
+
+SPY, VOO and QQQ combined may not exceed `broad_us_equity_cap.limit`. This
+gates **buys** only, like the universe check — an existing overweight position
+must remain sellable.
+
+### The cash floor drifts, and that is not a breach
+
+The floor is a percentage of total value, so a **rising market can push cash
+below it with no trade at all**: the cash did not move, the target did. Found
+in the meltup simulation, where cash fell under the floor on a day nothing was
+bought.
+
+This is not a violation. The rule is that **an order which would breach the
+floor is rejected**, not that cash must always sit above it. The practical
+consequence, undocumented until now: when cash drifts below the floor the
+system cannot buy until something is sold. It is not stuck — trims and stops
+free cash — but it will hold rather than deploy, and that is intended.
+
+The cash **ceiling** is guidance to the AI plus a health warning, not a
+rejection. There is no sensible order to refuse for holding too much cash.
+
 ### Why a concentration trim rather than a take-profit
 
 Selling a position *because it rose* systematically removes the best holdings.
@@ -203,3 +258,8 @@ constraints deferred to a later ADR.
 **2026-08-28 (second amendment)** — Position sizing and the cash floor now use
 `available_cash` (cash net of pending buy orders) rather than `cash`. Found by
 placing two orders outside market hours and observing that `cash` did not move.
+
+**2026-08-29 (third amendment)** — Mechanical stop-loss and concentration-trim
+triggers specified, the broad-US-equity cap made a validation check, and the
+cash floor's drift documented as intended behaviour rather than a breach. All
+found by simulating a year of trading before going live.

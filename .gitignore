@@ -25,3 +25,6 @@ __pycache__/
 
 # dry-run previews are disposable, not decisions
 data/dry-runs/
+
+# simulation output - regenerable, not a record
+sim-out/

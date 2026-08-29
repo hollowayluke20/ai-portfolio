@@ -1,0 +1,1 @@
+"""Isolated synthetic market simulation."""

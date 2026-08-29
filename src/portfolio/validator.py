@@ -62,8 +62,29 @@ def validate_static(decisions, state, rules, universe):
             elif action in {"SELL", "TRIM"} and ticker not in held:
                 reason = f"{action} requires an existing holding of {ticker}"
             else:
-                if not limits["minimum"] <= projected_count <= limits["maximum"]:
-                    reason = f"resulting position count {projected_count} is outside {limits['minimum']}..{limits['maximum']}"
+                # The MAXIMUM gates buying: it stops the book fragmenting.
+                #
+                # The MINIMUM does not. Blocking a buy for leaving the book
+                # below the target is backwards - it blocks the move TOWARD
+                # diversification. Enforced on buys it makes the portfolio
+                # impossible to build: from empty, any cycle proposing fewer
+                # than `minimum` names has every one rejected, and after a
+                # crash stops out most positions the book can never be rebuilt.
+                # Found by simulating a year: 250 days, 50 cycles, and the
+                # portfolio ended holding ONE position and 93.5% cash.
+                #
+                # The minimum instead blocks a discretionary SELL that would
+                # take the book below it. Stop-losses and trims are never
+                # blocked - a safety exit must not be gated by a
+                # diversification rule (the same principle that already lets
+                # the universe gate buys but not exits).
+                if action == "BUY" and projected_count > limits["maximum"]:
+                    reason = (f"resulting position count {projected_count} exceeds "
+                              f"maximum of {limits['maximum']}")
+                elif (action == "SELL" and decision.get("trigger", "ai") == "ai"
+                      and projected_count < limits["minimum"]):
+                    reason = (f"discretionary sell would leave {projected_count} positions, "
+                              f"below the minimum of {limits['minimum']}")
                 elif action != "HOLD":
                     notional = decision.get("notional")
                     if not isinstance(notional, (int, float)) or notional < minimum_notional:
