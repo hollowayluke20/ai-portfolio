@@ -50,6 +50,7 @@ def main(live: bool) -> int:
     spy_price, spy_as_of = alpaca.get_latest_price(BENCHMARK)
     rules = load_rules()
     universe = load_universe()
+    universe_metadata = json.loads((REPO / "config" / "universe.json").read_text(encoding="utf-8")).get("metadata", {})
     held_symbols = [position["symbol"] for position in positions]
     active_records = dec.read_active_records(DECISIONS_DIR, held_symbols)
 
@@ -90,8 +91,9 @@ def main(live: bool) -> int:
             print(f"trigger    : {decision['trigger']} {decision['action']} {decision['ticker']}")
 
     exiting = {d["ticker"] for d in triggered}
-    prompt = __import__("src.portfolio.ai", fromlist=["render_prompt"]).render_prompt(st, rules, [c for c in candidates if c not in exiting], theses, features, {}, breadth)
-    ai_output = propose(st, rules, [c for c in candidates if c not in exiting], theses)
+    prompt = __import__("src.portfolio.ai", fromlist=["render_prompt"]).render_prompt(st, rules, [c for c in candidates if c not in exiting], theses, features, universe_metadata, breadth)
+    ai_output = propose(st, rules, [c for c in candidates if c not in exiting], theses,
+                        features, universe_metadata, breadth, prompt=prompt)
     proposed = ai_output["decisions"]
     print(f"proposed   : {len(proposed)} decisions, "
           f"{len(ai_output.get('considered', []))} candidates considered")

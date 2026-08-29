@@ -298,9 +298,8 @@ def _parse(text: str) -> dict:
     return {"commentary": obj["commentary"], "decisions": decisions, "considered": considered}
 
 
-def propose(
-    state: dict, rules: dict, candidates: list[str], held_theses: dict[str, str]
-) -> dict:
+def propose(state, rules, candidates, held_theses, features=None, metadata=None,
+            breadth=None, prompt=None) -> dict:
     """Return {"commentary", "decisions", "considered"} or raise AIError.
 
     Retries exactly once on unusable output. Network failures are retried
@@ -312,7 +311,8 @@ def propose(
         raise AIError("GEMINI_API_KEY is not set (expected in .env or the environment)")
 
     model = rules["ai"]["model"]
-    prompt = render_prompt(state, rules, candidates, held_theses)
+    prompt = prompt or render_prompt(state, rules, candidates, held_theses,
+                                     features, metadata, breadth)
 
     last_error: Exception | None = None
     for attempt in (1, 2):

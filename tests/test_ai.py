@@ -79,6 +79,15 @@ def test_prompt_renders_with_no_placeholder_left():
     assert "NVDA" in prompt
 
 
+def test_prompt_with_market_data_has_price_and_company_name():
+    from src.portfolio.marketdata import TickerFeatures
+    feature = TickerFeatures("IEF", 95.5, .01, .1, -.02, .15, True, 253)
+    prompt = ai.render_prompt(STATE, RULES, ["IEF"], HELD_THESES,
+                              {"IEF": feature}, {"IEF": {"name": "Treasury Fund", "sector": "Bond"}}, .5)
+    assert "$95.50" in prompt
+    assert "Treasury Fund" in prompt
+
+
 def test_rules_block_matches_rules_json_exactly():
     block = ai._render_rules(RULES)
     # every leaf value from rules.json appears in the rendered block
