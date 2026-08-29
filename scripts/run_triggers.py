@@ -29,7 +29,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.portfolio import alpaca, decisions as dec, executor, state as state_mod  # noqa: E402
-from src.portfolio.config import load_inception, load_rules, load_universe        # noqa: E402
+from src.portfolio.config import (load_inception, load_rules, load_universe,      # noqa: E402
+                                  save_inception)                                # noqa: E402
 from src.portfolio.storage import append_history_row, write_json_atomic           # noqa: E402
 from src.portfolio.triggers import mechanical_decisions                           # noqa: E402
 
@@ -78,9 +79,39 @@ def _build(generated_at):
     return st, rules
 
 
+def _maybe_stamp_inception(state):
+    """Stamp the baseline the first time the SYSTEM's own holdings exist.
+
+    save_inception() sat unused for two days: defined, unit-tested, called by
+    nothing. Inception would never have been stamped, so `performance` and
+    `benchmark` would have stayed null forever - the dashboard saying "not yet
+    trading" after a year of trading, and the benchmark comparison never
+    activating at all.
+
+    A position only counts if a decision record opened it. Luke's manual NVDA
+    and MSTR trades have no record, so they cannot start the clock - measuring
+    from a $24 test position would poison every future comparison.
+    """
+    if load_inception() or not state["positions"]:
+        return
+    if not any(p.get("thesis") for p in state["positions"]):
+        return              # nothing here was opened by a system decision
+    save_inception({
+        "inception_date": state["market_data_as_of"][:10],
+        "inception_value": state["totals"]["total_value"],
+        "benchmark_ticker": BENCHMARK,
+        "benchmark_inception_price": state["benchmark"]["current_price"]
+        if state.get("benchmark") else None,
+    })
+    print(f"inception  : stamped at ${state['totals']['total_value']:,.2f} "
+          f"({state['market_data_as_of'][:10]})")
+
+
 def main(live: bool) -> int:
     now = _now()
     state, rules = _build(now)
+
+    _maybe_stamp_inception(state)
 
     fired = mechanical_decisions(state, rules)
 
