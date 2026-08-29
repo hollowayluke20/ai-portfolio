@@ -1,4 +1,4 @@
-name: Update portfolio state
+name: Daily state and sell triggers
 
 # 16:25 in the MARKET's own timezone, not ours. The US and UK change clocks on
 # different dates, so pinning to Europe/London would drift for a week each
@@ -31,18 +31,27 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Refresh state and history
+      # Runs the mechanical sell triggers as well as refreshing state. The
+      # stop loss and concentration trim are pure arithmetic on data already
+      # fetched - no AI call, no cost. Running them only on the weekly cycle
+      # made them far weaker than ADR 0003 claims: a holding could fall 35% on
+      # a Tuesday and sit there until Friday evening.
+      #
+      # The AI's decisions stay weekly (weekly-cycle.yml). Judgement does not
+      # improve by exercising it more often against delayed data. Reacting to
+      # a position already past its stop does.
+      - name: Refresh state and run the sell triggers
         env:
           APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
           APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
           APCA_API_BASE_URL: ${{ vars.APCA_API_BASE_URL }}
-        run: python scripts/update_state.py --scheduled
+        run: python scripts/run_triggers.py --live
 
       - name: Commit if anything changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/state.json data/history.json
+          git add data/state.json data/history.json data/decisions/ 2>/dev/null || git add data/state.json data/history.json
           if git diff --staged --quiet; then
             echo "No change in portfolio state - nothing to commit."
             exit 0

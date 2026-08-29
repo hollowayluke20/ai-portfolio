@@ -180,6 +180,28 @@ free cash — but it will hold rather than deploy, and that is intended.
 The cash **ceiling** is guidance to the AI plus a health warning, not a
 rejection. There is no sensible order to refuse for holding too much cash.
 
+### The triggers run daily; the AI runs weekly
+
+**Amended 2026-08-29.** Both were originally on the weekly cycle, which made
+the stop far weaker than this ADR claims. "Hard exit at —20%" was in practice
+"hard exit at —20%, checked once a week" — a holding could fall 35% on a Tuesday
+and sit until Friday evening.
+
+They are different kinds of work and belong on different clocks:
+
+| | Cadence | Why |
+|---|---|---|
+| Stop loss, concentration trim | **Daily** | Pure arithmetic on data already fetched. No AI call, no cost, no judgement. A safety rail checked weekly is barely a rail |
+| AI decisions: what to buy, thesis review | **Weekly** | Judgement does not improve by exercising it more often against a 15-minute-delayed feed, and 250 entries a year mostly reading "hold, thesis intact" makes the decision history less readable, not more |
+
+Triggers run from `scripts/run_triggers.py` on the daily workflow, deliberately
+**not** from `update_state.py` — that script is read-only and safe to run at any
+time, and quietly giving it the ability to place orders would be a trap.
+
+A triggered sell is written to `data/decisions/<date>-triggers.json`, so a stop
+that fires appears in the permanent record rather than only in a workflow log,
+and is distinguishable from a weekly AI cycle when read back.
+
 ### Why a concentration trim rather than a take-profit
 
 Selling a position *because it rose* systematically removes the best holdings.
