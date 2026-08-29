@@ -54,10 +54,23 @@ Orders already submitted and not yet filled. Do not double-count this cash.
 
 ## Candidates you may act on this week
 
+## Market context
+
+{MARKET_CONTEXT}
+
 You may only propose decisions on tickers in this list or tickers you already
 hold. Anything else will be rejected.
 
 {CANDIDATES}
+
+---
+
+## Decision basis
+
+Every decision must include `basis`: `momentum` means buying because it has
+risen; `mean_reversion` means buying because it has fallen; `allocation` is an
+asset-class decision; `thesis_change` means acting because the original reason
+no longer holds; and `other` is for a different stated basis.
 
 ---
 

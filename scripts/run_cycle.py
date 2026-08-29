@@ -29,6 +29,7 @@ from src.portfolio.candidates import select_candidates
 from src.portfolio.triggers import mechanical_decisions                            # noqa: E402
 from src.portfolio.config import load_inception, load_rules, load_universe        # noqa: E402
 from src.portfolio.storage import read_json                                       # noqa: E402
+from src.portfolio.marketdata import fetch_bars, compute_features, compute_breadth  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 STATE_PATH = REPO / "data" / "state.json"
@@ -65,6 +66,13 @@ def main(live: bool) -> int:
     week_index = now.isocalendar().week
     candidates = select_candidates(universe, held, week_index)
     theses = dec.read_active_theses(DECISIONS_DIR, held)
+    try:
+        as_of = spy_as_of[:10]
+        bars = fetch_bars(universe, (datetime.date.fromisoformat(as_of) - datetime.timedelta(days=400)).isoformat(), as_of)
+        features = compute_features(bars, as_of)
+        breadth = compute_breadth(features)
+    except Exception as exc:
+        raise RuntimeError(f"market-data fetch failed; aborting cycle: {exc}") from exc
 
     print(f"cycle      : {cycle_date}  ({'LIVE' if live else 'DRY RUN'})")
     print(f"portfolio  : ${st['totals']['total_value']:,.2f}  "
@@ -82,6 +90,7 @@ def main(live: bool) -> int:
             print(f"trigger    : {decision['trigger']} {decision['action']} {decision['ticker']}")
 
     exiting = {d["ticker"] for d in triggered}
+    prompt = __import__("src.portfolio.ai", fromlist=["render_prompt"]).render_prompt(st, rules, [c for c in candidates if c not in exiting], theses, features, {}, breadth)
     ai_output = propose(st, rules, [c for c in candidates if c not in exiting], theses)
     proposed = ai_output["decisions"]
     print(f"proposed   : {len(proposed)} decisions, "
@@ -96,6 +105,9 @@ def main(live: bool) -> int:
     out_path = out_dir / f"{cycle_date}.json"
     if not live and out_path.exists():
         out_path.unlink()          # previews are overwritable by design
+    if not live:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / f"{cycle_date}.prompt.txt").write_text(prompt, encoding="utf-8")
 
     cycle = dec.write_cycle(
         out_path,

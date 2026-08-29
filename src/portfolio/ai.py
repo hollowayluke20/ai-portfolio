@@ -146,9 +146,18 @@ def _render_pending_orders(state: dict) -> str:
     return "\n".join(lines)
 
 
-def render_prompt(
-    state: dict, rules: dict, candidates: list[str], held_theses: dict[str, str]
-) -> str:
+def _market_line(ticker, features, metadata):
+    feature = features.get(ticker)
+    meta = metadata.get(ticker, {})
+    if feature is None:
+        return f"{ticker}  {meta.get('name', 'n/a')}  {meta.get('sector', 'n/a')}  n/a (listed recently)"
+    pct = lambda value: "n/a" if value is None else f"{value:+.1%}"
+    trend = "n/a" if feature.above_200d_ma is None else ("above 200d" if feature.above_200d_ma else "below 200d")
+    recent = " (listed recently)" if feature.bars_available < 253 else ""
+    return f"{ticker}  {meta.get('name', 'n/a')}  {meta.get('sector', 'n/a')}  ${feature.price:.2f}  1m {pct(feature.ret_1m)}  12m {pct(feature.ret_12m)}  {pct(feature.pct_off_52w_high)} off high  vol {pct(feature.vol_60d)}  {trend}{recent}"
+
+
+def render_prompt(state, rules, candidates, held_theses, features=None, metadata=None, breadth=None) -> str:
     """Fill the config/prompt.md template. No placeholder may survive."""
     template = PROMPT_PATH.read_text(encoding="utf-8")
     totals = state.get("totals", {})
@@ -159,13 +168,16 @@ def render_prompt(
         "{CASH_WEIGHT}": str(totals.get("cash_weight")),
         "{POSITIONS}": _render_positions(state, held_theses),
         "{PENDING_ORDERS}": _render_pending_orders(state),
-        "{CANDIDATES}": ", ".join(candidates) if candidates else "None.",
+        "{CANDIDATES}": "\n".join(_market_line(t, features or {}, metadata or {}) for t in candidates) if candidates else "None.",
+        "{MARKET_CONTEXT}": "As of the last close; next-open fills are unknown.\n" + "\n".join(_market_line(t, features or {}, metadata or {}) for t in rules["etf_universe"]) + f"\nMarket breadth: {'n/a' if breadth is None else f'{breadth:.1%}'} of the universe is above its 200-day average.",
     }
     rendered = template
     for token, value in replacements.items():
         rendered = rendered.replace(token, value)
     if "{" in rendered or "}" in rendered:
         raise AIError(f"prompt template still has an unfilled placeholder: {rendered!r}")
+    if len(rendered) >= 80000:
+        raise AIError(f"prompt is {len(rendered)} characters (tripwire: 80000)")
     return rendered
 
 
