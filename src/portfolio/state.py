@@ -13,7 +13,7 @@ def _fraction(value):
 
 def build_state(account, positions, spy_price, spy_as_of,
                 rules, inception, generated_at, run, pending_orders=None,
-                health=None):
+                health=None, active_records=None):
     """Build an ADR 0004 state document without reading external state.
 
     ``rules`` is deliberately accepted as part of the pipeline interface even
@@ -26,6 +26,7 @@ def build_state(account, positions, spy_price, spy_as_of,
     invested_value = 0.0
 
     for position in positions:
+        record = (active_records or {}).get(position["symbol"])
         market_value = _money(position["market_value"])
         invested_value += market_value
         qty = float(position["qty"])
@@ -42,7 +43,10 @@ def build_state(account, positions, spy_price, spy_as_of,
             "market_value": market_value,
             "unrealized_pl": unrealized_pl,
             "unrealized_pl_pct": _fraction(unrealized_pl_pct),
-            "opened_at": position.get("opened_at"),
+            "thesis": record.get("thesis") if record else None,
+            "risks": record.get("risks") if record else None,
+            "business": record.get("business") if record else None,
+            "opened_at": record.get("decided_at") if record else None,
         })
 
     invested_value = _money(invested_value)

@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -47,6 +48,8 @@ def main(live: bool) -> int:
     spy_price, spy_as_of = alpaca.get_latest_price(BENCHMARK)
     rules = load_rules()
     universe = load_universe()
+    held_symbols = [position["symbol"] for position in positions]
+    active_records = dec.read_active_records(DECISIONS_DIR, held_symbols)
 
     st = state_mod.build_state(
         account=account, positions=positions, pending_orders=pending,
@@ -54,6 +57,7 @@ def main(live: bool) -> int:
         inception=load_inception(), generated_at=decided_at,
         run={"id": "cycle-" + cycle_date, "trigger": "manual" if not live else "live",
              "workflow": "run-cycle"},
+        active_records=active_records,
     )
 
     held = [p["ticker"] for p in st["positions"]]
@@ -72,7 +76,7 @@ def main(live: bool) -> int:
     print(f"proposed   : {len(proposed)} decisions, "
           f"{len(ai_output.get('considered', []))} candidates considered")
 
-    executed = executor.execute(proposed, st, rules, universe, dry_run=not live)
+    executed = executor.execute(proposed, st, rules, dry_run=not live)
 
     # A dry run is a PREVIEW, not a decision. It must not write to the
     # immutable decision record (ADR 0004), both because nothing was decided
@@ -87,6 +91,8 @@ def main(live: bool) -> int:
         cycle_id=f"{cycle_date}-weekly", decided_at=decided_at,
         state=st, ai_output=ai_output, executed=executed,
     )
+    if live:
+        shutil.copyfile(out_path, DECISIONS_DIR / "latest.json")
 
     print()
     for d in executed:

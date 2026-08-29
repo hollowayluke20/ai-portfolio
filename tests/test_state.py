@@ -91,3 +91,25 @@ def test_unknown_quantity_order_warns_instead_of_assuming_zero_commitment():
     assert state["totals"]["committed_cash"] == 0.0
     assert state["health"]["ok"] is False
     assert "Cannot determine committed cash" in state["health"]["warnings"][0]
+
+
+def test_position_reasoning_is_enriched_or_explicitly_null():
+    account = {"cash": 100, "equity": 150, "buying_power": 400, "status": "ACTIVE"}
+    positions = [
+        {"symbol": "MSFT", "qty": 1, "avg_entry_price": 50, "current_price": 50,
+         "market_value": 50, "unrealized_pl": 0},
+        {"symbol": "NVDA", "qty": 1, "avg_entry_price": 0, "current_price": 0,
+         "market_value": 0, "unrealized_pl": 0},
+    ]
+    records = {"MSFT": {"thesis": "durable growth", "risks": "valuation",
+                         "business": None, "decided_at": "2026-08-29T12:00:00Z"}}
+    state = build_state(account, positions, 700, "2026-08-29T20:00:00Z", {}, None,
+                        "2026-08-29T21:00:00Z", {"id": "r", "trigger": "manual", "workflow": "x"},
+                        active_records=records)
+    assert state["positions"][0]["thesis"] == "durable growth"
+    assert state["positions"][0]["risks"] == "valuation"
+    assert state["positions"][0]["business"] is None
+    assert state["positions"][0]["opened_at"] == "2026-08-29T12:00:00Z"
+    assert {field: state["positions"][1][field] for field in ("thesis", "risks", "business", "opened_at")} == {
+        "thesis": None, "risks": None, "business": None, "opened_at": None,
+    }

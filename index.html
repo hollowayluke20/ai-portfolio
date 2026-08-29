@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Portfolio Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/dashboard.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <div id="alerts"></div>
+
+  <header class="masthead">
+    <h1>AI Portfolio Ledger</h1>
+    <div class="stamp-line" id="stamp"></div>
+  </header>
+
+  <section class="pairing" id="hero"></section>
+
+  <div class="head">
+    <span>Performance</span>
+    <div class="ranges" id="ranges" role="group" aria-label="Chart date range"></div>
+  </div>
+  <div class="readout" id="readout" aria-live="polite"></div>
+  <div class="chart" id="chartBox"></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="head">
+    <span>Holdings</span>
+    <span class="count" id="holdcount"></span>
+  </div>
+  <div class="filterbar" id="filterbar">
+    <label class="vh" for="filter">Filter holdings by ticker or company</label>
+    <input id="filter" type="search" placeholder="Filter — ticker or company" autocomplete="off">
+    <span class="filtermsg" id="filtermsg" aria-live="polite"></span>
+  </div>
+  <div class="colhead line" id="sortbar">
+    <span><button type="button" data-k="tick">Ticker</button></span>
+    <span><button type="button" data-k="name">Company</button></span>
+    <span class="num"><button type="button" data-k="w">Weight</button></span>
+    <span class="num"><button type="button" data-k="mv">Value</button></span>
+    <span class="num"><button type="button" data-k="pl">+/−</button></span>
+  </div>
+  <div class="rows" id="holdings"></div>
+
+  <div class="head"><span>Blocked by rules</span><span class="count" id="blockedHead"></span></div>
+  <div class="colhead line flush" id="blockedColhead">
+    <span>Ticker</span>
+    <span>Action</span>
+    <span class="num"></span>
+    <span class="num">Amount</span>
+    <span class="num">Result</span>
+  </div>
+  <div class="rows blocked" id="blocked"></div>
+
+  <footer>
+    Decisions run weekly after the US close; orders fill at the next open, so
+    fill prices are unknown when a decision is made. Figures come from a paper
+    account — no real money is at risk, and paper fills carry no slippage or
+    market impact. Benchmark comparison is price return on both sides. The S&amp;P 500
+    is the only benchmark: when the portfolio holds bonds, gold or other non-equity
+    assets, it is deliberately being measured against pure US equity rather than a
+    matched mix.
+  </footer>
+</div>
+
+<script src="assets/dashboard.js"></script>
+</body>
+</html>

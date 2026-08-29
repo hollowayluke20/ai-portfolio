@@ -26,18 +26,26 @@ def write_cycle(path, cycle_id, decided_at, state, ai_output, executed):
     return document
 
 
-def read_active_theses(decisions_dir, held_tickers):
-    """Find the original executed BUY thesis for every currently held ticker."""
+def read_active_records(decisions_dir, held_tickers):
+    """Find each held ticker's executed opening BUY record and cycle timestamp."""
     remaining = set(held_tickers)
-    theses = {}
+    records = {}
     for path in sorted(Path(decisions_dir).glob("*.json"), reverse=True):
         with path.open(encoding="utf-8") as file:
             document = json.load(file)
         for decision in document.get("decisions", []):
             ticker = decision.get("ticker")
             if ticker in remaining and decision.get("action") == "BUY" and decision.get("status") == "executed":
-                theses[ticker] = decision.get("thesis")
+                records[ticker] = {**decision, "decided_at": document["decided_at"]}
                 remaining.remove(ticker)
         if not remaining:
             break
-    return theses
+    return records
+
+
+def read_active_theses(decisions_dir, held_tickers):
+    """Return only the opening theses for the prompt-building caller."""
+    return {
+        ticker: record.get("thesis")
+        for ticker, record in read_active_records(decisions_dir, held_tickers).items()
+    }

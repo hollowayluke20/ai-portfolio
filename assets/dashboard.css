@@ -1,0 +1,321 @@
+/* ==========================================================================
+   AI Portfolio Ledger — the approved mockup (docs/tasks/phase-3/
+   dashboard-mockup.html), split out unchanged, plus the states the mockup
+   does not show: staleness, health warnings, empty/null data, load failure.
+   ========================================================================== */
+
+:root{
+  --ledger:#E7EBE3;
+  --sheet:#F1F4EE;
+  --rule:#C3CCBC;
+  --rule-faint:#D6DDD0;
+  --ink:#1C2118;
+  --annotation:#6B7A66;
+  --gain:#2F5D3A;
+  --stamp:#A03328;
+  --stamp-wash:#EBDCD8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ledger:#131711;
+    --sheet:#1A1F17;
+    --rule:#333C2E;
+    --rule-faint:#262E21;
+    --ink:#DFE6D8;
+    --annotation:#8D9A87;
+    --gain:#7FB48A;
+    --stamp:#D9705F;
+    --stamp-wash:#2A1D1A;
+  }
+}
+:root[data-theme="dark"]{
+  --ledger:#131711;
+  --sheet:#1A1F17;
+  --rule:#333C2E;
+  --rule-faint:#262E21;
+  --ink:#DFE6D8;
+  --annotation:#8D9A87;
+  --gain:#7FB48A;
+  --stamp:#D9705F;
+  --stamp-wash:#2A1D1A;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ledger);
+  color:var(--ink);
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+/* ---- masthead ---- */
+.masthead{
+  display:flex;flex-wrap:wrap;gap:1rem;align-items:baseline;
+  justify-content:space-between;
+  padding-bottom:.75rem;
+  border-bottom:2px solid var(--ink);
+}
+.masthead h1{
+  font-family:Newsreader,Georgia,serif;
+  font-weight:400;font-size:1.5rem;letter-spacing:.01em;
+  margin:0;
+}
+.stamp-line{
+  display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:baseline;
+  font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--annotation);
+}
+.fresh{color:var(--gain)}
+.stale{color:var(--stamp)}
+
+/* ---- the pairing: number and argument ---- */
+.pairing{
+  display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);
+  gap:2.5rem;
+  padding:2.5rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.figure .value{
+  font-size:2.5rem;font-weight:500;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+  display:block;line-height:1.1;
+}
+.figure .against{
+  margin-top:.9rem;display:grid;gap:.3rem;
+  font-size:.8125rem;font-variant-numeric:tabular-nums;
+}
+.figure .against div{display:flex;justify-content:space-between;gap:1rem}
+.figure .against span:first-child{color:var(--annotation)}
+.figure .against .notyet{
+  display:block;color:var(--annotation);
+  font-family:Newsreader,Georgia,serif;font-style:italic;
+  font-size:.9375rem;line-height:1.5;
+}
+.pos{color:var(--gain)}
+.neg{color:var(--stamp)}
+
+.argument{
+  font-family:Newsreader,Georgia,serif;
+  font-size:1.0625rem;line-height:1.6;font-weight:300;
+  max-width:44ch;
+  border-left:1px solid var(--rule);
+  padding-left:1.5rem;
+}
+.argument .who{
+  display:block;font-family:"IBM Plex Mono",monospace;
+  font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--annotation);margin-bottom:.7rem;
+}
+
+/* ---- section headings ---- */
+.head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  margin:2.75rem 0 .75rem;
+  font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;
+}
+.head .count{color:var(--annotation)}
+
+/* ---- chart ---- */
+.chart{
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  padding:1.25rem 0 .5rem;
+  overflow-x:auto;
+}
+.chart svg{display:block;width:100%;height:auto;min-width:26rem}
+.chart text.ax{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  fill:var(--annotation);letter-spacing:.06em;
+}
+.chart .hair{stroke:var(--annotation);stroke-width:1}
+.chart .dot{fill:var(--ink)}
+
+/* range selector — ledger tabs, not pills */
+.ranges{display:flex;gap:.15rem}
+.ranges button{
+  font:inherit;font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--annotation);padding:.15rem .45rem;cursor:pointer;
+}
+.ranges button:hover:not(:disabled){color:var(--ink)}
+.ranges button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.ranges button:disabled{opacity:.35;cursor:not-allowed}
+.ranges button:focus-visible{outline:2px solid var(--gain);outline-offset:2px}
+
+/* hover readout lives in the page, not in a floating card */
+.readout{
+  display:flex;flex-wrap:wrap;gap:.35rem 1.5rem;
+  min-height:1.35rem;margin-bottom:.35rem;
+  font-size:.75rem;font-variant-numeric:tabular-nums;color:var(--annotation);
+}
+.readout b{font-weight:500;color:var(--ink)}
+.readout .idle{color:var(--annotation)}
+.legend{
+  display:flex;gap:1.5rem;margin-top:.6rem;
+  font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--annotation);
+}
+.legend:empty{display:none}
+.legend b{font-weight:500;color:var(--ink)}
+.legend i{display:inline-block;width:1.1rem;height:0;vertical-align:middle;
+  border-top:2px solid var(--ink);margin-right:.45rem}
+.legend .bm i{border-top:1px dashed var(--annotation)}
+
+/* ---- holdings ledger ---- */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.filterbar{display:flex;align-items:baseline;gap:.85rem;margin:.35rem 0 .6rem}
+.filterbar input{
+  font:inherit;font-size:.8125rem;color:var(--ink);
+  background:none;border:none;border-bottom:1px solid var(--rule);
+  padding:.25rem 0;width:min(18rem,100%);
+}
+.filterbar input::placeholder{color:var(--annotation)}
+.filterbar input:focus{outline:none;border-bottom-color:var(--ink)}
+.filterbar input:focus-visible{outline:2px solid var(--gain);outline-offset:3px}
+.filtermsg{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--annotation)}
+.colhead{
+  font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--annotation);
+  padding-bottom:.4rem;
+  /* the +/- disclosure glyph occupies 1em in each row, so indent to match */
+}
+.colhead:not(.flush) span:first-child{padding-left:1em}
+.colhead button{
+  font:inherit;letter-spacing:inherit;text-transform:inherit;
+  background:none;border:none;padding:0;cursor:pointer;
+  color:var(--annotation);
+}
+.colhead button:hover{color:var(--ink)}
+.colhead button:focus-visible{outline:2px solid var(--gain);outline-offset:2px}
+.colhead button[data-dir]{color:var(--ink)}
+.colhead button[data-dir]::after{content:" ↑";font-size:.9em}
+.colhead button[data-dir="desc"]::after{content:" ↓"}
+.colhead .num button{display:inline}
+.rows{border-top:1px solid var(--rule)}
+.row{border-bottom:1px solid var(--rule-faint);padding:.7rem 0}
+.line{
+  display:grid;
+  grid-template-columns:5.5rem minmax(0,1fr) 4.5rem 7rem 5.5rem;
+  gap:.75rem;align-items:baseline;
+}
+.tick{font-weight:600;letter-spacing:.02em}
+.name{color:var(--annotation);font-size:.8125rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.bar{
+  grid-column:1/-1;height:2px;background:var(--rule-faint);margin-top:.55rem;
+}
+.bar span{display:block;height:2px;background:var(--annotation)}
+
+/* the signature: reasoning hangs off a margin rule, revealed on demand */
+details.row > summary{list-style:none;cursor:pointer}
+details.row > summary::-webkit-details-marker{display:none}
+details.row > summary:focus-visible{outline:2px solid var(--gain);outline-offset:3px}
+details.row .tick::before{
+  content:"+";display:inline-block;width:1em;
+  color:var(--annotation);font-weight:400;
+}
+details.row[open] .tick::before{content:"−"}
+details.row > summary:hover .tick::before{color:var(--ink)}
+
+.note{
+  margin:.7rem 0 .15rem 0;
+  padding-left:1.25rem;
+  border-left:1px solid var(--rule);
+  font-family:Newsreader,Georgia,serif;
+  font-size:.9375rem;line-height:1.6;font-weight:300;
+  color:var(--ink);max-width:62ch;
+}
+.note p{margin:0}
+.note .notehead{
+  display:block;font-family:"IBM Plex Mono",monospace;
+  font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--annotation);margin-bottom:.35rem;
+}
+/* three registers, three weights: what it is, why we own it, what breaks it */
+.note .notehead + p + .notehead{margin-top:.9rem}
+.note .biz{color:var(--annotation)}
+.note .risk{font-style:italic;color:var(--annotation)}
+.note .predates{color:var(--annotation);font-style:italic}
+
+/* ---- blocked ---- */
+.blocked .row{border-bottom:1px solid var(--rule-faint)}
+.blocked .tick{color:var(--stamp)}
+.blocked .why{
+  margin:.55rem 0 .15rem;padding-left:1.25rem;
+  border-left:2px solid var(--stamp);
+  font-family:Newsreader,Georgia,serif;font-size:.9375rem;font-weight:300;
+  color:var(--stamp);
+}
+.rule-tag{
+  font-family:"IBM Plex Mono",monospace;font-size:.625rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:var(--stamp-wash);color:var(--stamp);
+  padding:.1rem .4rem;margin-left:.5rem;white-space:nowrap;
+}
+
+footer{
+  margin-top:3rem;padding-top:1rem;border-top:1px solid var(--rule);
+  font-size:.6875rem;color:var(--annotation);line-height:1.7;
+}
+
+/* ==========================================================================
+   States the mockup does not show
+   ========================================================================== */
+
+/* staleness + health — loud, above everything, impossible to miss */
+#alerts{display:grid;gap:.75rem;margin-bottom:1.75rem}
+#alerts:empty{display:none;margin:0}
+.banner{
+  border:2px solid var(--stamp);
+  background:var(--stamp-wash);
+  color:var(--stamp);
+  padding:.9rem 1.05rem;
+}
+.banner .btitle{
+  display:block;font-weight:600;font-size:.75rem;
+  letter-spacing:.11em;text-transform:uppercase;margin-bottom:.4rem;
+}
+.banner p{
+  margin:.35rem 0 0;font-size:.8125rem;line-height:1.55;
+  font-family:"IBM Plex Mono",monospace;
+}
+.banner p:first-of-type{margin-top:0}
+.banner code{background:none;font-size:.95em}
+
+/* empty / not-yet states — a plain statement, never an error */
+.empty{
+  margin:0;padding:1.75rem 0;max-width:52ch;
+  font-family:Newsreader,Georgia,serif;font-weight:300;font-style:italic;
+  font-size:1rem;line-height:1.6;color:var(--annotation);
+}
+.chart .empty{padding:2.25rem 0}
+
+/* load failure replaces the page rather than showing half of it */
+.fatal{max-width:46ch;margin:4rem auto 6rem}
+.fatal .btitle{
+  display:block;color:var(--stamp);font-weight:600;font-size:.75rem;
+  letter-spacing:.11em;text-transform:uppercase;margin-bottom:.7rem;
+}
+.fatal p{
+  font-family:Newsreader,Georgia,serif;font-weight:300;
+  font-size:1.0625rem;line-height:1.65;
+}
+.fatal code{font-family:"IBM Plex Mono",monospace;font-size:.9em;color:var(--ink)}
+
+@media (max-width:46rem){
+  .pairing{grid-template-columns:1fr;gap:1.75rem;padding:2rem 0}
+  .argument{border-left:none;padding-left:0;border-top:1px solid var(--rule);padding-top:1.25rem}
+  /* drop company name and cash value; keep ticker, weight, since-entry */
+  .line{grid-template-columns:5.5rem minmax(0,1fr) 6rem;row-gap:.25rem}
+  .line > span:nth-child(2),
+  .line > span:nth-child(4){display:none}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
