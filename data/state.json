@@ -1,26 +1,26 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-29T12:38:48Z",
+  "generated_at": "2026-08-29T12:46:01Z",
   "market_data_as_of": "2026-08-28T19:59:59Z",
   "currency": "USD",
   "run": {
-    "id": "1aa6c84fa7a5",
+    "id": "6c4215d5e0f4",
     "trigger": "schedule",
-    "workflow": "update-state"
+    "workflow": "run-triggers"
   },
   "account": {
-    "cash": 99975.01,
-    "equity": 99998.91,
-    "buying_power": 399958.42,
+    "cash": 99974.86,
+    "equity": 99998.76,
+    "buying_power": 399957.82,
     "status": "ACTIVE"
   },
   "totals": {
-    "total_value": 99998.91,
+    "total_value": 99998.76,
     "invested_value": 23.9,
     "cash_weight": 0.9998,
     "position_count": 2,
     "committed_cash": 0.0,
-    "available_cash": 99975.01
+    "available_cash": 99974.86
   },
   "positions": [
     {
