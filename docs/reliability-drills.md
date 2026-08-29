@@ -81,6 +81,54 @@ model through news text, would otherwise execute in the browser of anyone
 reading the dashboard. Every one of those fields is escaped, and drill 11 now
 proves it rather than assuming it.
 
+## Broker smoke test — repeatable, any time
+
+`scripts/submit_notional_order` and `close_position` cannot be unit-tested:
+mocking them only proves the mock works. Until 2026-08-29 the only evidence
+they worked was that someone had run them once by hand — and when they finally
+ran for real, they failed twice.
+
+`scripts/smoke_test_broker.py` exercises the whole broker layer against the
+real API. **Manual only, never in a workflow.**
+
+```
+python scripts/smoke_test_broker.py
+```
+
+| Check |
+|---|
+| Order accepted |
+| Order fills and becomes a position |
+| Quantity is fractional |
+| Company name resolves |
+| Market value matches the amount ordered |
+| Cash falls by the amount ordered |
+| `build_state` handles a live position |
+| Weights plus cash sum to 1.0 |
+| Totals reconcile |
+| The probe cannot stamp inception (it has no thesis) |
+| Position closes and is gone |
+| Cash returns to where it started |
+
+**Crypto is the instrument, not a holding.** It trades 24/7, so this runs on a
+Saturday with the equity market shut, and ADR 0003 excludes crypto from the
+investable universe. The close runs in a `finally` block, so a failed check
+still cleans up — a leftover position would appear on the public dashboard and
+in Friday's email as a real holding. The script also refuses to start if a
+probe position already exists, rather than adding to one it did not create.
+
+Expect roughly 15—20p of drift on a $25 round trip. That is the bid-ask
+spread, and it is real.
+
+### What this cannot test
+
+Crypto fills in seconds; equities queue and fill at the next open, which is
+what the whole Friday-decide/Monday-fill design rests on. Crypto also requires
+`time_in_force: gtc` where equities use `day`, so the parameter exercised here
+is not the one production uses. And because crypto is outside the universe, the
+validator rejects it — this calls the broker functions directly, bypassing the
+guardrails.
+
 ## Not yet drilled
 
 - **Market data API returns malformed data** (as opposed to failing) — needs a
