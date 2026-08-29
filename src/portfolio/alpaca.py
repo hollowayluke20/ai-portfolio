@@ -231,7 +231,8 @@ def list_assets() -> list[dict]:
     ]
 
 
-def submit_notional_order(symbol: str, side: str, notional: float) -> dict:
+def submit_notional_order(symbol: str, side: str, notional: float,
+                          time_in_force: str = "day") -> dict:
     """Submit a NOTIONAL market order. The only function here that spends money.
 
     Notional (a dollar amount) rather than a share count: Alpaca supports
@@ -252,7 +253,12 @@ def submit_notional_order(symbol: str, side: str, notional: float) -> dict:
         "notional": round(float(notional), 2),
         "side": side,
         "type": "market",
-        "time_in_force": "day",
+        # Equities take "day"; crypto rejects it with 422 "invalid crypto
+        # time_in_force" and needs "gtc". Discovered on this function's first
+        # ever real invocation. The default stays "day" because ADR 0003's
+        # universe is equities and ETFs only - the parameter exists so the
+        # function is honest about what it supports, not to invite crypto in.
+        "time_in_force": time_in_force,
         "extended_hours": False,
     }
     data = _request("POST", f"{PAPER_HOST}/v2/orders", json_body=payload)
@@ -261,6 +267,34 @@ def submit_notional_order(symbol: str, side: str, notional: float) -> dict:
         "symbol": data["symbol"],
         "side": data["side"],
         "notional": _to_optional_float(data.get("notional")),
+        "status": data["status"],
+        "submitted_at": _normalise_ts(data["submitted_at"]),
+    }
+
+
+def close_position(symbol: str) -> dict:
+    """Exit a position ENTIRELY, by quantity rather than by dollar amount.
+
+    A full exit must never be sized in dollars. Alpaca converts a notional sell
+    to a quantity at submission time, so if the price has fallen since state was
+    built, that dollar amount is now MORE shares than are held and the order is
+    rejected:
+
+        403 insufficient balance - requested 0.000321397, available 0.000315112
+
+    A stop-loss fires precisely when a price is falling, which is exactly the
+    condition that makes a notional exit fail. The guardrail would have been
+    rejected at the moment it was needed. Found by exiting a real crypto
+    position on 2026-08-29.
+
+    Alpaca's own close endpoint sells the exact held quantity, whatever it is.
+    """
+    data = _request("DELETE", f"{PAPER_HOST}/v2/positions/{symbol}")
+    return {
+        "order_id": data["id"],
+        "symbol": data["symbol"],
+        "side": data["side"],
+        "qty": _to_optional_float(data.get("qty")),
         "status": data["status"],
         "submitted_at": _normalise_ts(data["submitted_at"]),
     }

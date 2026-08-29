@@ -101,7 +101,16 @@ def simulate(days, scenario, seed, out=None, verbose=False):
             submitted += 1
             return broker.submit(ticker, side, notional)
 
-        result = execute(triggered + ai["decisions"], state, RULES, TICKERS, False, submit=submit)
+        def close(*, ticker):
+            # The fake broker has no price drift between decision and
+            # submission, so a full-value notional sell always works there.
+            # That is exactly why the simulation could not have found the
+            # real bug this parameter exists to fix.
+            held = {p["ticker"]: p for p in state["positions"]}
+            return broker.submit(ticker, "sell", held[ticker]["market_value"])
+
+        result = execute(triggered + ai["decisions"], state, RULES, TICKERS, False,
+                         submit=submit, close=close)
 
         for item in result:
             actions[item["status"]] += 1

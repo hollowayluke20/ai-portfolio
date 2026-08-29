@@ -11,6 +11,12 @@ def submit_order(*, ticker, side, notional):
     return submit_notional_order(symbol=ticker, side=side, notional=notional)
 
 
+def close_full_position(*, ticker):
+    """Exit a position entirely, by held quantity. See _submit_or_skip."""
+    from src.portfolio.alpaca import close_position
+    return close_position(ticker)
+
+
 def _planned_notional(decision, state):
     action = decision["action"]
     if action == "HOLD":
@@ -26,19 +32,40 @@ def _planned_notional(decision, state):
     return round(max(0.0, current - target), 2)
 
 
-def _submit_or_skip(decision, dry_run, submit):
+def _submit_or_skip(decision, dry_run, submit, close):
     if dry_run:
         decision.update(status="skipped", order_id=None, rejection_reason="dry run")
         return
-    side = "sell" if decision["action"] in ("SELL", "TRIM") else "buy"
-    result = submit(ticker=decision["ticker"], side=side,
-                          notional=decision["notional"])
+
+    # A FULL EXIT is sized by quantity, never by dollars.
+    #
+    # Alpaca converts a notional sell into a quantity at submission time. If the
+    # price has fallen since state was built, that dollar amount is now MORE
+    # shares than are held, and the order is rejected outright:
+    #
+    #   403 insufficient balance - requested 0.000321397, available 0.000315112
+    #
+    # A stop-loss fires precisely when a price is falling, which is exactly the
+    # condition that makes a notional exit fail. The guardrail would have been
+    # rejected at the moment it was needed most. Found by exiting a real
+    # position on 2026-08-29; the simulator could never have caught it, because
+    # the fake broker has no price drift between decision and submission.
+    #
+    # A TRIM stays notional: it sells (current - target), comfortably less than
+    # the holding, so a small adverse move cannot overshoot.
+    if decision["action"] == "SELL":
+        result = close(ticker=decision["ticker"])
+    else:
+        side = "sell" if decision["action"] == "TRIM" else "buy"
+        result = submit(ticker=decision["ticker"], side=side,
+                        notional=decision["notional"])
     decision.update(status="executed", order_id=result.get("order_id"), rejection_reason=None)
 
 
-def execute(decisions, state, rules, universe, dry_run: bool, submit=None):
+def execute(decisions, state, rules, universe, dry_run: bool, submit=None, close=None):
     """Validate, sell/trim first, then buy in the supplied priority order."""
     submit = submit_order if submit is None else submit
+    close = close_full_position if close is None else close
     prepared = []
     for decision in decisions:
         item = deepcopy(decision)
@@ -63,7 +90,7 @@ def execute(decisions, state, rules, universe, dry_run: bool, submit=None):
                 if reason:
                     decision.update(status="rejected", order_id=None, rejection_reason=reason)
                 else:
-                    _submit_or_skip(decision, dry_run, submit)
+                    _submit_or_skip(decision, dry_run, submit, close)
                     running_cash -= float(decision["notional"])
             else:
                 # SELL / TRIM. Deliberately does NOT credit the proceeds to
@@ -73,6 +100,6 @@ def execute(decisions, state, rules, universe, dry_run: bool, submit=None):
                 # against cash that does not exist - which Alpaca would accept
                 # using the 4x margin ADR 0003 declines to use.
                 # Consequence: a sell-to-fund-a-buy rebalance takes two cycles.
-                _submit_or_skip(decision, dry_run, submit)
+                _submit_or_skip(decision, dry_run, submit, close)
             results.append(decision)
     return results

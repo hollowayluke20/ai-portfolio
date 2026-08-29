@@ -178,3 +178,73 @@ specification that omitted the guardrails, so the tests agreed with the gap.
 
 Only running the system through conditions it had never seen — a crash, a
 melt-up, a year — surfaced the absence.
+
+---
+
+## 2026-08-29 — The stop-loss would have been rejected exactly when it fired
+
+Alpaca trades **crypto 24 hours a day**, so the trading path could be exercised
+on a Saturday with the equity market shut. Luke's idea. It found three defects
+in about ten minutes, none of which any local test or simulation could have
+reached.
+
+### 1. The order function only worked for equities
+
+First ever real call to `submit_notional_order`:
+
+```
+422 {"code":42210000,"message":"invalid crypto time_in_force"}
+```
+
+`time_in_force` was hardcoded to `"day"`, which is correct for equities and
+invalid for crypto. Worth noting what went right: it failed loudly, said
+exactly why, and **did not retry** — a 422 is a 4xx, and retrying a malformed
+order only malforms it three more times.
+
+### 2. A full exit sized in dollars is rejected when the price falls
+
+The serious one. Selling an entire position by notional:
+
+```
+403 insufficient balance for BTC
+    requested: 0.000321397, available: 0.000315112
+```
+
+Alpaca converts a notional sell into a quantity **at submission time**. If the
+price has fallen since state was built, that dollar amount is now more shares
+than are held, and the order is refused.
+
+**A stop-loss fires precisely when a price is falling.** That is the exact
+condition which makes a notional exit fail, so the guardrail built that same
+morning would have been rejected at the moment it was needed most — and the
+position would have kept falling.
+
+**Fix.** A full exit now uses Alpaca's close-position endpoint, which sells the
+exact held quantity whatever it is. A TRIM stays notional: it sells
+`current - target`, comfortably less than the holding, so a small adverse move
+cannot overshoot.
+
+**Why nothing caught it.** The simulator's fake broker has no price drift
+between decision and submission — a full-value notional sell always succeeds
+there. The simulation was not wrong; it was faithful to a model that did not
+include the failure. Only the real broker had it.
+
+### 3. Alpaca uses two different symbol formats
+
+An order is submitted as `BTC/USD`. The resulting position comes back as
+`BTCUSD`. And `DELETE /v2/positions/BTC/USD` returns 404, because the slash
+splits the URL path.
+
+Harmless for equities, which have no slashes. It would silently break thesis
+lookup if crypto were ever added: `read_active_records` matches a decision
+record's ticker against a position's ticker, and `BTC/USD` never equals
+`BTCUSD`. Recorded so that whoever considers adding crypto finds it here first.
+
+### The lesson
+
+The simulation was built to test conditions the system had never seen, and it
+found four missing guardrails. It could not find this, because **a simulation
+can only be as correct as its model of the thing it replaces.**
+
+Twenty-five dollars of bitcoin on a Saturday tested what a year of fake data
+could not.
