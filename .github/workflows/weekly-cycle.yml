@@ -1,0 +1,80 @@
+name: Weekly decision cycle
+
+# THE ONLY WORKFLOW THAT SPENDS MONEY.
+#
+# Friday, 25 minutes after the closing bell, in the market's own timezone.
+# Orders are market/day, so they queue over the weekend and fill at Monday's
+# open at a price nobody knows on Friday. That is the documented design
+# (ADR 0003), not a defect.
+#
+# Friday deliberately: it gives a whole weekend to notice a bad cycle before
+# anything fills, and it keeps decisions out of market hours, where a
+# 15-minute-delayed data feed has no business trading.
+on:
+  schedule:
+    - cron: '25 16 * * 5'
+      timezone: America/New_York
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run - propose and validate, submit nothing"
+        type: boolean
+        default: true
+
+# Never let two cycles run at once. Two concurrent runs would each read the
+# same cash balance and each commit against it.
+concurrency:
+  group: portfolio-cycle
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run the decision cycle
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+          APCA_API_BASE_URL: ${{ vars.APCA_API_BASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        # A manual run defaults to DRY. Only the schedule goes live, so
+        # clicking "Run workflow" without reading the form cannot place orders.
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.dry_run }}" = "false" ]; then
+            echo "LIVE cycle - orders will be submitted"
+            python scripts/run_cycle.py --live
+          else
+            echo "DRY RUN - nothing will be submitted"
+            python scripts/run_cycle.py
+          fi
+
+      - name: Refresh state after trading
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+          APCA_API_BASE_URL: ${{ vars.APCA_API_BASE_URL }}
+        run: python scripts/update_state.py --scheduled
+
+      - name: Commit the decision record
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ config/inception.json 2>/dev/null || git add data/
+          if git diff --staged --quiet; then
+            echo "Nothing changed - no cycle output to commit."
+            exit 0
+          fi
+          git commit -m "data: decision cycle $(date -u +%Y-%m-%d)"
+          git push
