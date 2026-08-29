@@ -94,6 +94,37 @@ Each `pending_orders[]` entry: `symbol`, `side`, `notional`, `qty`, `status`,
 Position weights continue to use `total_value`; pending orders do **not** count
 toward weights, because nothing has been bought yet.
 
+### Positions carry their own reasoning
+
+**Added 2026-08-29, for the dashboard.** Each entry in `positions[]` also
+carries the reasoning behind it, merged in by the pipeline from the executed
+BUY that opened the position:
+
+| Field | Source |
+|---|---|
+| `thesis` | the opening decision record |
+| `risks` | the same record |
+| `business` | the same record; `null` until the AI schema provides it |
+| `opened_at` | that record's `decided_at` |
+
+**Why the pipeline does this rather than the dashboard.** The dashboard is a
+static page with no error handling worth the name. Joining state to decision
+records in the browser would mean it fetching an unknown number of files and
+matching them itself. Merging in the pipeline keeps the rule that **the
+dashboard computes nothing** — every figure and every sentence it displays
+was written by something that could validate it first.
+
+A position with no matching record keeps `null` in all four fields. This is
+the correct state for anything bought outside the system, and it must render as
+a plain statement rather than an error.
+
+### `data/decisions/latest.json`
+
+Written on every live cycle as a copy of the newest decision record. A static
+page cannot list a directory, so a **known path** is the only way the dashboard
+can find the current cycle. Its absence means no cycle has run yet — a normal
+state, not a failure.
+
 ### Staleness is a first-class concern
 
 A static dashboard shows whatever was last written, and a silently failed

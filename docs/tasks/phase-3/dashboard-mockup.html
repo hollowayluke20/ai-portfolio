@@ -1,0 +1,663 @@
+<title>Portfolio Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ledger:#E7EBE3;
+  --sheet:#F1F4EE;
+  --rule:#C3CCBC;
+  --rule-faint:#D6DDD0;
+  --ink:#1C2118;
+  --annotation:#6B7A66;
+  --gain:#2F5D3A;
+  --stamp:#A03328;
+  --stamp-wash:#EBDCD8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ledger:#131711;
+    --sheet:#1A1F17;
+    --rule:#333C2E;
+    --rule-faint:#262E21;
+    --ink:#DFE6D8;
+    --annotation:#8D9A87;
+    --gain:#7FB48A;
+    --stamp:#D9705F;
+    --stamp-wash:#2A1D1A;
+  }
+}
+:root[data-theme="dark"]{
+  --ledger:#131711;
+  --sheet:#1A1F17;
+  --rule:#333C2E;
+  --rule-faint:#262E21;
+  --ink:#DFE6D8;
+  --annotation:#8D9A87;
+  --gain:#7FB48A;
+  --stamp:#D9705F;
+  --stamp-wash:#2A1D1A;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ledger);
+  color:var(--ink);
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+/* ---- masthead ---- */
+.masthead{
+  display:flex;flex-wrap:wrap;gap:1rem;align-items:baseline;
+  justify-content:space-between;
+  padding-bottom:.75rem;
+  border-bottom:2px solid var(--ink);
+}
+.masthead h1{
+  font-family:Newsreader,Georgia,serif;
+  font-weight:400;font-size:1.5rem;letter-spacing:.01em;
+  margin:0;
+}
+.stamp-line{
+  display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:baseline;
+  font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--annotation);
+}
+.fresh{color:var(--gain)}
+.sample{
+  color:var(--stamp);border:1px solid var(--stamp);
+  padding:.1rem .4rem;letter-spacing:.12em;
+}
+
+/* ---- the pairing: number and argument ---- */
+.pairing{
+  display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);
+  gap:2.5rem;
+  padding:2.5rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.figure .value{
+  font-size:2.5rem;font-weight:500;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+  display:block;line-height:1.1;
+}
+.figure .against{
+  margin-top:.9rem;display:grid;gap:.3rem;
+  font-size:.8125rem;font-variant-numeric:tabular-nums;
+}
+.figure .against div{display:flex;justify-content:space-between;gap:1rem}
+.figure .against span:first-child{color:var(--annotation)}
+.pos{color:var(--gain)}
+.neg{color:var(--stamp)}
+
+.argument{
+  font-family:Newsreader,Georgia,serif;
+  font-size:1.0625rem;line-height:1.6;font-weight:300;
+  max-width:44ch;
+  border-left:1px solid var(--rule);
+  padding-left:1.5rem;
+}
+.argument .who{
+  display:block;font-family:"IBM Plex Mono",monospace;
+  font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--annotation);margin-bottom:.7rem;
+}
+
+/* ---- section headings ---- */
+.head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  margin:2.75rem 0 .75rem;
+  font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;
+}
+.head .count{color:var(--annotation)}
+
+/* ---- chart ---- */
+.chart{
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  padding:1.25rem 0 .5rem;
+  overflow-x:auto;
+}
+.chart svg{display:block;width:100%;height:auto;min-width:26rem}
+.chart text.ax{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  fill:var(--annotation);letter-spacing:.06em;
+}
+.chart .hair{stroke:var(--annotation);stroke-width:1}
+.chart .dot{fill:var(--ink)}
+
+/* range selector — ledger tabs, not pills */
+.ranges{display:flex;gap:.15rem}
+.ranges button{
+  font:inherit;font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--annotation);padding:.15rem .45rem;cursor:pointer;
+}
+.ranges button:hover:not(:disabled){color:var(--ink)}
+.ranges button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.ranges button:disabled{opacity:.35;cursor:not-allowed}
+.ranges button:focus-visible{outline:2px solid var(--gain);outline-offset:2px}
+
+/* hover readout lives in the page, not in a floating card */
+.readout{
+  display:flex;flex-wrap:wrap;gap:.35rem 1.5rem;
+  min-height:1.35rem;margin-bottom:.35rem;
+  font-size:.75rem;font-variant-numeric:tabular-nums;color:var(--annotation);
+}
+.readout b{font-weight:500;color:var(--ink)}
+.readout .idle{color:var(--annotation)}
+.legend{
+  display:flex;gap:1.5rem;margin-top:.6rem;
+  font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--annotation);
+}
+.legend b{font-weight:500;color:var(--ink)}
+.legend i{display:inline-block;width:1.1rem;height:0;vertical-align:middle;
+  border-top:2px solid var(--ink);margin-right:.45rem}
+.legend .bm i{border-top:1px dashed var(--annotation)}
+
+/* ---- holdings ledger ---- */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.filterbar{display:flex;align-items:baseline;gap:.85rem;margin:.35rem 0 .6rem}
+.filterbar input{
+  font:inherit;font-size:.8125rem;color:var(--ink);
+  background:none;border:none;border-bottom:1px solid var(--rule);
+  padding:.25rem 0;width:min(18rem,100%);
+}
+.filterbar input::placeholder{color:var(--annotation)}
+.filterbar input:focus{outline:none;border-bottom-color:var(--ink)}
+.filterbar input:focus-visible{outline:2px solid var(--gain);outline-offset:3px}
+.filtermsg{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--annotation)}
+.colhead{
+  font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--annotation);
+  padding-bottom:.4rem;
+  /* the +/- disclosure glyph occupies 1em in each row, so indent to match */
+}
+.colhead:not(.flush) span:first-child{padding-left:1em}
+.colhead button{
+  font:inherit;letter-spacing:inherit;text-transform:inherit;
+  background:none;border:none;padding:0;cursor:pointer;
+  color:var(--annotation);
+}
+.colhead button:hover{color:var(--ink)}
+.colhead button:focus-visible{outline:2px solid var(--gain);outline-offset:2px}
+.colhead button[data-dir]{color:var(--ink)}
+.colhead button[data-dir]::after{content:" ↑";font-size:.9em}
+.colhead button[data-dir="desc"]::after{content:" ↓"}
+.colhead .num button{display:inline}
+.rows{border-top:1px solid var(--rule)}
+.row{border-bottom:1px solid var(--rule-faint);padding:.7rem 0}
+.line{
+  display:grid;
+  grid-template-columns:5.5rem minmax(0,1fr) 4.5rem 7rem 5.5rem;
+  gap:.75rem;align-items:baseline;
+}
+.tick{font-weight:600;letter-spacing:.02em}
+.name{color:var(--annotation);font-size:.8125rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.bar{
+  grid-column:1/-1;height:2px;background:var(--rule-faint);margin-top:.55rem;
+}
+.bar span{display:block;height:2px;background:var(--annotation)}
+
+/* the signature: reasoning hangs off a margin rule, revealed on demand */
+details.row > summary{list-style:none;cursor:pointer}
+details.row > summary::-webkit-details-marker{display:none}
+details.row > summary:focus-visible{outline:2px solid var(--gain);outline-offset:3px}
+details.row .tick::before{
+  content:"+";display:inline-block;width:1em;
+  color:var(--annotation);font-weight:400;
+}
+details.row[open] .tick::before{content:"−"}
+details.row > summary:hover .tick::before{color:var(--ink)}
+
+.note{
+  margin:.7rem 0 .15rem 0;
+  padding-left:1.25rem;
+  border-left:1px solid var(--rule);
+  font-family:Newsreader,Georgia,serif;
+  font-size:.9375rem;line-height:1.6;font-weight:300;
+  color:var(--ink);max-width:62ch;
+}
+.note p{margin:0}
+.note .notehead{
+  display:block;font-family:"IBM Plex Mono",monospace;
+  font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--annotation);margin-bottom:.35rem;
+}
+/* three registers, three weights: what it is, why we own it, what breaks it */
+.note .notehead + p + .notehead{margin-top:.9rem}
+.note .biz{color:var(--annotation)}
+.note .risk{font-style:italic;color:var(--annotation)}
+
+/* ---- blocked ---- */
+.blocked .row{border-bottom:1px solid var(--rule-faint)}
+.blocked .tick{color:var(--stamp)}
+.blocked .why{
+  margin:.55rem 0 .15rem;padding-left:1.25rem;
+  border-left:2px solid var(--stamp);
+  font-family:Newsreader,Georgia,serif;font-size:.9375rem;font-weight:300;
+  color:var(--stamp);
+}
+.rule-tag{
+  font-family:"IBM Plex Mono",monospace;font-size:.625rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:var(--stamp-wash);color:var(--stamp);
+  padding:.1rem .4rem;margin-left:.5rem;white-space:nowrap;
+}
+
+footer{
+  margin-top:3rem;padding-top:1rem;border-top:1px solid var(--rule);
+  font-size:.6875rem;color:var(--annotation);line-height:1.7;
+}
+
+@media (max-width:46rem){
+  .pairing{grid-template-columns:1fr;gap:1.75rem;padding:2rem 0}
+  .argument{border-left:none;padding-left:0;border-top:1px solid var(--rule);padding-top:1.25rem}
+  /* drop company name and cash value; keep ticker, weight, since-entry */
+  .line{grid-template-columns:5.5rem minmax(0,1fr) 6rem;row-gap:.25rem}
+  .line > span:nth-child(2),
+  .line > span:nth-child(4){display:none}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>AI Portfolio Ledger</h1>
+    <div class="stamp-line">
+      <span class="sample">Sample data</span>
+      <span>Prices — 11 Sep close</span>
+      <span>Written — 21:17 UTC</span>
+      <span class="fresh">● Fresh · 2h old</span>
+    </div>
+  </header>
+
+  <section class="pairing">
+    <div class="figure">
+      <span class="value" id="hv"></span>
+      <div class="against">
+        <div><span>Since inception</span><span class="pos" id="hr"></span></div>
+        <div><span>S&amp;P 500</span><span class="pos">+0.45%</span></div>
+        <div><span>Difference</span><span class="pos" id="hd"></span></div>
+        <div><span>Cash</span><span id="hc"></span></div>
+      </div>
+    </div>
+    <div class="argument">
+      <span class="who">Positioning — set 11 Sep · holds until the next cycle</span>
+      Fifteen equal-weighted positions, cash sitting just above the 5% floor.
+      NVDA is the largest holding at 6.5% after a strong fortnight but remains
+      well inside the 12% trim threshold. UNH is the weakest at −5.0% from
+      entry, roughly a quarter of the way to the stop; the thesis has not
+      broken and no action is taken. The portfolio-level risk worth naming is
+      that six of fifteen holdings are mega-cap technology, so the book is less
+      diversified than a count of positions suggests.
+    </div>
+  </section>
+
+  <div class="head">
+    <span>Performance</span>
+    <div class="ranges" id="ranges" role="group" aria-label="Chart date range"></div>
+  </div>
+  <div class="readout" id="readout" aria-live="polite"></div>
+  <div class="chart">
+    <svg id="chart" viewBox="0 0 900 210" role="img"
+         aria-label="Portfolio up 1.17 percent against the S and P 500 up 0.45 percent since inception"></svg>
+  </div>
+  <div class="legend">
+    <span><i></i><b>Portfolio</b> <span id="lp">+1.17%</span></span>
+    <span class="bm"><i></i>S&amp;P 500 <span id="lb">+0.45%</span></span>
+  </div>
+
+  <div class="head">
+    <span>Holdings</span>
+    <span class="count" id="holdcount"></span>
+  </div>
+  <div class="filterbar">
+    <label class="vh" for="filter">Filter holdings by ticker or company</label>
+    <input id="filter" type="search" placeholder="Filter — ticker or company" autocomplete="off">
+    <span class="filtermsg" id="filtermsg" aria-live="polite"></span>
+  </div>
+  <div class="colhead line" id="sortbar">
+    <span><button type="button" data-k="tick">Ticker</button></span>
+    <span><button type="button" data-k="name">Company</button></span>
+    <span class="num"><button type="button" data-k="w">Weight</button></span>
+    <span class="num"><button type="button" data-k="mv">Value</button></span>
+    <span class="num"><button type="button" data-k="pl">+/−</button></span>
+  </div>
+  <div class="rows" id="holdings"></div>
+
+  <div class="head"><span>Blocked by rules</span><span class="count">1 this cycle</span></div>
+  <div class="colhead line flush">
+    <span>Ticker</span>
+    <span>Action</span>
+    <span class="num"></span>
+    <span class="num">Amount</span>
+    <span class="num">Result</span>
+  </div>
+  <div class="rows blocked" id="blocked"></div>
+
+  <footer>
+    Decisions run weekly after the US close; orders fill at the next open, so
+    fill prices are unknown when a decision is made. Figures come from a paper
+    account — no real money is at risk, and paper fills carry no slippage or
+    market impact. Benchmark comparison is price return on both sides.
+  </footer>
+</div>
+
+<script>
+const holdings = [
+  ["MSFT","Microsoft",0.0632,6389.11,0.0130,"Dominant enterprise software footprint combined with market leadership in cloud and generative-AI deployment across enterprise workflows. Copilot attach rates are the variable that decides whether AI shows up as margin or as capex.","Valuation compression during tech pullbacks; deceleration in Azure growth; antitrust scrutiny in AI and cloud.","1 Sep 2026",425.50,"Enterprise software and cloud infrastructure. Windows, Office and Azure, sold overwhelmingly to businesses on multi-year contracts rather than to consumers."],
+  ["NVDA","NVIDIA",0.0650,6489.38,0.0836,"Data-centre demand remains supply-constrained rather than demand-constrained, and guidance assumes no China contribution — so that risk sits outside the numbers rather than on top of them.","A single customer cohort drives most incremental revenue. Any easing of the supply constraint compresses pricing quickly.","1 Sep 2026",198.30,"Designs the graphics and accelerator chips that train and run AI models. Manufactures nothing itself; the chips are fabricated by TSMC."],
+  ["AAPL","Apple",0.0638,6456.02,0.0168,"Installed-base monetisation through services continues to grow faster than hardware, shifting the revenue mix toward recurring margin at a higher multiple than devices earn.","Hardware replacement cycles lengthening; regulatory pressure on App Store economics in the EU.","1 Sep 2026",258.10,"Consumer hardware — iPhone, Mac, Watch — plus a services business selling subscriptions and App Store commission to the installed base."],
+  ["JPM","JPMorgan Chase",0.0633,6407.28,0.0275,"Premier global franchise with resilient net interest income and a market-leading investment bank. Balance sheet strength is the point: it can take share in a downturn rather than defend in one.","Net interest margin compression as central bank rates decline; commercial real-estate credit deterioration.","1 Sep 2026",310.25,"The largest US bank. Retail deposits and lending, plus a global investment bank in trading, advisory and underwriting."],
+  ["UNH","UnitedHealth",0.0626,6287.17,-0.0500,"Managed-care cost ratios normalising from an elevated base, with pricing power intact in the employer segment.","Regulatory intervention on pricing is a step-change risk, not a gradual one, and would not be visible in advance.","1 Sep 2026",355.80,"US health insurer, and through Optum also a provider of care and pharmacy benefits — it sits on both sides of the same transaction."],
+  ["XOM","Exxon Mobil",0.0629,6360.53,0.0372,"Low-cost Permian and Guyana barrels underpin free cash flow well below current strip pricing, which makes the dividend defensible without drawing down the balance sheet.","Sustained crude weakness; accelerating policy pressure on long-cycle capital projects.","1 Sep 2026",121.90,"Integrated oil and gas: extraction, refining and chemicals. Production is concentrated in the Permian basin and offshore Guyana."],
+  ["GOOGL","Alphabet",0.0639,6461.52,0.0348,"Search economics remain intact while cloud reaches sustained operating profitability, so the second business stops being a drag on the first.","AI-driven substitution of search queries; ongoing antitrust remedies.","1 Sep 2026",205.40,"Search advertising, YouTube and Google Cloud. Advertising still funds almost everything else the company does."],
+  ["AMZN","Amazon",0.0631,6379.44,-0.0151,"Retail margin recovery and AWS reacceleration are two independent levers, and the market is currently pricing only one of them.","Capital intensity in logistics and data centres; consumer weakness feeding through to discretionary retail.","1 Sep 2026",251.90,"Online retail and logistics, plus AWS — the cloud computing arm that generates most of the group's operating profit."],
+  ["AVGO","Broadcom",0.0644,6512.09,0.0521,"Custom accelerator design wins convert into multi-year revenue with far less cyclicality than merchant silicon.","Customer concentration is extreme, and software integration has repeatedly proved harder than promised.","1 Sep 2026",312.15,"Semiconductors for networking and storage, plus enterprise infrastructure software acquired through VMware and CA."],
+  ["LLY","Eli Lilly",0.0627,6338.72,0.0209,"Incretin manufacturing capacity, not demand, is the binding constraint, and capacity comes online through 2027.","Reimbursement pressure in the US; fast-following competitors compressing price before volume arrives.","1 Sep 2026",884.30,"Pharmaceuticals. Diabetes and obesity treatments dominate current revenue, alongside oncology and neuroscience."],
+  ["V","Visa",0.0630,6371.55,0.0117,"Toll on consumer spending with pricing power and almost no incremental cost per transaction.","Regulatory attack on interchange; account-to-account rails bypassing the network entirely.","1 Sep 2026",371.40,"Payment network. Does not lend or issue cards — it takes a fee for routing transactions between banks and merchants."],
+  ["PG","Procter & Gamble",0.0621,6280.14,-0.0071,"Volume has stopped declining while pricing holds, which is the point at which staples stop being a value trap.","Private-label share gains if consumers keep trading down; currency drag on the international mix.","1 Sep 2026",175.20,"Household and personal care brands — Tide, Pampers, Gillette — sold through supermarkets worldwide."],
+  ["COST","Costco",0.0635,6421.88,0.0178,"Membership fee income is the actual earnings engine, and renewal rates have not moved in a decade.","Valuation leaves no room for a membership growth stumble; expansion outside the US is slower than modelled.","1 Sep 2026",945.30,"Membership warehouse retailer. Sells goods at close to cost and makes its profit from annual membership fees."],
+  ["HD","Home Depot",0.0623,6299.61,0.0140,"Housing turnover is at a multi-decade low; any normalisation in rates releases deferred renovation spend.","If rates stay high for longer, the deferral simply continues and the thesis is early rather than wrong.","1 Sep 2026",418.75,"Home improvement retail, serving both consumers and professional contractors across North America."],
+  ["CAT","Caterpillar",0.0632,6390.02,0.0264,"Infrastructure and grid spending is legislated rather than cyclical, which lengthens the order book beyond the usual cycle.","Genuinely cyclical end markets; dealer inventory swings amplify any downturn.","1 Sep 2026",402.60,"Construction and mining equipment, plus engines and turbines. Sold through an independent global dealer network."]
+];
+
+const blocked = [
+  ["TSLA","BUY",6363.87,"cash floor","Order would have left cash at 4.1%, below the 5% floor. Rejected before submission; nothing was sent to the broker."]
+];
+
+const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct = n => (n>=0?"+":"−") + Math.abs(n*100).toFixed(2) + "%";
+
+// Shared view state. The chart owns the date range; the holdings table reads it,
+// so the +/- column always answers the same question the chart is showing.
+const VIEW = { range:"ALL", label:"Since entry", subscribers:[] };
+VIEW.publish = () => VIEW.subscribers.forEach(f=>f());
+
+// Everything below is DERIVED from the holdings, never written by hand. A
+// hardcoded count can disagree with the rows beneath it - which is exactly
+// what went wrong in the first draft - and hardcoded weights don't sum to 1.
+const CASH = 5024.11;
+const INVESTED = holdings.reduce((s,h)=>s+h[3],0);
+const TOTAL = INVESTED + CASH;
+const weightOf = mv => mv / TOTAL;
+
+document.getElementById("holdcount").textContent =
+  `${holdings.length} position${holdings.length===1?"":"s"} · ${(INVESTED/TOTAL*100).toFixed(2)}% invested`;
+
+// the hero figures come from the same source, so they cannot drift from the table
+(function(){
+  const INCEPTION = 100000, BENCH = 0.0045;
+  const ret = TOTAL/INCEPTION - 1;
+  document.getElementById("hv").textContent = money(TOTAL);
+  document.getElementById("hr").textContent = pct(ret);
+  document.getElementById("hd").textContent = pct(ret - BENCH);
+  document.getElementById("hc").textContent = `${money(CASH)} · ${(CASH/TOTAL*100).toFixed(2)}%`;
+  for(const [id,v] of [["hr",ret],["hd",ret-BENCH]])
+    document.getElementById(id).className = v>=0 ? "pos" : "neg";
+})();
+
+// Return for a single holding over the window the chart is showing.
+// SAMPLE ONLY — deterministic from the ticker so the page is stable between
+// renders. The real version needs per-holding price history, which the current
+// data contract does not store. See the note in the build spec.
+const RANGE_SCALE={"1W":0.35,"1M":0.7,"3M":1.0,"1Y":1.6,"5Y":2.4,"ALL":null};
+function returnOver(tick, sinceEntry){
+  const scale=RANGE_SCALE[VIEW.range];
+  if(scale===null||scale===undefined) return sinceEntry;
+  let seed=0; for(const c of tick+VIEW.range) seed=(seed*31+c.charCodeAt(0))&0x7fffffff;
+  return ((seed%1000)/1000-0.42)*0.09*scale;
+}
+
+const renderHoldings = list => document.getElementById("holdings").innerHTML = list.map(h=>{
+  const [tick,name,_w,mv,plEntry,thesis,risk,opened,entry,biz] = h;
+  const w = weightOf(mv);
+  const pl = returnOver(tick, plEntry);
+  const cls = pl>=0 ? "pos" : "neg";
+  return `<details class="row">
+    <summary class="line">
+      <span class="tick">${tick}</span>
+      <span class="name">${name}</span>
+      <span class="num">${(w*100).toFixed(2)}%</span>
+      <span class="num">${money(mv)}</span>
+      <span class="num ${cls}">${pct(pl)}</span>
+      <span class="bar"><span style="width:${(w/0.07*100).toFixed(1)}%"></span></span>
+    </summary>
+    <div class="note">
+      <span class="notehead">The business</span>
+      <p class="biz">${biz}</p>
+      <span class="notehead">Thesis — opened ${opened} at ${money(entry)}</span>
+      <p>${thesis}</p>
+      <span class="notehead">Risk</span>
+      <p class="risk">${risk}</p>
+    </div>
+  </details>`;
+}).join("");
+
+// One view: filter, then sort, then render. Kept together so the two cannot
+// fight each other - sorting a filtered list must keep the filter applied.
+(function(){
+  const input=document.getElementById("filter"),
+        msg=document.getElementById("filtermsg"),
+        bar=document.getElementById("sortbar");
+
+  const KEY={tick:h=>h[0], name:h=>h[1], w:h=>h[3], mv:h=>h[3],
+             pl:h=>returnOver(h[0],h[4])};
+  const TEXT=new Set(["tick","name"]);
+  let sortKey="w", dir="desc";          // biggest position first is the useful default
+
+  function apply(){
+    const q=input.value.trim().toLowerCase();
+    let list = q ? holdings.filter(h=>
+      h[0].toLowerCase().includes(q) || h[1].toLowerCase().includes(q)) : holdings.slice();
+
+    const get=KEY[sortKey], mult=dir==="asc"?1:-1;
+    list.sort((a,b)=> TEXT.has(sortKey)
+      ? mult*get(a).localeCompare(get(b))
+      : mult*(get(a)-get(b)));
+
+    renderHoldings(list);
+
+    msg.textContent = !q ? ""
+      : list.length ? `${list.length} of ${holdings.length}`
+      : `No holding matches “${input.value.trim()}”`;
+    if(q && list.length===1) document.querySelector("#holdings details").open=true;
+
+    bar.querySelectorAll("button").forEach(b=>{
+      if(b.dataset.k===sortKey){ b.dataset.dir=dir; }
+      else { delete b.dataset.dir; }
+      b.setAttribute("aria-label",
+        `${b.textContent.replace(/[↑↓]/g,"").trim()} — sort ${b.dataset.k===sortKey&&dir==="asc"?"descending":"ascending"}`);
+    });
+  }
+
+  bar.addEventListener("click",e=>{
+    const b=e.target.closest("button[data-k]"); if(!b) return;
+    if(sortKey===b.dataset.k){ dir = dir==="asc"?"desc":"asc"; }
+    else { sortKey=b.dataset.k; dir = TEXT.has(sortKey) ? "asc" : "desc"; }
+    apply();
+  });
+  input.addEventListener("input",apply);
+
+  // re-render whenever the chart's range changes, and relabel the column so it
+  // is always obvious what period the numbers describe
+  VIEW.subscribers.push(()=>{
+    const b=bar.querySelector('button[data-k="pl"]');
+    b.textContent = VIEW.range==="ALL" ? "+/−" : `+/− ${VIEW.range}`;
+    b.title = VIEW.label;
+    apply();
+  });
+
+  apply();
+})();
+
+document.getElementById("blocked").innerHTML = blocked.map(b=>{
+  const [tick,action,notional,rule,why] = b;
+  return `<div class="row">
+    <div class="line">
+      <span class="tick">${tick}</span>
+      <span class="name">${action} · blocked<span class="rule-tag">${rule}</span></span>
+      <span class="num"></span>
+      <span class="num">${money(notional)}</span>
+      <span class="num neg">—</span>
+    </div>
+    <p class="why">${why}</p>
+  </div>`;
+}).join("");
+
+// ---- chart ----------------------------------------------------------------
+(function(){
+  const svg=document.getElementById("chart"),
+        readout=document.getElementById("readout"),
+        rangeBar=document.getElementById("ranges");
+
+  // ~13 weeks of trading days, ending 11 Sep. Sample data.
+  const series=(function(){
+    const out=[]; let p=0, b=0, seed=7;
+    const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff-0.5;};
+    const start=new Date(Date.UTC(2026,5,15));
+    for(let i=0;i<64;i++){
+      const d=new Date(start); d.setUTCDate(d.getUTCDate()+Math.floor(i*1.4));
+      if(d.getUTCDay()===0||d.getUTCDay()===6) continue;
+      p+=rnd()*0.55+0.032; b+=rnd()*0.45+0.021;
+      out.push({d:new Date(d), p:+p.toFixed(2), b:+b.toFixed(2)});
+    }
+    out[0].p=0; out[0].b=0;
+    return out;
+  })();
+
+  const RANGES=[["1W",7],["1M",31],["3M",93],["1Y",365],["5Y",1826],["ALL",null]];
+  const last=series[series.length-1].d;
+  const spanDays=(last-series[0].d)/864e5;
+  let active="ALL";
+
+  const fmtDate=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:
+      (d.getUTCFullYear()!==last.getUTCFullYear())?"numeric":undefined});
+  const sign=v=>(v>=0?"+":"−")+Math.abs(v).toFixed(2)+"%";
+
+  rangeBar.innerHTML=RANGES.map(([label,days])=>{
+    // a range longer than the data we hold is offered but disabled, not hidden:
+    // the reader should see the portfolio is young rather than wonder why 5Y is missing
+    const ok = days===null || days<=spanDays+1;
+    return `<button type="button" data-r="${label}" aria-pressed="${label===active}"
+             ${ok?"":"disabled title=\"Not enough history yet\""}>${label}</button>`;
+  }).join("");
+
+  function slice(){
+    const days=(RANGES.find(r=>r[0]===active)||[])[1];
+    if(!days) return series;
+    const cut=new Date(last); cut.setUTCDate(cut.getUTCDate()-days);
+    const s=series.filter(pt=>pt.d>=cut);
+    return s.length>1?s:series.slice(-2);
+  }
+
+  const W=900,H=210,L=48,R=14,T=14,B=30;
+  let geom=null;
+
+  function draw(){
+    const data=slice();
+    // rebase so every range reads as "return over THIS window"
+    const p0=data[0].p, b0=data[0].b;
+    const P=data.map(pt=>pt.p-p0), Bm=data.map(pt=>pt.b-b0);
+    const all=P.concat(Bm);
+    const pad=Math.max(0.25,(Math.max(...all)-Math.min(...all))*0.15);
+    const lo=Math.min(...all,0)-pad, hi=Math.max(...all,0)+pad;
+
+    const x=i=>L+(data.length<2?0:(i/(data.length-1))*(W-L-R));
+    const y=v=>H-B-((v-lo)/(hi-lo))*(H-T-B);
+    geom={data,P,Bm,x,y};
+
+    const step=Math.max(0.25,Math.ceil((hi-lo)/4*4)/4);
+    const ticks=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) ticks.push(+v.toFixed(2));
+    if(!ticks.some(v=>Math.abs(v)<1e-9) && lo<0 && hi>0) ticks.push(0);
+
+    const grid=ticks.map(v=>{
+      const yy=y(v).toFixed(1), zero=Math.abs(v)<1e-9;
+      return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"
+                stroke="${zero?'var(--rule)':'var(--rule-faint)'}" stroke-width="1"/>
+              <text x="${L-8}" y="${yy}" text-anchor="end" dominant-baseline="middle"
+                class="ax">${v>0?"+":""}${v.toFixed(2).replace(/\.00$/,".0")}%</text>`;
+    }).join("");
+
+    const marks=[0,Math.floor((data.length-1)/2),data.length-1];
+    const xlabels=marks.map((i,n)=>
+      `<text x="${x(i).toFixed(1)}" y="${H-10}"
+         text-anchor="${n===0?'start':n===2?'end':'middle'}"
+         class="ax">${fmtDate(data[i].d)}</text>`).join("");
+
+    const line=a=>a.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+    svg.innerHTML = grid + xlabels +
+      `<path d="${line(Bm)}" fill="none" stroke="var(--annotation)" stroke-width="1.5"
+             stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+       <path d="${line(P)}" fill="none" stroke="var(--ink)" stroke-width="2"
+             vector-effect="non-scaling-stroke"/>
+       <circle cx="${x(P.length-1)}" cy="${y(P[P.length-1])}" r="3.5" fill="var(--gain)"/>
+       <g id="cross" style="display:none">
+         <line class="hair" y1="${T}" y2="${H-B}"/>
+         <circle class="dot" r="3"/>
+       </g>`;
+
+    document.getElementById("lp").textContent=sign(P[P.length-1]);
+    document.getElementById("lb").textContent=sign(Bm[Bm.length-1]);
+    idle();
+  }
+
+  function idle(){
+    const {data,P,Bm}=geom;
+    readout.innerHTML=`<span class="idle">${fmtDate(data[0].d)} — ${fmtDate(data[data.length-1].d)}
+      · hover the chart for a single day</span>`;
+  }
+
+  function hover(ev){
+    if(!geom) return;
+    const {data,P,Bm,x,y}=geom;
+    const box=svg.getBoundingClientRect();
+    const px=(ev.clientX-box.left)/box.width*W;
+    let i=Math.round((px-L)/((W-L-R)/Math.max(1,data.length-1)));
+    i=Math.max(0,Math.min(data.length-1,i));
+    const g=document.getElementById("cross");
+    if(!g) return;
+    g.style.display="";
+    g.querySelector("line").setAttribute("x1",x(i)); g.querySelector("line").setAttribute("x2",x(i));
+    g.querySelector("circle").setAttribute("cx",x(i)); g.querySelector("circle").setAttribute("cy",y(P[i]));
+    const dayP=i?P[i]-P[i-1]:0;
+    readout.innerHTML=
+      `<span><b>${fmtDate(data[i].d)}</b></span>
+       <span>Portfolio <b class="${P[i]>=0?'pos':'neg'}">${sign(P[i])}</b></span>
+       <span>S&amp;P 500 <b>${sign(Bm[i])}</b></span>
+       <span>On the day <b class="${dayP>=0?'pos':'neg'}">${sign(dayP)}</b></span>`;
+  }
+
+  svg.addEventListener("pointermove",hover);
+  svg.addEventListener("pointerleave",()=>{
+    const g=document.getElementById("cross"); if(g) g.style.display="none"; idle();
+  });
+  rangeBar.addEventListener("click",e=>{
+    const b=e.target.closest("button[data-r]"); if(!b||b.disabled) return;
+    active=b.dataset.r;
+    [...rangeBar.querySelectorAll("button")].forEach(x=>x.setAttribute("aria-pressed",x===b));
+    draw();
+    // tell the holdings table which window it should be reporting over
+    const d=slice();
+    VIEW.range=active;
+    VIEW.label={"1W":"Past week","1M":"Past month","3M":"Past 3 months",
+                "1Y":"Past year","5Y":"Past 5 years","ALL":"Since entry"}[active];
+    VIEW.from=d[0].d; VIEW.to=d[d.length-1].d;
+    VIEW.publish();
+  });
+
+  const d0=slice();
+  VIEW.from=d0[0].d; VIEW.to=d0[d0.length-1].d;
+  draw();
+  VIEW.publish();   // chart runs last, so the table needs telling once at start
+})();
+</script>
