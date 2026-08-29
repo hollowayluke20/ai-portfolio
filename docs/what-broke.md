@@ -126,3 +126,55 @@ quiet day exits green rather than failing on an empty commit.
 active, and GitHub disables scheduled workflows in public repos after 60 days
 of inactivity. The daily commit is load-bearing. Recorded here so the guard is
 not mistaken for working protection.
+
+---
+
+## 2026-08-29 — Four guardrails were documented, configured, and never built
+
+**Symptom.** None, which is the point. 45 tests passed, the dashboard was live,
+the email worked, and a simulated year reported no violations.
+
+**What was actually true.** The stop loss, both halves of the concentration
+trim, the broad-US-equity cap and the cash ceiling existed in
+`config/rules.json`, in ADR 0003, in the README, and in the prompt injected
+into the AI — and in **no production code at all**. A position could fall 90%
+and nothing would sell it.
+
+**How it was found.** By simulating a year of trading rather than testing the
+current state. The crash scenario ran the portfolio down 28.6% with holdings
+well past the —20% line and **no stop ever fired**. A grep confirmed it:
+`stop_loss` appeared nowhere outside a test fixture.
+
+**Root cause: a specification gap, not an implementation error.** The Phase 2
+tasks defined validating *proposals the AI makes* and executing them. Nothing
+was ever assigned to **generate decisions from the portfolio's own state**. Two
+agents built their specs correctly. The specification had a hole where a
+guardrail should be, and every test written from that specification passed.
+
+**Fix.** `src/portfolio/triggers.py` computes stop-loss and trim decisions from
+state before the AI runs, and the broad-equity cap became a validation check.
+The same crash scenario now fires 14 stops and ends at —22.4% instead of
+—28.6%.
+
+### Two more bugs the same simulation found
+
+**The minimum position count made the portfolio impossible to build.** It was
+enforced on buys, so from an empty book any cycle proposing fewer than 8 names
+had every one rejected — and after stops reduced a book below 8, it could never
+be rebuilt. It now gates discretionary sells only. Friday's dry run missed this
+purely because the AI happened to propose 15 names at once.
+
+**The cash floor drifts without a trade.** It is a percentage, so a rising
+market pushes cash under it while the cash itself has not moved. That is not a
+breach — the rule is that an *order* breaching the floor is rejected — so the
+simulation reports it as an observation rather than a failure. Undocumented
+until the meltup scenario flagged it.
+
+### The lesson
+
+**A green test suite proves the code that exists is correct. It says nothing
+about the code that does not.** Every test here was written from the same
+specification that omitted the guardrails, so the tests agreed with the gap.
+
+Only running the system through conditions it had never seen — a crash, a
+melt-up, a year — surfaced the absence.

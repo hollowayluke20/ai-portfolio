@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "cycle_id": "2026-05-22-weekly",
+  "decided_at": "2026-05-22T21:00:00Z",
+  "portfolio_value_at_decision": 69005.37,
+  "commentary": "Simulated cycle: 15 held, 0 buys, 0 sells.",
+  "decisions": [
+    {
+      "ticker": "AAPL",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for AAPL.",
+      "risks": "Synthetic market risk on AAPL.",
+      "business": "AAPL is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "ADBE",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for ADBE.",
+      "risks": "Synthetic market risk on ADBE.",
+      "business": "ADBE is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "AMZN",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for AMZN.",
+      "risks": "Synthetic market risk on AMZN.",
+      "business": "AMZN is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "COST",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for COST.",
+      "risks": "Synthetic market risk on COST.",
+      "business": "COST is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "CRM",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for CRM.",
+      "risks": "Synthetic market risk on CRM.",
+      "business": "CRM is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "GOOGL",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for GOOGL.",
+      "risks": "Synthetic market risk on GOOGL.",
+      "business": "GOOGL is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "JPM",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for JPM.",
+      "risks": "Synthetic market risk on JPM.",
+      "business": "JPM is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "LLY",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for LLY.",
+      "risks": "Synthetic market risk on LLY.",
+      "business": "LLY is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "META",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for META.",
+      "risks": "Synthetic market risk on META.",
+      "business": "META is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "NVDA",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for NVDA.",
+      "risks": "Synthetic market risk on NVDA.",
+      "business": "NVDA is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "ORCL",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for ORCL.",
+      "risks": "Synthetic market risk on ORCL.",
+      "business": "ORCL is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "PEP",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for PEP.",
+      "risks": "Synthetic market risk on PEP.",
+      "business": "PEP is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "TMO",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for TMO.",
+      "risks": "Synthetic market risk on TMO.",
+      "business": "TMO is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "XOM",
+      "action": "HOLD",
+      "target_weight": 0.063,
+      "thesis": "Simulated thesis for XOM.",
+      "risks": "Synthetic market risk on XOM.",
+      "business": "XOM is a simulated business.",
+      "reason_for_action": "At target weight; thesis intact.",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    }
+  ],
+  "considered": [
+    {
+      "ticker": "PG",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "KO",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "V",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "HD",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "CAT",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "MRK",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "CVX",
+      "verdict": "Not selected this cycle."
+    },
+    {
+      "ticker": "ABT",
+      "verdict": "Not selected this cycle."
+    }
+  ]
+}

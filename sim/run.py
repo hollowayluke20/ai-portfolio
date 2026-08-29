@@ -24,6 +24,7 @@ from src.portfolio.executor import execute
 from src.portfolio.report import build_report
 from src.portfolio.state import build_history_row, build_state
 from src.portfolio.storage import append_history_row, write_json_atomic
+from src.portfolio.triggers import mechanical_decisions
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -54,6 +55,8 @@ def simulate(days, scenario, seed, out=None, verbose=False):
     inception = None
     submitted = filled_before = 0
     reasons = collections.Counter()
+    notes = set()
+    triggers = collections.Counter()
     actions = collections.Counter()
     cycles = 0
     state = None
@@ -82,23 +85,28 @@ def simulate(days, scenario, seed, out=None, verbose=False):
         row = build_history_row(state, bench)
         history["rows"] = [r for r in history["rows"] if r["date"] != row["date"]] + [row]
 
-        _guard(check(state, history, RULES, day), day, state, None)
+        problems, day_notes = check(state, history, RULES, day)
+        notes.update(n.split(': ', 1)[1] for n in day_notes)
+        _guard(problems, day, state, None)
 
         if day.weekday() != 4:          # decisions run weekly, after Friday's close
             continue
 
         cycles += 1
-        ai = propose(state, RULES, TICKERS, {t: r.get("thesis") for t, r in records.items()}, "valid")
+        triggered = mechanical_decisions(state, RULES)
+        ai = propose(state, RULES, [t for t in TICKERS if t not in {d['ticker'] for d in triggered}], {t: r.get("thesis") for t, r in records.items()}, "valid")
 
         def submit(*, ticker, side, notional):
             nonlocal submitted
             submitted += 1
             return broker.submit(ticker, side, notional)
 
-        result = execute(ai["decisions"], state, RULES, TICKERS, False, submit=submit)
+        result = execute(triggered + ai["decisions"], state, RULES, TICKERS, False, submit=submit)
 
         for item in result:
             actions[item["status"]] += 1
+            if item.get("trigger") in ("stop_loss", "concentration_trim"):
+                triggers[(item["trigger"], item["status"])] += 1
             if item["status"] == "rejected":
                 reasons[(item.get("rejection_reason") or "unknown").split(":")[0]] += 1
 
@@ -117,7 +125,9 @@ def simulate(days, scenario, seed, out=None, verbose=False):
             inception = {"inception_date": str(day), "inception_value": state["totals"]["total_value"],
                          "benchmark_ticker": BENCHMARK, "benchmark_inception_price": bench}
 
-        _guard(check(state, history, RULES, day), day, state, result)
+        problems, day_notes = check(state, history, RULES, day)
+        notes.update(n.split(': ', 1)[1] for n in day_notes)
+        _guard(problems, day, state, result)
 
     subject, body = build_report(state, history, None)
 
@@ -129,6 +139,14 @@ def simulate(days, scenario, seed, out=None, verbose=False):
           f"cash {state['totals']['cash_weight']:.1%}   "
           f"value ${state['totals']['total_value']:,.2f}")
     print(f"inception      : {'stamped ' + inception['inception_date'] if inception else 'NOT STAMPED'}")
+    print("mechanical triggers:")
+    if triggers:
+        for (trig, status), count in sorted(triggers.items()):
+            print(f"   {trig + ' (' + status + ')':<44} {count}")
+    else:
+        print("   none")
+        print("   WARNING: neither the stop loss nor the concentration trim fired.")
+        print("   Either the market was too gentle, or they are not wired in.")
     print("rejections by reason:")
     if reasons:
         for reason, count in reasons.most_common():
@@ -139,6 +157,10 @@ def simulate(days, scenario, seed, out=None, verbose=False):
               f"{cycles} cycles. This run is not evidence that they work.")
     if not actions.get("executed"):
         print("   WARNING: nothing was ever executed. The trading path was not exercised.")
+    if notes:
+        print("observations (not failures):")
+        for n in sorted(notes)[:5]:
+            print(f"   {n}")
     print(f"report subject : {subject}")
 
     if out:

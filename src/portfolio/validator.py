@@ -59,6 +59,11 @@ def validate_static(decisions, state, rules, universe):
                 reason = "target_weight must be a decimal fraction between 0 and 1"
             elif action in {"BUY", "TRIM"} and decision["target_weight"] > cap:
                 reason = f"target_weight exceeds hard cap of {cap}"
+            elif action == "BUY" and ticker in rules.get("broad_us_equity_cap", {}).get("tickers", []):
+                broad = sum(p.get("weight", 0) for p in held.values() if p["ticker"] in rules["broad_us_equity_cap"]["tickers"])
+                combined = broad + decision["target_weight"]
+                if combined > rules["broad_us_equity_cap"]["limit"]:
+                    reason = f"broad US equity weight {combined:.4f} exceeds limit {rules['broad_us_equity_cap']['limit']:.4f}"
             elif action in {"SELL", "TRIM"} and ticker not in held:
                 reason = f"{action} requires an existing holding of {ticker}"
             else:
