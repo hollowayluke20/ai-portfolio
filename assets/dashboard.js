@@ -115,6 +115,11 @@ function fatal(path, detail) {
 /* ---- orchestration -------------------------------------------------- */
 
 async function main() {
+  // The boot notice exists to cover the one failure this file cannot report:
+  // itself not loading. Clearing it first means everything after here is
+  // handled by fatal() instead.
+  document.getElementById("boot")?.remove();
+
   let state, history;
 
   try {

@@ -13,6 +13,27 @@
 
 <div class="wrap">
 
+  <!-- Removed by dashboard.js as soon as it starts. If it is still on the page,
+       the script never ran at all - and no error handling inside a file that
+       failed to load can report that. Without this the page renders section
+       headings above nothing, in silence, which reads as an empty portfolio
+       rather than a broken page. -->
+  <div id="boot" class="fatal" role="status">
+    <span class="btitle">Loading portfolio data</span>
+    <p>If this message stays, the page's scripts did not load. The figures
+       below are not missing — they were never fetched. Try reloading; if it
+       persists, the deployment is broken rather than the portfolio.</p>
+  </div>
+
+  <noscript>
+    <div class="fatal" role="alert">
+      <span class="btitle">JavaScript required</span>
+      <p>This dashboard reads the portfolio from JSON files the pipeline commits,
+         so it needs JavaScript to display anything. The underlying data is
+         readable directly at <code>data/state.json</code>.</p>
+    </div>
+  </noscript>
+
   <div id="alerts"></div>
 
   <header class="masthead">
