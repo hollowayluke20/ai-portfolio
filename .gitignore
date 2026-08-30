@@ -31,3 +31,6 @@ sim-out/
 
 # backtest output - regenerable, and the run log is a scratch artifact
 data/backtests/
+
+# vendored pytest installed by a sandboxed agent - never ours to ship
+.test-deps/
