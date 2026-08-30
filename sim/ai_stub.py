@@ -19,10 +19,25 @@ def _seed_for(state, candidates):
 
 
 def propose(state, rules, candidates, held_theses, mode="valid"):
-    target = rules["position_weight"]["target"]
     want = rules["position_count"]["target"]
     held = {p["ticker"]: p for p in state.get("positions", [])}
     seed = _seed_for(state, candidates)
+
+    # Sizing is derived now, not read from a fixed target, and the stub has to
+    # fill BOTH sleeves or the validator rejects everything it proposes: a buy
+    # into the risk sleeve is refused while bonds sit under their floor. That
+    # is the rule working - but it means a stub that only ever bought shares
+    # would build nothing and the run would test nothing.
+    sleeves = rules["sleeves"]
+    bond_universe = [t for t in sleeves["bond"]["tickers"]
+                     if t in candidates or t in held]
+    bond_sleeve, risk_sleeve = 0.30, 0.60          # inside both 25-75% bands
+    bond_target = bond_sleeve / max(1, len(bond_universe))
+    target = risk_sleeve / max(1, want - len(bond_universe))
+    is_bond = set(bond_universe).__contains__
+
+    def size(ticker):
+        return bond_target if is_bond(ticker) else target
 
     if mode == "malformed":
         return {"commentary": "bad", "decisions": "bad", "considered": []}
@@ -63,21 +78,28 @@ def propose(state, rules, candidates, held_theses, mode="valid"):
     for ticker, position in sorted(held.items()):
         if ticker in selling:
             continue
-        if position.get("weight", 0) >= target * 0.9:
-            decisions.append(entry(ticker, "HOLD", target, "At target weight; thesis intact."))
+        if position.get("weight", 0) >= size(ticker) * 0.9:
+            decisions.append(entry(ticker, "HOLD", size(ticker), "At target weight; thesis intact."))
 
-    # Buy toward the target count, in a rotating order so the book is not
-    # always the same names.
+    # Bonds first. A risk buy is rejected while the bond sleeve is under its
+    # floor, so proposing shares before bonds would have every share refused.
     room = want - (len(held) - len(selling))
-    fresh = [t for t in candidates if t not in held]
+    for ticker in bond_universe:
+        if ticker not in held and room > 0:
+            decisions.append(entry(ticker, "BUY", bond_target, "Filling the bond sleeve."))
+            room -= 1
+
+    # Then buy toward the target count, rotating so the book is not always the
+    # same names.
+    fresh = [t for t in candidates if t not in held and not is_bond(t)]
     rotated = fresh[seed % len(fresh):] + fresh[:seed % len(fresh)] if fresh else []
     for ticker in rotated[:max(0, room)]:
         decisions.append(entry(ticker, "BUY", target, "Building toward the target position count."))
 
-    # Top up anything that has drifted well below target.
+    # Top up anything that has drifted well below its derived weight.
     for ticker, position in sorted(held.items()):
-        if ticker not in selling and position.get("weight", 0) < target * 0.75:
-            decisions.append(entry(ticker, "BUY", target, "Drifted below target weight."))
+        if ticker not in selling and position.get("weight", 0) < size(ticker) * 0.75:
+            decisions.append(entry(ticker, "BUY", size(ticker), "Drifted below target weight."))
 
     considered = [{"ticker": t, "verdict": "Not selected this cycle."}
                   for t in candidates if t not in held][:8]

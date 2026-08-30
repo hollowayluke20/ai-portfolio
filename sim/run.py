@@ -37,6 +37,12 @@ RULES = json.loads((REPO / "config" / "rules.json").read_text(encoding="utf-8"))
 # draft used 8 tickers against a 15-position target, so the portfolio could
 # never be built and the run "passed" by never doing anything.
 TICKERS = [
+    # The bond sleeve must exist here or nothing can be bought at all: a buy
+    # into the risk sleeve is rejected while bonds sit below their floor, so a
+    # shares-only universe makes the portfolio impossible to build. The
+    # simulator found that itself the first time the sleeve rule ran - 750
+    # rejections, all the same reason, nothing ever executed.
+    "IEF", "AGG", "TLT",
     "MSFT", "NVDA", "AAPL", "GOOGL", "AMZN", "META", "JPM", "XOM", "PG", "KO",
     "V", "HD", "CAT", "MRK", "CVX", "ABT", "LIN", "MCD", "COST", "LLY",
     "ADBE", "ORCL", "CRM", "PEP", "TMO",
@@ -102,12 +108,15 @@ def simulate(days, scenario, seed, out=None, verbose=False):
             return broker.submit(ticker, side, notional)
 
         def close(*, ticker):
-            # The fake broker has no price drift between decision and
-            # submission, so a full-value notional sell always works there.
-            # That is exactly why the simulation could not have found the
-            # real bug this parameter exists to fix.
-            held = {p["ticker"]: p for p in state["positions"]}
-            return broker.submit(ticker, "sell", held[ticker]["market_value"])
+            # Close the position, as production does with DELETE /v2/positions.
+            #
+            # This used to submit a notional sell of the position's market
+            # value. The comment here said that always worked in the fake
+            # broker because it has no price drift - which was wrong. Market
+            # value is rounded to the cent, so the sell settled into slightly
+            # fewer shares than were held and left fractional dust that never
+            # died. A 2025 replay sold Apple five times before this was found.
+            return broker.close(ticker)
 
         result = execute(triggered + ai["decisions"], state, RULES, TICKERS, False,
                          submit=submit, close=close)

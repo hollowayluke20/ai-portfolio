@@ -123,9 +123,10 @@ def main(start, end, out_dir, verbose):
         def submit(*, ticker, side, notional):
             return broker.submit(ticker, side, notional)
 
-        def close(*, ticker, _pos=positions):
-            mv = next((p["market_value"] for p in _pos if p["symbol"] == ticker), 0.0)
-            return broker.submit(ticker, "sell", mv)
+        def close(*, ticker):
+            # Close the position, never a notional sell of its market value -
+            # see FakeBroker.close. Production uses DELETE /v2/positions here.
+            return broker.close(ticker)
 
         triggered = mechanical_decisions(st, rules)
         decisions_today, ai_out = list(triggered), None
