@@ -1,4 +1,4 @@
-from src.portfolio.fundamentals import _measure_points, compute_ttm, latest_instant, pe_ratio, refresh_fundamentals
+from src.portfolio.fundamentals import _measure_points, compute_ttm, compute_ttm_pair, latest_instant, pe_ratio, refresh_fundamentals
 
 
 def _point(start, end, val, filed="2024-12-31"):
@@ -47,6 +47,16 @@ def test_ttm_rejects_four_quarters_with_a_gap():
         _point("2025-01-01", "2025-03-29", 4),
     ]
     assert compute_ttm(points, "2025-05-01") is None
+
+
+def test_ttm_pair_compares_prior_quarters_public_at_the_same_as_of_date():
+    points = [
+        _point("2023-01-01", "2023-03-31", 1), _point("2023-04-01", "2023-06-30", 2),
+        _point("2023-07-01", "2023-09-30", 3), _point("2023-10-01", "2023-12-31", 4),
+        _point("2024-01-01", "2024-03-31", 5), _point("2024-04-01", "2024-06-30", 6),
+        _point("2024-07-01", "2024-09-30", 7), _point("2024-10-01", "2024-12-31", 8),
+    ]
+    assert compute_ttm_pair(points, "2025-01-01") == (26.0, 10.0)
 
 
 def test_calculations_are_order_independent_and_instants_are_not_summed():

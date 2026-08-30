@@ -30,6 +30,7 @@ from src.portfolio.triggers import mechanical_decisions                         
 from src.portfolio.config import load_inception, load_rules, load_universe        # noqa: E402
 from src.portfolio.storage import read_json                                       # noqa: E402
 from src.portfolio.marketdata import fetch_bars, compute_features, compute_breadth  # noqa: E402
+from src.portfolio.news import fetch_news                                           # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 STATE_PATH = REPO / "data" / "state.json"
@@ -75,6 +76,17 @@ def main(live: bool) -> int:
     except Exception as exc:
         raise RuntimeError(f"market-data fetch failed; aborting cycle: {exc}") from exc
 
+    news_unavailable = False
+    try:
+        news = fetch_news(
+            held,
+            (datetime.date.fromisoformat(cycle_date) - datetime.timedelta(days=7)).isoformat(),
+            cycle_date,
+        )
+    except Exception as exc:  # news improves a cycle, but must not prevent one
+        print(f"news fetch failed; continuing without it: {exc}", file=sys.stderr)
+        news, news_unavailable = {}, True
+
     print(f"cycle      : {cycle_date}  ({'LIVE' if live else 'DRY RUN'})")
     print(f"portfolio  : ${st['totals']['total_value']:,.2f}  "
           f"available ${st['totals']['available_cash']:,.2f}  "
@@ -91,9 +103,12 @@ def main(live: bool) -> int:
             print(f"trigger    : {decision['trigger']} {decision['action']} {decision['ticker']}")
 
     exiting = {d["ticker"] for d in triggered}
-    prompt = __import__("src.portfolio.ai", fromlist=["render_prompt"]).render_prompt(st, rules, [c for c in candidates if c not in exiting], theses, features, universe_metadata, breadth)
+    prompt = __import__("src.portfolio.ai", fromlist=["render_prompt"]).render_prompt(
+        st, rules, [c for c in candidates if c not in exiting], theses, features,
+        universe_metadata, breadth, news, news_unavailable,
+    )
     ai_output = propose(st, rules, [c for c in candidates if c not in exiting], theses,
-                        features, universe_metadata, breadth, prompt=prompt)
+                        features, universe_metadata, breadth, news, news_unavailable, prompt=prompt)
     proposed = ai_output["decisions"]
     print(f"proposed   : {len(proposed)} decisions, "
           f"{len(ai_output.get('considered', []))} candidates considered")

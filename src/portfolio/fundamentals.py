@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date
 import time
 
 import requests
@@ -14,7 +14,7 @@ COMPANYFACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
 
 MEASURES: dict[str, dict[str, object]] = {
     "EarningsPerShareDiluted": {"kind": "flow", "tags": ["EarningsPerShareDiluted", "EarningsPerShareBasic", "EarningsPerShareBasicAndDiluted"]},
-    "Revenues": {"kind": "flow", "tags": ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet"]},
+    "Revenues": {"kind": "flow", "tags": ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet", "RevenuesNetOfInterestExpense"]},
     "NetIncomeLoss": {"kind": "flow", "tags": ["NetIncomeLoss"]},
     "GrossProfit": {"kind": "flow", "tags": ["GrossProfit"]},
     "NetCashProvidedByUsedInOperatingActivities": {"kind": "flow", "tags": ["NetCashProvidedByUsedInOperatingActivities"]},
@@ -65,8 +65,8 @@ def _derive_missing_quarters(rows: list[dict]) -> list[dict]:
     return derived
 
 
-def compute_ttm(points: list[dict], as_of: str) -> float | None:
-    """Sum the four latest public quarterly flow values, or return ``None``."""
+def _quarterly_points(points: list[dict], as_of: str) -> list[dict]:
+    """One public quarterly value per period end, newest first."""
     public = [p for p in points if p.get("filed", "") <= as_of and p.get("start")]
     candidates = public + _derive_missing_quarters(public)
 
@@ -94,7 +94,10 @@ def compute_ttm(points: list[dict], as_of: str) -> float | None:
             continue
         if better(point, latest.get(point["end"])):
             latest[point["end"]] = point
-    quarters = sorted(latest.values(), key=lambda point: point["end"], reverse=True)[:4]
+    return sorted(latest.values(), key=lambda point: point["end"], reverse=True)
+
+
+def _sum_consecutive_quarters(quarters: list[dict]) -> float | None:
     if len(quarters) != 4:
         return None
     earliest_start = min(point["start"] for point in quarters)
@@ -103,6 +106,17 @@ def compute_ttm(points: list[dict], as_of: str) -> float | None:
     if not 330 <= span <= 400:
         return None
     return sum(float(point["val"]) for point in quarters)
+
+
+def compute_ttm(points: list[dict], as_of: str) -> float | None:
+    """Sum the four latest public quarterly flow values, or return ``None``."""
+    return _sum_consecutive_quarters(_quarterly_points(points, as_of)[:4])
+
+
+def compute_ttm_pair(points: list[dict], as_of: str) -> tuple[float | None, float | None]:
+    """Return current and preceding honest TTM values from one as-of filing set."""
+    quarters = _quarterly_points(points, as_of)
+    return _sum_consecutive_quarters(quarters[:4]), _sum_consecutive_quarters(quarters[4:8])
 
 
 def latest_instant(points: list[dict], as_of: str) -> float | None:
@@ -129,11 +143,10 @@ def summarise(entry: dict, price: float | None, as_of: str) -> dict:
         points = (measures.get(name) or {}).get("points") or []
         return compute_ttm(points, at)
 
-    year_ago = (date.fromisoformat(as_of) - timedelta(days=365)).isoformat()
-
     eps = flow("EarningsPerShareDiluted", as_of)
-    revenue = flow("Revenues", as_of)
-    revenue_prior = flow("Revenues", year_ago)
+    revenue, revenue_prior = compute_ttm_pair(
+        (measures.get("Revenues") or {}).get("points") or [], as_of
+    )
     income = flow("NetIncomeLoss", as_of)
 
     growth = None

@@ -6,6 +6,7 @@ import pytest
 
 from src.portfolio import ai
 from src.portfolio.config import load_rules
+from src.portfolio.news import Article
 
 # A recorded schema-valid Gemini response body (the text of parts[0].text).
 RECORDED_RESPONSE = json.dumps({
@@ -86,6 +87,35 @@ def test_prompt_with_market_data_has_price_and_company_name():
                               {"IEF": feature}, {"IEF": {"name": "Treasury Fund", "sector": "Bond"}}, .5)
     assert "$95.50" in prompt
     assert "Treasury Fund" in prompt
+
+
+def test_news_distinguishes_no_articles_from_failed_fetch():
+    empty = ai.render_prompt(STATE, RULES, CANDIDATES, HELD_THESES, news={})
+    failed = ai.render_prompt(STATE, RULES, CANDIDATES, HELD_THESES,
+                              news_unavailable=True)
+    assert "MSFT â€” no articles in the last 7 days" in empty
+    assert "News unavailable this cycle â€” the fetch failed" in failed
+    assert empty != failed
+
+
+def test_propose_sends_news_headline_to_model(monkeypatch):
+    captured = []
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    monkeypatch.setattr(ai, "_call_gemini", lambda prompt, *_: captured.append(prompt) or json.dumps({"commentary": "x", "decisions": [], "considered": []}))
+    article = Article("Earnings miss breaks the thesis", "", "2026-08-30T12:00:00Z", "Reuters", "https://example.test")
+    ai.propose(STATE, RULES, CANDIDATES, HELD_THESES, news={"MSFT": [article]})
+    assert "Earnings miss breaks the thesis" in captured[-1]
+
+
+def test_prompt_stays_under_tripwire_with_news_for_fifteen_holdings():
+    tickers = [f"T{index:02d}" for index in range(15)]
+    state = {**STATE, "positions": [{"ticker": ticker, "weight": .05,
+                                      "unrealized_pl": 0, "unrealized_pl_pct": 0}
+                                     for ticker in tickers]}
+    article = Article("A material company development", "", "2026-08-30T12:00:00Z", "Wire", "")
+    prompt = ai.render_prompt(state, RULES, CANDIDATES, {},
+                              news={ticker: [article] * 5 for ticker in tickers})
+    assert len(prompt) < 80000
 
 
 def test_propose_sends_market_prompt_and_honours_pre_rendered_prompt(monkeypatch):

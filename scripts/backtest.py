@@ -16,6 +16,7 @@ from src.portfolio.ai import propose, render_prompt
 from src.portfolio.candidates import select_candidates
 from src.portfolio.config import load_rules, load_universe
 from src.portfolio.marketdata import fetch_bars, compute_features, compute_breadth
+from src.portfolio.news import fetch_news
 from src.portfolio.triggers import mechanical_decisions
 from sim.broker import FakeBroker
 
@@ -137,8 +138,18 @@ def main(start, end, out_dir, verbose):
                      if c not in exiting]
             theses = {t: r.get("thesis") for t, r in records.items() if t in held}
             breadth = compute_breadth(features)
-            prompt = render_prompt(st, rules, cands, theses, features, meta, breadth)
-            ai_out = propose(st, rules, cands, theses, features, meta, breadth, prompt=prompt)
+            try:
+                recent_news = fetch_news(
+                    held, (day - datetime.timedelta(days=7)).isoformat(), iso
+                )
+                news_unavailable = False
+            except Exception as exc:
+                print(f"{iso} news fetch failed; continuing without it: {exc}", file=sys.stderr)
+                recent_news, news_unavailable = {}, True
+            prompt = render_prompt(st, rules, cands, theses, features, meta, breadth,
+                                   recent_news, news_unavailable)
+            ai_out = propose(st, rules, cands, theses, features, meta, breadth,
+                             recent_news, news_unavailable, prompt=prompt)
             decisions_today += ai_out["decisions"]
 
         done = []

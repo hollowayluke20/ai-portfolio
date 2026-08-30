@@ -15,11 +15,27 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.portfolio.fundamentals import MEASURES, compute_ttm, latest_instant, pe_ratio  # noqa: E402
+from src.portfolio.fundamentals import MEASURES, compute_ttm_pair, latest_instant, pe_ratio, summarise  # noqa: E402
 
 
 DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "fundamentals.json"
 CROSSCHECK_TICKERS = ("AAPL", "MSFT", "NVDA", "JPM", "XOM", "KO", "UNH", "PG")
+
+# These are reporting conventions, not targets to optimise.  Financial firms
+# and property trusts legitimately lack gross profit and a classified current
+# balance sheet, while the remaining SEC concepts should be broadly available.
+COVERAGE_EXPECTATIONS = {
+    "EarningsPerShareDiluted": 0.95,
+    "Revenues": 0.95,
+    "NetIncomeLoss": 0.95,
+    "GrossProfit": 0.45,
+    "NetCashProvidedByUsedInOperatingActivities": 0.95,
+    "Assets": 0.95,
+    "AssetsCurrent": 0.80,
+    "LiabilitiesCurrent": 0.80,
+    "LongTermDebtNoncurrent": 0.88,
+    "CommonStockSharesOutstanding": 0.88,
+}
 
 
 @dataclass(frozen=True)
@@ -35,7 +51,10 @@ class Audit:
     def failed(self) -> bool:
         return bool(
             self.identity_violations
-            or any(count / self.companies < 0.9 for count in self.coverage.values())
+            or any(
+                count / self.companies < COVERAGE_EXPECTATIONS[measure]
+                for measure, count in self.coverage.items()
+            )
         ) if self.companies else True
 
 
@@ -44,26 +63,8 @@ def _points(entry: dict, measure: str) -> list[dict]:
 
 
 def _ttm_pair(points: list[dict], as_of: str) -> tuple[float | None, float | None]:
-    """Return the current and preceding four quarterly values, if complete."""
-    latest: dict[tuple[str, str], dict] = {}
-    for point in points:
-        if point.get("filed", "") > as_of or not point.get("start"):
-            continue
-        try:
-            # ``compute_ttm`` is the authority on accepted rows; selecting its
-            # input here keeps this comparison consistent with valuation.
-            from datetime import date
-            if (date.fromisoformat(point["end"]) - date.fromisoformat(point["start"])).days >= 110:
-                continue
-        except (KeyError, TypeError, ValueError):
-            continue
-        key = (point["start"], point["end"])
-        if key not in latest or point.get("filed", "") > latest[key].get("filed", ""):
-            latest[key] = point
-    quarters = sorted(latest.values(), key=lambda point: point["end"], reverse=True)
-    current = sum(float(point["val"]) for point in quarters[:4]) if len(quarters) >= 4 else None
-    prior = sum(float(point["val"]) for point in quarters[4:8]) if len(quarters) >= 8 else None
-    return current, prior
+    """Return the same two TTM windows used by the production summary."""
+    return compute_ttm_pair(points, as_of)
 
 
 def audit_document(
@@ -85,7 +86,7 @@ def audit_document(
 
     for ticker, entry in companies.items():
         values = {
-            measure: (compute_ttm(_points(entry, measure), as_of)
+            measure: (compute_ttm_pair(_points(entry, measure), as_of)[0]
                       if specification["kind"] == "flow"
                       else latest_instant(_points(entry, measure), as_of))
             for measure, specification in MEASURES.items()
@@ -122,13 +123,12 @@ def audit_document(
 
 
 def crosscheck_rows(document: dict, prices: dict[str, float], as_of: str) -> list[tuple[str, float | None, float | None, float | None]]:
-    """Return the stable human-review set of EPS, revenue, and P/E values."""
-    rows = []
+    """Return P/E, revenue growth, and net margin for human comparison."""
+    rows: list[tuple[str, float | None, float | None, float | None]] = []
     for ticker in CROSSCHECK_TICKERS:
         entry = document.get("tickers", {}).get(ticker, {})
-        eps = compute_ttm(_points(entry, "EarningsPerShareDiluted"), as_of)
-        revenue = compute_ttm(_points(entry, "Revenues"), as_of)
-        rows.append((ticker, eps, revenue, pe_ratio(prices[ticker], eps) if ticker in prices else None))
+        summary = summarise(entry, prices.get(ticker), as_of)
+        rows.append((ticker, summary["pe"], summary["revenue_growth"], summary["net_margin"]))
     return rows
 
 
@@ -136,15 +136,20 @@ def format_report(audit: Audit, document: dict, prices: dict[str, float], as_of:
     lines = [f"fundamentals audit as of {as_of}", f"companies: {audit.companies}", "coverage:"]
     for measure, count in audit.coverage.items():
         percentage = count / audit.companies if audit.companies else 0
-        flag = "  UNDER 90%" if percentage < 0.9 else ""
-        lines.append(f"  {measure}: {count}/{audit.companies} ({percentage:.1%}){flag}")
+        expected = COVERAGE_EXPECTATIONS[measure]
+        flag = "  BELOW EXPECTATION" if percentage < expected else ""
+        lines.append(f"  {measure}: {count}/{audit.companies} ({percentage:.1%}; expect {expected:.0%}){flag}")
     for title, values in (("identity violations", audit.identity_violations), ("P/E outliers", audit.pe_outliers),
                           ("profit-margin outliers", audit.margin_outliers), ("TTM growth outliers", audit.ttm_outliers)):
         lines.append(f"{title}: {len(values)}")
         lines.extend(f"  {value}" for value in values)
-    lines.extend(["cross-check (P/E is n/a unless --price is supplied):", "  ticker       TTM EPS     TTM revenue            P/E"])
-    for ticker, eps, revenue, pe in crosscheck_rows(document, prices, as_of):
-        lines.append(f"  {ticker:<6} {eps if eps is not None else 'n/a':>11} {revenue if revenue is not None else 'n/a':>15} {pe if pe is not None else 'n/a':>14}")
+    lines.extend(["cross-check (P/E is n/a unless --price is supplied):", "  ticker            P/E   revenue growth    net margin"])
+    for ticker, pe, growth, margin in crosscheck_rows(document, prices, as_of):
+        lines.append(
+            f"  {ticker:<6} {pe if pe is not None else 'n/a':>12} "
+            f"{f'{growth:.1%}' if growth is not None else 'n/a':>16} "
+            f"{f'{margin:.1%}' if margin is not None else 'n/a':>13}"
+        )
     return "\n".join(lines)
 
 

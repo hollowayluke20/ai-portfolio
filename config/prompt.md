@@ -79,6 +79,10 @@ it is up. A position that is down but whose thesis is intact is not.**
 
 {POSITIONS}
 
+### Recent news
+
+{NEWS}
+
 ### Pending orders
 
 Orders already submitted and not yet filled. Do not double-count this cash.

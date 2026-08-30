@@ -186,6 +186,32 @@ def _render_pending_orders(state: dict) -> str:
     return "\n".join(lines)
 
 
+def _render_news(state: dict, news=None, unavailable: bool = False) -> str:
+    """Render held-position news without ever equating absence with failure."""
+    if unavailable:
+        return ("News unavailable this cycle â€” the fetch failed. Do not read the "
+                "absence of news as the absence of events.")
+    grouped = news or {}
+    held = [position["ticker"] for position in state.get("positions", [])]
+    if not held:
+        return "No positions are held."
+    lines = [
+        "News is evidence that can break a thesis: an earnings miss, competitor "
+        "launch, or regulatory action can falsify a reason for holding; price alone cannot."
+    ]
+    for ticker in held:
+        articles = grouped.get(ticker, [])
+        if not articles:
+            lines.append(f"{ticker} â€” no articles in the last 7 days")
+            continue
+        lines.append(ticker)
+        for article in articles:
+            date = article.created_at[:10]
+            source = article.source or "Unknown source"
+            lines.append(f"  {date}  {source}   {article.headline}")
+    return "\n".join(lines)
+
+
 def _market_line(ticker, features, metadata):
     feature = features.get(ticker)
     meta = metadata.get(ticker, {})
@@ -197,7 +223,8 @@ def _market_line(ticker, features, metadata):
     return f"{ticker}  {meta.get('name', 'n/a')}  {meta.get('sector', 'n/a')}  ${feature.price:.2f}  1m {pct(feature.ret_1m)}  12m {pct(feature.ret_12m)}  {pct(feature.pct_off_52w_high)} off high  vol {pct(feature.vol_60d)}  {trend}{recent}"
 
 
-def render_prompt(state, rules, candidates, held_theses, features=None, metadata=None, breadth=None) -> str:
+def render_prompt(state, rules, candidates, held_theses, features=None, metadata=None,
+                  breadth=None, news=None, news_unavailable: bool = False) -> str:
     """Fill the config/prompt.md template. No placeholder may survive."""
     template = PROMPT_PATH.read_text(encoding="utf-8")
     totals = state.get("totals", {})
@@ -207,6 +234,7 @@ def render_prompt(state, rules, candidates, held_theses, features=None, metadata
         "{AVAILABLE_CASH}": str(totals.get("available_cash")),
         "{CASH_WEIGHT}": str(totals.get("cash_weight")),
         "{POSITIONS}": _render_positions(state, held_theses, features),
+        "{NEWS}": _render_news(state, news, news_unavailable),
         "{PENDING_ORDERS}": _render_pending_orders(state),
         "{CANDIDATES}": "\n".join(_market_line(t, features or {}, metadata or {}) for t in candidates) if candidates else "None.",
         "{MARKET_CONTEXT}": "As of the last close; next-open fills are unknown.\n" + "\n".join(_market_line(t, features or {}, metadata or {}) for t in rules["etf_universe"]) + f"\nMarket breadth: {'n/a' if breadth is None else f'{breadth:.1%}'} of the universe is above its 200-day average.",
@@ -352,7 +380,7 @@ def _parse(text: str) -> dict:
 
 
 def propose(state, rules, candidates, held_theses, features=None, metadata=None,
-            breadth=None, prompt=None) -> dict:
+            breadth=None, news=None, news_unavailable: bool = False, prompt=None) -> dict:
     """Return {"commentary", "decisions", "considered"} or raise AIError.
 
     Retries exactly once on unusable output. Network failures are retried
@@ -365,7 +393,7 @@ def propose(state, rules, candidates, held_theses, features=None, metadata=None,
 
     model = rules["ai"]["model"]
     prompt = prompt or render_prompt(state, rules, candidates, held_theses,
-                                     features, metadata, breadth)
+                                     features, metadata, breadth, news, news_unavailable)
 
     last_error: Exception | None = None
     for attempt in (1, 2):

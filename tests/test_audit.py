@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import sys
+from copy import deepcopy
 
 
 SPEC = importlib.util.spec_from_file_location("audit_fundamentals", Path(__file__).parents[1] / "scripts" / "audit_fundamentals.py")
@@ -30,7 +31,7 @@ def test_audit_flags_low_coverage_and_accounting_identities():
     assert any("current assets" in violation for violation in result.identity_violations)
 
 
-def test_audit_reports_sanity_ranges_and_crosscheck_pe():
+def test_audit_reports_sanity_ranges_and_crosscheck_summary():
     document = _document()
     document["tickers"]["GOOD"]["measures"]["NetIncomeLoss"]["points"] = [
         _flow(20, "2024-01-01", "2024-03-31"), _flow(20, "2024-04-01", "2024-06-30"),
@@ -40,7 +41,21 @@ def test_audit_reports_sanity_ranges_and_crosscheck_pe():
     assert result.margin_outliers == ["GOOD: profit margin 200.0%"]
     assert result.pe_outliers == ["GOOD: P/E 250.00"]
     rows = audit_fundamentals.crosscheck_rows({"tickers": {"AAPL": document["tickers"]["GOOD"]}}, {"AAPL": 400}, "2025-06-01")
-    assert rows[0] == ("AAPL", 40.0, 40.0, 10.0)
+    assert rows[0] == ("AAPL", 10.0, None, 2.0)
+
+
+def test_legitimately_sparse_measures_do_not_fail_coverage_expectations():
+    document = _document()
+    document["tickers"].update({
+        f"GOOD{index}": deepcopy(document["tickers"]["GOOD"])
+        for index in range(2, 6)
+    })
+    for ticker in ("GOOD2", "GOOD3"):
+        document["tickers"][ticker]["measures"]["GrossProfit"]["points"] = []
+    document["tickers"]["GOOD2"]["measures"]["AssetsCurrent"]["points"] = []
+    document["tickers"]["GOOD2"]["measures"]["LiabilitiesCurrent"]["points"] = []
+    result = audit_fundamentals.audit_document(document)
+    assert not result.failed
 
 
 def test_parse_prices_rejects_ambiguous_input():
