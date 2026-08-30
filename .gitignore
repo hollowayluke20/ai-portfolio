@@ -34,3 +34,6 @@ data/backtests/
 
 # vendored pytest installed by a sandboxed agent - never ours to ship
 .test-deps/
+
+# agent scratch logs - regenerable, not a record
+scratch/

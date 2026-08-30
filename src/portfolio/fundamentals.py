@@ -38,7 +38,14 @@ def compute_ttm(points: list[dict], as_of: str) -> float | None:
         if key not in latest or point["filed"] > latest[key].get("filed", ""):
             latest[key] = point
     quarters = sorted(latest.values(), key=lambda point: point["end"], reverse=True)[:4]
-    return sum(float(point["val"]) for point in quarters) if len(quarters) == 4 else None
+    if len(quarters) != 4:
+        return None
+    earliest_start = min(point["start"] for point in quarters)
+    latest_end = max(point["end"] for point in quarters)
+    span = (date.fromisoformat(latest_end) - date.fromisoformat(earliest_start)).days
+    if not 330 <= span <= 400:
+        return None
+    return sum(float(point["val"]) for point in quarters)
 
 
 def latest_instant(points: list[dict], as_of: str) -> float | None:
@@ -59,7 +66,10 @@ def ticker_ciks() -> dict[str, str]:
     return {entry["ticker"]: f"{int(entry['cik_str']):010d}" for entry in response.json().values()}
 
 
-def _measure_points(facts: dict, tags: list[str]) -> tuple[str | None, list[dict]]:
+def _measure_points(
+    facts: dict, tags: list[str], expected_unit: str
+) -> tuple[str | None, list[dict]]:
+    candidates: list[tuple[str, list[dict], str]] = []
     for tag in tags:
         namespace, _, name = tag.partition(":")
         if not name:
@@ -67,12 +77,44 @@ def _measure_points(facts: dict, tags: list[str]) -> tuple[str | None, list[dict
         concept = facts.get(namespace, {}).get(name)
         if concept:
             units = concept.get("units", {})
-            points = next(iter(units.values()), [])
-            return tag, [
-                {key: row[key] for key in ("start", "end", "val", "accn", "fy", "fp", "form", "filed", "frame") if key in row}
-                for row in points[-12:]
-            ]
-    return None, []
+            points = units.get(expected_unit, next(iter(units.values()), []))
+            if points:
+                candidates.append((tag, points, max(row.get("filed", "") for row in points)))
+    if not candidates:
+        return None, []
+
+    newest_filed = max(candidate[2] for candidate in candidates)
+    newest_date = date.fromisoformat(newest_filed) if newest_filed else date.min
+    close_candidates = [
+        candidate for candidate in candidates
+        if candidate[2] and (newest_date - date.fromisoformat(candidate[2])).days <= 90
+    ] or candidates
+
+    def quarterly_rows_last_three_years(candidate: tuple[str, list[dict], str]) -> int:
+        _, points, _ = candidate
+        return sum(
+            bool(row.get("start"))
+            and (date.fromisoformat(row["end"]) - date.fromisoformat(row["start"])).days < 110
+            and (newest_date - date.fromisoformat(row["end"])).days <= 3 * 365
+            for row in points
+        )
+
+    tag, points, _ = max(
+        close_candidates,
+        key=lambda candidate: (quarterly_rows_last_three_years(candidate), candidate[2]),
+    )
+    latest_periods: dict[tuple[str, str], dict] = {}
+    for point in points:
+        key = (point.get("start", ""), point.get("end", ""))
+        if key not in latest_periods or point.get("filed", "") > latest_periods[key].get("filed", ""):
+            latest_periods[key] = point
+    selected = sorted(
+        latest_periods.values(), key=lambda row: (row.get("end", ""), row.get("filed", ""))
+    )[-12:]
+    return tag, [
+        {key: row[key] for key in ("start", "end", "filed", "val") if key in row}
+        for row in selected
+    ]
 
 
 def refresh_fundamentals(tickers: list[str]) -> dict[str, dict]:
@@ -80,6 +122,8 @@ def refresh_fundamentals(tickers: list[str]) -> dict[str, dict]:
     ciks = ticker_ciks()
     output: dict[str, dict] = {}
     for index, ticker in enumerate(tickers):
+        if index and index % 25 == 0:
+            print(f"fetched {index}/{len(tickers)} tickers", flush=True)
         cik = ciks.get(ticker)
         if cik is None:
             output[ticker] = {"cik": None, "measures": {}}
@@ -87,11 +131,21 @@ def refresh_fundamentals(tickers: list[str]) -> dict[str, dict]:
         if index:
             time.sleep(0.11)
         response = requests.get(COMPANYFACTS_URL.format(cik=cik), headers=SEC_HEADERS, timeout=60)
-        response.raise_for_status()
-        facts = response.json().get("facts", {})
+        if response.status_code == 404:
+            facts = {}
+        else:
+            response.raise_for_status()
+            facts = response.json().get("facts", {})
         measures = {}
         for name, specification in MEASURES.items():
-            concept, points = _measure_points(facts, specification["tags"])
+            expected_unit = (
+                "USD/shares" if name == "EarningsPerShareDiluted"
+                else "shares" if name == "CommonStockSharesOutstanding"
+                else "USD"
+            )
+            concept, points = _measure_points(
+                facts, specification["tags"], expected_unit
+            )
             measures[name] = {"concept": concept, "kind": specification["kind"], "points": points}
         output[ticker] = {"cik": cik, "measures": measures}
     return output

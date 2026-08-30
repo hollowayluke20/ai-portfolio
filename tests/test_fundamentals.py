@@ -1,4 +1,4 @@
-from src.portfolio.fundamentals import compute_ttm, latest_instant, pe_ratio, refresh_fundamentals
+from src.portfolio.fundamentals import _measure_points, compute_ttm, latest_instant, pe_ratio, refresh_fundamentals
 
 
 def _point(start, end, val, filed="2024-12-31"):
@@ -39,6 +39,16 @@ def test_ttm_uses_later_restatement_and_requires_four_quarters():
     assert compute_ttm(points[:3], "2025-03-01") is None
 
 
+def test_ttm_rejects_four_quarters_with_a_gap():
+    points = [
+        _point("2024-01-01", "2024-03-30", 1),
+        _point("2024-07-01", "2024-09-28", 2),
+        _point("2024-10-01", "2024-12-28", 3),
+        _point("2025-01-01", "2025-03-29", 4),
+    ]
+    assert compute_ttm(points, "2025-05-01") is None
+
+
 def test_calculations_are_order_independent_and_instants_are_not_summed():
     points = [_point("2024-01-01", "2024-03-30", 1), _point("2024-04-01", "2024-06-29", 2), _point("2024-07-01", "2024-09-28", 3), _point("2024-10-01", "2024-12-28", 4)]
     assert compute_ttm(points, "2025-01-01") == compute_ttm(list(reversed(points)), "2025-01-01") == 10
@@ -52,3 +62,25 @@ def test_calculations_are_order_independent_and_instants_are_not_summed():
 def test_etf_without_cik_has_no_measures(monkeypatch):
     monkeypatch.setattr("src.portfolio.fundamentals.ticker_ciks", lambda: {})
     assert refresh_fundamentals(["SPY"])["SPY"] == {"cik": None, "measures": {}}
+
+
+def test_measure_points_prefers_the_expected_unit_and_keeps_12_rows():
+    rows = [{"end": f"2024-01-{day:02d}", "filed": "2024-02-01", "val": day} for day in range(1, 26)]
+    facts = {"us-gaap": {"Revenues": {"units": {"shares": [{"val": 999}], "USD": rows}}}}
+    concept, points = _measure_points(facts, ["Revenues"], "USD")
+    assert concept == "Revenues"
+    assert len(points) == 12 and points[0]["val"] == 14
+
+
+def test_measure_points_prefers_the_tag_with_current_filings():
+    stale = [{"start": "2009-01-01", "end": "2009-03-31", "filed": "2010-04-01", "val": 1}]
+    current = [{"start": "2025-01-01", "end": "2025-03-31", "filed": "2025-05-01", "val": 2}]
+    facts = {"us-gaap": {
+        "Revenues": {"units": {"USD": stale}},
+        "RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": current}},
+    }}
+    concept, points = _measure_points(
+        facts, ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax"], "USD"
+    )
+    assert concept == "RevenueFromContractWithCustomerExcludingAssessedTax"
+    assert points == current
