@@ -140,6 +140,7 @@ def main(start, end, out_dir, verbose):
             ai_out = propose(st, rules, cands, theses, features, meta, breadth, prompt=prompt)
             decisions_today += ai_out["decisions"]
 
+        done = []
         if decisions_today:
             done = executor.execute(decisions_today, st, rules, universe,
                                     dry_run=False, submit=submit, close=close)
@@ -148,7 +149,20 @@ def main(start, end, out_dir, verbose):
                     records[d["ticker"]] = {**d, "decided_at": f"{iso}T21:05:00Z"}
                 if d["action"] == "SELL" and d["status"] == "executed":
                     records.pop(d["ticker"], None)
-            log.append({"date": iso, "commentary": (ai_out or {}).get("commentary"),
+
+        # Log every cycle the AI ran, not only the ones that traded.
+        #
+        # A quiet week used to leave no trace at all, which made "it reviewed
+        # everything and held" indistinguishable from "the cycle never fired"
+        # or "the API call failed". The commentary and the ranked review were
+        # produced and then thrown away for want of a trade to attach them to
+        # - and on a week where nothing happens, the reasoning for why nothing
+        # happened is the only output worth having.
+        if ai_out or decisions_today:
+            log.append({"date": iso,
+                        "commentary": (ai_out or {}).get("commentary"),
+                        "review": (ai_out or {}).get("review"),
+                        "considered": (ai_out or {}).get("considered"),
                         "decisions": done})
             if verbose:
                 print(f"{iso}  ${st['totals']['total_value']:>11,.0f}  "
