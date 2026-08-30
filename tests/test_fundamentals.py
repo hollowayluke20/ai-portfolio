@@ -64,12 +64,13 @@ def test_etf_without_cik_has_no_measures(monkeypatch):
     assert refresh_fundamentals(["SPY"])["SPY"] == {"cik": None, "measures": {}}
 
 
-def test_measure_points_prefers_the_expected_unit_and_keeps_12_rows():
+def test_measure_points_prefers_the_expected_unit_and_keeps_24_rows():
     rows = [{"end": f"2024-01-{day:02d}", "filed": "2024-02-01", "val": day} for day in range(1, 26)]
     facts = {"us-gaap": {"Revenues": {"units": {"shares": [{"val": 999}], "USD": rows}}}}
     concept, points = _measure_points(facts, ["Revenues"], "USD")
     assert concept == "Revenues"
-    assert len(points) == 12 and points[0]["val"] == 14
+    # 25 rows in, the newest 24 kept, so the oldest survivor is day 2.
+    assert len(points) == 24 and points[0]["val"] == 2
 
 
 def test_measure_points_prefers_the_tag_with_current_filings():
@@ -84,3 +85,39 @@ def test_measure_points_prefers_the_tag_with_current_filings():
     )
     assert concept == "RevenueFromContractWithCustomerExcludingAssessedTax"
     assert points == current
+
+
+# Apple's real filing shape: Q1-Q3 arrive as quarters, but the September
+# quarter never does - it exists only as the 10-K year minus the nine-month
+# cumulative. Keeping only rows already under 110 days drops it, and the four
+# "most recent quarters" then span 455 days with a hole in the middle.
+#
+# That produced 8.44 against a true 8.71, and an outside source showing 8.72.
+# The 3% gap was visible in the audit from its first run and was dismissed as
+# a definitional difference. It was this.
+APPLE_REAL = [
+    {"start": "2024-09-29", "end": "2025-06-28", "filed": "2026-07-31", "val": 5.62},
+    {"start": "2024-09-29", "end": "2025-09-27", "filed": "2025-10-31", "val": 7.46},
+    {"start": "2025-09-28", "end": "2025-12-27", "filed": "2026-01-30", "val": 2.84},
+    {"start": "2025-09-28", "end": "2026-03-28", "filed": "2026-05-01", "val": 4.85},
+    {"start": "2025-12-28", "end": "2026-03-28", "filed": "2026-05-01", "val": 2.01},
+    {"start": "2025-09-28", "end": "2026-06-27", "filed": "2026-07-31", "val": 6.88},
+    {"start": "2026-03-29", "end": "2026-06-27", "filed": "2026-07-31", "val": 2.02},
+]
+
+
+def test_ttm_derives_the_quarter_that_is_never_filed():
+    ttm = compute_ttm(APPLE_REAL, "2026-08-30")
+    assert ttm is not None, "no fourth quarter was derived"
+    # 2.84 + 2.01 + 2.02 + (7.46 - 5.62)
+    assert round(ttm, 2) == 8.71
+
+
+def test_a_derived_quarter_never_double_counts_a_filed_one():
+    """The derived and filed versions of one quarter start a day apart.
+
+    Keyed on the whole period both survive, the same three months are counted
+    twice, and the span check then rejects everything. One row per period end.
+    """
+    ttm = compute_ttm(APPLE_REAL, "2026-08-30")
+    assert ttm is not None and ttm < 10, "a quarter was counted twice"

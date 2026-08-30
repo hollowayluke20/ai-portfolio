@@ -16,6 +16,31 @@
 "use strict";
 
 const STALE_HOURS = 26; // a daily cycle plus margin (ADR 0004)
+
+/* How old the data is allowed to get before it counts as stale.
+
+   26 hours covers a normal weekday gap. But update-state runs Mon-Fri only,
+   so from Friday's close to Monday's is about 72 hours with nothing wrong at
+   all - and a flat 26-hour rule put a red STALE banner on this page from
+   Saturday lunchtime until Monday evening, every single week.
+
+   That is worse than no warning. A banner that is always on during the
+   weekend is one the reader learns to scroll past, and then it is not there
+   on the Tuesday the pipeline actually breaks. Each intervening weekend day
+   buys another 24 hours, because no cycle was ever due to run. */
+function staleAfterHours(iso) {
+  const from = new Date(iso);
+  if (isNaN(from)) return STALE_HOURS;
+  const now = new Date();
+  let closedDays = 0;
+  const cursor = new Date(from);
+  while (cursor < now) {
+    const day = cursor.getUTCDay();
+    if (day === 0 || day === 6) closedDays++;
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return STALE_HOURS + closedDays * 24;
+}
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -163,7 +188,7 @@ function renderAlerts(state) {
   const parts = [];
 
   const age = ageHoursOf(state.generated_at);
-  if (age > STALE_HOURS) {
+  if (age > staleAfterHours(state.generated_at)) {
     parts.push(
       `<div class="banner" role="alert">
          <span class="btitle">Stale data — ${esc(fmtAge(age))}</span>
@@ -192,7 +217,7 @@ function renderAlerts(state) {
 
 function renderStamp(state) {
   const age = ageHoursOf(state.generated_at);
-  const stale = age > STALE_HOURS;
+  const stale = age > staleAfterHours(state.generated_at);
   $("stamp").innerHTML =
     `<span>Prices — ${esc(fmtStamp(state.market_data_as_of))}</span>
      <span>Written — ${esc(fmtStamp(state.generated_at))}</span>
