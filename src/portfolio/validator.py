@@ -91,6 +91,8 @@ def validate_static(decisions, state, rules, universe):
     bond_tickers = set(sleeves["bond"]["tickers"])
     projected_bond, projected_risk = _projected_sleeves(decisions, held, rules)
     limits = rules["position_count"]
+    ceiling = rules.get("cash", {}).get("ceiling")
+    cash_weight = float(state.get("totals", {}).get("cash_weight") or 0.0)
     projected = set(held)
     for proposal in decisions:
         ticker, action = proposal.get("ticker"), proposal.get("action")
@@ -182,6 +184,27 @@ def validate_static(decisions, state, rules, universe):
                       and projected_count < limits["minimum"]):
                     reason = (f"discretionary sell would leave {projected_count} positions, "
                               f"below the minimum of {limits['minimum']}")
+                elif (action == "SELL" and decision.get("trigger", "ai") == "ai"
+                      and ceiling is not None and cash_weight > ceiling):
+                    # The cash CEILING, and it gates only discretionary sells.
+                    #
+                    # It exists to stop money sitting idle - a performance
+                    # rule, not a safety one. So it must never block a stop
+                    # loss or a trim: gating a safety exit on a performance
+                    # rule is backwards, exactly as the position-count minimum
+                    # above already refuses to.
+                    #
+                    # It cannot be enforced by rejecting buys either, because
+                    # rejecting a buy RAISES cash. The only lever a validator
+                    # has is to stop the book selling further while it is
+                    # already sitting on too much - redeploy first.
+                    #
+                    # Found by replaying Feb-Apr 2025: eleven thesis-driven
+                    # exits left 32% in cash against a 15% ceiling that was in
+                    # the rules file, visible to the model, and enforced by
+                    # nothing.
+                    reason = (f"cash is {cash_weight:.4f}, above the ceiling of "
+                              f"{ceiling:.4f} - redeploy before selling more")
                 elif action != "HOLD":
                     notional = decision.get("notional")
                     if not isinstance(notional, (int, float)) or notional < minimum_notional:
