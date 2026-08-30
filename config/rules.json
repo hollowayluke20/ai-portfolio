@@ -8,9 +8,25 @@
     "maximum": 20
   },
 
+  "_comment_position_weight": "No fixed target any more. Position size is DERIVED: each sleeve's weight divided by the number of holdings in it. 60% equity across 12 names is 5% each. Caps differ by instrument because they exist to limit single-company blow-up risk, and a bond fund holding thousands of issues is not one company.",
+
   "position_weight": {
-    "target": 0.063,
-    "hard_cap": 0.10
+    "hard_cap_company": 0.10,
+    "hard_cap_fund": 0.25
+  },
+
+  "_comment_sleeves": "The allocation decision, and the AI's main lever. It picks where inside these bands to sit and must justify it. Wide on purpose: in 2022 bonds fell harder than shares (TLT -29.3% vs SPY -24.5%), so a fixed 'when shares fall, buy bonds' rule would have made that year worse. The band bounds the damage at both ends and leaves the judgement inside it. 'risk' is everything that is not a bond fund and not cash - shares, gold, commodities, property.",
+
+  "sleeves": {
+    "bond": {
+      "tickers": ["IEF", "AGG", "TLT"],
+      "min": 0.25,
+      "max": 0.75
+    },
+    "risk": {
+      "min": 0.25,
+      "max": 0.75
+    }
   },
 
   "cash": {

@@ -17,13 +17,79 @@ def _held_positions(state):
     return {position["ticker"]: position for position in state.get("positions", [])}
 
 
+def _projected_sleeves(decisions, held, rules):
+    """Sleeve weights the book would carry if every proposal were filled.
+
+    Computed once for the whole cycle, like `projected_count`, because a
+    sleeve band is a property of the finished portfolio and cannot be judged
+    from one decision in isolation.
+
+    HOLD and anything unmentioned keeps its current weight; BUY and TRIM move
+    to their target; SELL goes to zero.
+    """
+    weights = {t: float(p.get("weight") or 0.0) for t, p in held.items()}
+    for proposal in decisions:
+        ticker, action = proposal.get("ticker"), proposal.get("action")
+        if not ticker or action not in VALID_ACTIONS:
+            continue
+        if action == "SELL":
+            weights[ticker] = 0.0
+        elif action in {"BUY", "TRIM"}:
+            target = proposal.get("target_weight")
+            if isinstance(target, (int, float)):
+                weights[ticker] = float(target)
+    bond_tickers = set(rules["sleeves"]["bond"]["tickers"])
+    bond = sum(w for t, w in weights.items() if t in bond_tickers)
+    risk = sum(w for t, w in weights.items() if t not in bond_tickers)
+    return bond, risk
+
+
+def _broad_cap_breach(ticker, target_weight, held, rules):
+    """Why this BUY breaches the combined broad-US-equity cap, or None."""
+    cap = rules.get("broad_us_equity_cap")
+    if not cap or ticker not in cap.get("tickers", []):
+        return None
+    broad = sum(p.get("weight", 0) for p in held.values()
+                if p["ticker"] in cap["tickers"])
+    combined = broad + target_weight
+    if combined > cap["limit"]:
+        return (f"broad US equity weight {combined:.4f} "
+                f"exceeds limit {cap['limit']:.4f}")
+    return None
+
+
+def _sleeve_breach(ticker, bond_tickers, sleeves, projected_bond, projected_risk):
+    """Why this BUY is refused on allocation grounds, or None."""
+    bond, risk = sleeves["bond"], sleeves["risk"]
+    buying_bonds = ticker in bond_tickers
+    if buying_bonds:
+        if projected_bond > bond["max"]:
+            return (f"bond sleeve would reach {projected_bond:.4f}, "
+                    f"above its maximum of {bond['max']:.4f}")
+        if projected_risk < risk["min"]:
+            return (f"risk sleeve would sit at {projected_risk:.4f}, below its "
+                    f"minimum of {risk['min']:.4f} - raise it before adding bonds")
+    else:
+        if projected_risk > risk["max"]:
+            return (f"risk sleeve would reach {projected_risk:.4f}, "
+                    f"above its maximum of {risk['max']:.4f}")
+        if projected_bond < bond["min"]:
+            return (f"bond sleeve would sit at {projected_bond:.4f}, below its "
+                    f"minimum of {bond['min']:.4f} - raise it before adding risk")
+    return None
+
+
 def validate_static(decisions, state, rules, universe):
     """Return copied decisions annotated with order-independent validation."""
     held = _held_positions(state)
     assets = _asset_map(state)
     tickers = set(universe.get("tickers", universe) if isinstance(universe, dict) else universe)
     minimum_notional = float(rules.get("minimum_notional", 1.0))
-    cap = float(rules["position_weight"]["hard_cap"])
+    weight_caps = rules["position_weight"]
+    funds = set(rules.get("etf_universe", []))
+    sleeves = rules["sleeves"]
+    bond_tickers = set(sleeves["bond"]["tickers"])
+    projected_bond, projected_risk = _projected_sleeves(decisions, held, rules)
     limits = rules["position_count"]
     projected = set(held)
     for proposal in decisions:
@@ -57,13 +123,39 @@ def validate_static(decisions, state, rules, universe):
                 pass
             elif not isinstance(decision.get("target_weight"), (int, float)) or not 0 <= decision["target_weight"] <= 1:
                 reason = "target_weight must be a decimal fraction between 0 and 1"
-            elif action in {"BUY", "TRIM"} and decision["target_weight"] > cap:
-                reason = f"target_weight exceeds hard cap of {cap}"
-            elif action == "BUY" and ticker in rules.get("broad_us_equity_cap", {}).get("tickers", []):
-                broad = sum(p.get("weight", 0) for p in held.values() if p["ticker"] in rules["broad_us_equity_cap"]["tickers"])
-                combined = broad + decision["target_weight"]
-                if combined > rules["broad_us_equity_cap"]["limit"]:
-                    reason = f"broad US equity weight {combined:.4f} exceeds limit {rules['broad_us_equity_cap']['limit']:.4f}"
+            elif action in {"BUY", "TRIM"} and decision["target_weight"] > (
+                cap := float(weight_caps["hard_cap_fund" if ticker in funds
+                                         else "hard_cap_company"])):
+                # Two caps, because the cap exists to stop one COMPANY blowing
+                # a hole in the book. A bond fund holds thousands of issues;
+                # capping it like a single share is the wrong rule. The
+                # separate broad_us_equity_cap still stops SPY/VOO/QQQ
+                # quietly turning this into an index tracker.
+                kind = "fund" if ticker in funds else "company"
+                reason = f"target_weight exceeds the {kind} hard cap of {cap}"
+            elif action == "BUY" and (
+                    _broad_reason := _broad_cap_breach(ticker, decision["target_weight"],
+                                                       held, rules)):
+                # NB the walrus: this branch must only MATCH when it actually
+                # has a complaint. Written as `elif ticker in capped_tickers:`
+                # it matched every SPY/VOO/QQQ buy and then fell out of the
+                # chain with no reason set - silently skipping the position
+                # count, notional and sleeve checks for exactly the three
+                # tickers most able to distort the book.
+                reason = _broad_reason
+            elif action == "BUY" and (
+                    _sleeve_reason := _sleeve_breach(ticker, bond_tickers, sleeves,
+                                                     projected_bond, projected_risk)):
+                # The allocation band, judged on the finished book rather than
+                # one buy at a time.
+                #
+                # Buying INTO an over-full sleeve is blocked. Being under a
+                # floor blocks buys in the OTHER sleeve instead - the same
+                # principle as the position-count minimum below. Rejecting the
+                # buy that would fix a shortfall is backwards: no rejection can
+                # ever create a position, so blocking the cure leaves the book
+                # stuck out of band forever.
+                reason = _sleeve_reason
             elif action in {"SELL", "TRIM"} and ticker not in held:
                 reason = f"{action} requires an existing holding of {ticker}"
             else:

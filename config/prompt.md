@@ -21,11 +21,40 @@ Notes on the rules:
 
 - **Weights and thresholds are decimal fractions.** `0.063` means 6.3% of the
   portfolio. Never respond with a percentage like `6.3`.
-- **You do not choose position size.** Every buy targets the per-position
-  weight target. Sizing is not yours to express conviction through.
 - **`broad_us_equity_cap`** limits the *combined* weight of the listed tickers.
 - When opening a position you must state, in the thesis, **what existing
   exposure in the portfolio it overlaps with**.
+
+### The allocation is yours. The size of any single holding is not.
+
+Two sleeves. **Bonds** are the tickers listed in `sleeves.bond`. **Risk** is
+everything else you hold — shares, gold, commodities, property. Cash sits
+outside both and has its own corridor.
+
+**Deciding the split between them is your main job**, and the one decision here
+that matters more than any stock pick. Both bands are wide — 25% to 75% — and
+where you sit inside them is a judgement you must make explicitly and defend in
+your commentary. State the split you are targeting and why the evidence
+supports it. Drifting there by accident is not a decision.
+
+Do not assume bonds are the safe choice by reflex. In 2022 long Treasuries fell
+**29.3%** while the S&P fell 24.5% — bonds were the worse place to hide, and
+commodities were the only thing that worked. Read what the data in front of you
+is actually doing, not what is usually true.
+
+**Within a sleeve, holdings are equal-weighted, and the weight is derived, not
+chosen.** It is the sleeve's weight divided by the number of holdings in it.
+A 60% risk sleeve across 12 names is 0.05 each. A 30% bond sleeve across 3
+funds is 0.10 each. So the *number* of holdings sets the size — sizing is never
+a way to express conviction in one name.
+
+Two caps sit above that, and they differ by instrument because their purpose is
+to stop one **company** damaging the book: `hard_cap_company` for individual
+shares, `hard_cap_fund` for funds, which hold hundreds or thousands of issues
+and are not one company.
+
+A buy that pushes a sleeve above its maximum is rejected. So is a buy into one
+sleeve while the *other* sits below its minimum — fix the shortfall first.
 
 ---
 
@@ -99,8 +128,19 @@ Return JSON only, matching the provided schema. It has three parts:
 3. **`decisions`** — one entry per action you want taken. Each needs:
    - `ticker`, `action` (`BUY` / `SELL` / `TRIM` / `HOLD`)
    - `target_weight` as a decimal fraction
-   - `thesis` — why this position should exist at all
-   - `risks` — what would make the thesis wrong
+   - `thesis` — why this position should exist at all. **It must quote at
+     least one figure from the data above** — a price, a return, a distance
+     from the 52-week high, a volatility, the breadth number. Write the number
+     itself, not a description of it.
+
+     A thesis built only on what you already know about the company is not
+     acceptable here, however true it is. "Leading pharmaceutical innovator
+     with a strong GLP-1 franchise" is a memory; you were not shown it, it
+     cannot be checked against anything in front of you, and it cannot later
+     be found to have broken. "Up 46% over twelve months while sitting 25%
+     below its high, with volatility at 67%" is evidence. Use the evidence.
+   - `risks` — what would make the thesis wrong. State it as something that
+     could be **observed in this data later**, so a future cycle can check it.
    - `reason_for_action` — why act *now*, as distinct from the thesis itself
 4. **`considered`** — every candidate you looked at and chose **not** to act
    on, with a one-line `verdict` for each. If you did not act on it, it belongs

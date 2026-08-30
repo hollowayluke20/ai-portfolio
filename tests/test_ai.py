@@ -106,7 +106,10 @@ def test_rules_block_matches_rules_json_exactly():
     block = ai._render_rules(RULES)
     # every leaf value from rules.json appears in the rendered block
     assert "position_count.target: 15" in block
-    assert "position_weight.hard_cap: 0.1" in block
+    assert "position_weight.hard_cap_company: 0.1" in block
+    assert "position_weight.hard_cap_fund: 0.25" in block
+    assert "sleeves.bond.min: 0.25" in block
+    assert "sleeves.risk.max: 0.75" in block
     assert "cash.floor: 0.05" in block
     assert "sell_triggers.stop_loss_pct: -0.2" in block
     assert "ai.model: gemini-3.6-flash" in block

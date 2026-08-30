@@ -2,7 +2,11 @@ from src.portfolio import executor
 
 
 UNIVERSE = ["AAPL", "NVDA", "MSFT", "SPY", "QQQ", "GLD"]
-RULES = {"position_weight": {"hard_cap": .10}, "position_count": {"minimum": 0, "maximum": 20}, "cash": {"floor": .05}}
+RULES = {"position_weight": {"hard_cap_company": .10, "hard_cap_fund": .25},
+         "position_count": {"minimum": 0, "maximum": 20}, "cash": {"floor": .05},
+         "etf_universe": ["SPY", "IEF", "AGG", "TLT", "GLD"],
+         "sleeves": {"bond": {"tickers": [], "min": 0.0, "max": 1.0},
+                     "risk": {"min": 0.0, "max": 1.0}}}
 
 
 def _state(cash=100):
