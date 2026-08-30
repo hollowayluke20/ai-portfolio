@@ -265,12 +265,14 @@ def _post_with_retry(url: str, body: dict, api_key: str) -> dict:
 
 
 def _call_gemini(prompt: str, model: str, api_key: str) -> str:
-    """One full request/response. Returns the raw JSON text the model produced."""
+    """One deterministic request/response; fixed seed is best-effort per Gemini."""
     body = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "responseMimeType": "application/json",
             "responseSchema": RESPONSE_SCHEMA,
+            "temperature": 0,
+            "seed": 1,
         },
     }
     data = _post_with_retry(GEMINI_URL.format(model=model), body, api_key)

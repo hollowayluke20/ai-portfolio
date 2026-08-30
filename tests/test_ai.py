@@ -202,3 +202,26 @@ def test_model_name_comes_from_rules_not_hardcoded():
     src = inspect.getsource(ai)
     assert "gemini-3.6-flash" not in src
     assert "gemini-2.5" not in src  # no fallback model mentioned
+
+
+def test_gemini_http_payload_sets_deterministic_generation(monkeypatch):
+    captured = {}
+
+    class Response:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"candidates": [{"content": {"parts": [{"text": "{}"}]}}]}
+
+    def post(url, **kwargs):
+        captured["url"] = url
+        captured.update(kwargs)
+        return Response()
+
+    monkeypatch.setattr(ai.requests, "post", post)
+    assert ai._call_gemini("prompt", "pinned-model", "test-key") == "{}"
+    assert captured["json"]["generationConfig"]["temperature"] == 0
+    assert captured["json"]["generationConfig"]["seed"] == 1
