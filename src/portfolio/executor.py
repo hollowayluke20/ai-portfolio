@@ -66,10 +66,34 @@ def execute(decisions, state, rules, universe, dry_run: bool, submit=None, close
     """Validate, sell/trim first, then buy in the supplied priority order."""
     submit = submit_order if submit is None else submit
     close = close_full_position if close is None else close
-    prepared = []
+    # ONE decision per ticker per cycle. Mechanical triggers are passed in
+    # ahead of the AI's proposals, so the first occurrence wins and the stop
+    # loss always outranks a discretionary opinion about the same holding.
+    #
+    # Without this, a stop-loss day submits the exit TWICE: run_cycle filters
+    # exiting tickers out of the candidate list, but the AI may act on anything
+    # it already holds, so it proposes its own SELL for the same position and
+    # both reach the broker. The second close hits a position that no longer
+    # exists - 404, BrokerError, and the cycle dies during the SELL phase,
+    # before a single BUY. The record is never written and state.json never
+    # updates, so the day the guardrail fires is the day the cycle breaks
+    # half-finished. Found by the Jan-Mar 2026 backtest (CEG, -20.92%), which
+    # the fake broker had hidden: its settle() does sell=min(qty, held), so a
+    # duplicate exit silently became a zero-share fill.
+    # Duplicates never reach validate_static: it would reset `valid` and let
+    # the superseded order through anyway.
+    prepared, superseded, seen = [], [], {}
     for decision in decisions:
         item = deepcopy(decision)
         item["notional"] = _planned_notional(item, state)
+        ticker = item.get("ticker")
+        if ticker in seen:
+            item.update(valid=False, status="rejected", order_id=None,
+                        rejection_reason=f"superseded by the {seen[ticker]} decision "
+                                         f"for {ticker} earlier in this cycle")
+            superseded.append(item)
+            continue
+        seen[ticker] = item.get("trigger") or str(item.get("action", "")).lower()
         prepared.append(item)
     # universe is passed in explicitly. It was previously derived from `state`,
     # which has no such key (ADR 0004), so it silently resolved to an empty set
@@ -102,4 +126,8 @@ def execute(decisions, state, rules, universe, dry_run: bool, submit=None, close
                 # Consequence: a sell-to-fund-a-buy rebalance takes two cycles.
                 _submit_or_skip(decision, dry_run, submit, close)
             results.append(decision)
+    # Superseded duplicates are reported, never submitted. They belong in the
+    # record: a reviewer must be able to see that the AI also wanted to sell
+    # the position the stop was already selling.
+    results.extend(superseded)
     return results

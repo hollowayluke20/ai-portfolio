@@ -17,6 +17,11 @@ def write_cycle(path, cycle_id, decided_at, state, ai_output, executed):
         "portfolio_value_at_decision": state["totals"]["total_value"],
         "commentary": ai_output["commentary"],
         "decisions": executed,
+        # The weakest-to-strongest ranking. Kept in the record because it is
+        # the evidence that every holding was actually re-examined this cycle,
+        # not merely left alone - the Jan-Mar 2026 backtest showed four
+        # consecutive cycles of HOLD with nothing to show what was considered.
+        "review": ai_output.get("review", []),
         "considered": ai_output.get("considered", []),
     }
     destination.parent.mkdir(parents=True, exist_ok=True)

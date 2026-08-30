@@ -65,6 +65,18 @@ RESPONSE_SCHEMA = {
                 "required": list(_DECISION_FIELDS),
             },
         },
+        "review": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "ticker": {"type": "string"},
+                    "rank": {"type": "integer"},
+                    "verdict": {"type": "string"},
+                },
+                "required": ["ticker", "rank", "verdict"],
+            },
+        },
         "considered": {
             "type": "array",
             "items": {
@@ -77,7 +89,7 @@ RESPONSE_SCHEMA = {
             },
         },
     },
-    "required": ["commentary", "decisions", "considered"],
+    "required": ["commentary", "review", "decisions", "considered"],
 }
 
 
@@ -114,18 +126,46 @@ def _render_rules(rules: dict) -> str:
     return "\n".join(lines)
 
 
-def _render_positions(state: dict, held_theses: dict[str, str]) -> str:
+def _render_positions(state: dict, held_theses: dict[str, str], features=None) -> str:
+    """Each holding with its thesis, the risks that would falsify it, and how
+    the asset is actually behaving.
+
+    Three things used to be missing, and together they made discretionary
+    selling near-impossible. The Jan-Mar 2026 backtest ran nine weeks and
+    produced four consecutive cycles of HOLD x15; its only sale was forced by
+    the stop loss.
+
+      * `risks` was captured on every buy and never shown back. The model wrote
+        down what would prove it wrong, then was asked weekly whether the
+        thesis still held without being shown its own test.
+      * The price evidence sat in the candidates block, hundreds of lines below
+        the question, so the two had to be joined by the reader.
+      * Unrealised P&L is measured from OUR entry. A position opened last week
+        reads about zero however badly the asset is behaving; it describes our
+        timing, not the asset.
+    """
     positions = state.get("positions", [])
     if not positions:
         return "None — the portfolio is entirely in cash."
     lines = []
     for p in positions:
-        thesis = held_theses.get(p["ticker"], "(no recorded thesis on file)")
-        lines.append(
-            f"- {p['ticker']}: weight {p.get('weight')}, "
-            f"unrealised P&L {p.get('unrealized_pl')} "
-            f"({p.get('unrealized_pl_pct')}). Original thesis: {thesis}"
-        )
+        ticker = p["ticker"]
+        thesis = p.get("thesis") or held_theses.get(ticker) or "(no recorded thesis on file)"
+        line = (f"- {ticker}: weight {p.get('weight')}, "
+                f"unrealised P&L {p.get('unrealized_pl')} ({p.get('unrealized_pl_pct')})"
+                f"{', opened ' + p['opened_at'][:10] if p.get('opened_at') else ''}.")
+        feature = (features or {}).get(ticker)
+        if feature is not None:
+            pct = lambda v: "n/a" if v is None else f"{v:+.1%}"
+            trend = ("n/a" if feature.above_200d_ma is None
+                     else ("above 200d" if feature.above_200d_ma else "BELOW 200d"))
+            line += (f"\n    now: ${feature.price:.2f}, 1m {pct(feature.ret_1m)}, "
+                     f"12m {pct(feature.ret_12m)}, {pct(feature.pct_off_52w_high)} off high, "
+                     f"vol {pct(feature.vol_60d)}, {trend}")
+        line += f"\n    thesis: {thesis}"
+        if p.get("risks"):
+            line += f"\n    risks it was bought with: {p['risks']}"
+        lines.append(line)
     return "\n".join(lines)
 
 
@@ -166,7 +206,7 @@ def render_prompt(state, rules, candidates, held_theses, features=None, metadata
         "{TOTAL_VALUE}": str(totals.get("total_value")),
         "{AVAILABLE_CASH}": str(totals.get("available_cash")),
         "{CASH_WEIGHT}": str(totals.get("cash_weight")),
-        "{POSITIONS}": _render_positions(state, held_theses),
+        "{POSITIONS}": _render_positions(state, held_theses, features),
         "{PENDING_ORDERS}": _render_pending_orders(state),
         "{CANDIDATES}": "\n".join(_market_line(t, features or {}, metadata or {}) for t in candidates) if candidates else "None.",
         "{MARKET_CONTEXT}": "As of the last close; next-open fills are unknown.\n" + "\n".join(_market_line(t, features or {}, metadata or {}) for t in rules["etf_universe"]) + f"\nMarket breadth: {'n/a' if breadth is None else f'{breadth:.1%}'} of the universe is above its 200-day average.",
@@ -295,7 +335,18 @@ def _parse(text: str) -> dict:
             raise _Malformed("a considered entry is malformed")
         considered.append({"ticker": entry["ticker"], "verdict": entry["verdict"]})
 
-    return {"commentary": obj["commentary"], "decisions": decisions, "considered": considered}
+    # `review` is enforced by RESPONSE_SCHEMA at the API level, so it is parsed
+    # leniently here: a missing or malformed ranking must not discard a cycle
+    # whose decisions are otherwise valid.
+    review = []
+    for entry in obj.get("review") or []:
+        if isinstance(entry, dict) and {"ticker", "rank", "verdict"} <= set(entry):
+            review.append({"ticker": entry["ticker"], "rank": entry["rank"],
+                           "verdict": entry["verdict"]})
+    review.sort(key=lambda r: r["rank"] if isinstance(r["rank"], int) else 999)
+
+    return {"commentary": obj["commentary"], "review": review,
+            "decisions": decisions, "considered": considered}
 
 
 def propose(state, rules, candidates, held_theses, features=None, metadata=None,

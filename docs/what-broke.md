@@ -248,3 +248,71 @@ can only be as correct as its model of the thing it replaces.**
 
 Twenty-five dollars of bitcoin on a Saturday tested what a year of fake data
 could not.
+
+---
+
+## 2026-08-30 — The day the stop fires is the day the cycle dies
+
+Found by replaying the real prompt and the real rules through real historical
+prices, January to March 2026 (`scripts/backtest.py`). On 30 January the
+backtest sold CEG at −20.92% — and sold it **twice**:
+
+```
+OK SELL CEG   stop_loss       Stop-loss threshold breached: -20.92%.
+OK SELL CEG   thesis_change   Position hit mandatory stop-loss trigger at -20.92%...
+```
+
+`run_cycle.py` removes an exiting ticker from the **candidate** list, but the
+prompt permits acting on anything already **held**, so the AI proposed its own
+exit for the position the stop was already closing. `execute()` had no dedupe,
+so both reached the broker.
+
+In production a full exit is `DELETE /v2/positions/CEG`. The second call hits a
+position that no longer exists — 404, `BrokerError`, nothing catches it. The
+execution order is `SELL, TRIM, HOLD, BUY`, so the cycle dies during the sell
+phase: no buy is placed, `write_cycle` never runs, and `state.json` is never
+updated. The portfolio is left half-adjusted with no record that anything
+happened.
+
+**Fixed:** one decision per ticker per cycle, first occurrence wins. Mechanical
+triggers are passed in ahead of the AI's proposals, so the stop always
+outranks a discretionary opinion on the same holding. The superseded decision
+is kept in the record, marked rejected — a reviewer must be able to see that
+the AI also wanted to sell it.
+
+### Why the simulator could never have found this
+
+`sim/broker.py` settles a sale with `sell = min(qty, held)`. A duplicate exit
+silently became a zero-share fill. The fake broker was more forgiving than the
+real one, so the bug was invisible for as long as we only tested against it.
+
+That is the same lesson as 2026-08-29, from the other direction: **a simulation
+is only as correct as its model of the thing it replaces.** The fake broker had
+no price drift, so it could not find the notional-exit bug. It had a forgiving
+sell, so it could not find this one.
+
+### The finding that mattered more
+
+Nine simulated weeks produced **four consecutive cycles of `HOLD ×15`**. The
+only sale in the whole run was forced by arithmetic. The AI never once decided
+a position had gone bad.
+
+Three causes, all in the prompt layer, all now fixed:
+
+- **`risks` was captured on every buy and never shown back.** The model wrote
+  down what would prove it wrong, then was asked weekly whether the thesis
+  still held without being shown its own test.
+- **The price evidence sat hundreds of lines below the question**, in the
+  candidates block rather than on the position's own line.
+- **Unrealised P&L is measured from our entry**, so it describes our timing,
+  not the asset. A position opened last week reads near zero however badly it
+  is behaving.
+
+A required `review` field now makes the model rank every holding weakest to
+strongest and justify keeping the bottom two. It is pressure to *evaluate*,
+not to trade — forcing a weekly sale would be worse than freezing.
+
+**Still unfixed, and the real limit:** price is the only evidence available, so
+"weakest conviction" still means "worst price action". Until the model sees
+news or fundamentals, every discretionary sell is a momentum call wearing a
+thesis.

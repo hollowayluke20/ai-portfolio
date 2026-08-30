@@ -37,10 +37,16 @@ Notes on the rules:
 
 ### Positions held
 
-For every position below, its **original thesis** is shown. Say explicitly, in
-your commentary or in a HOLD/SELL/TRIM decision, **whether that thesis still
-holds**. A position whose thesis has broken is a sell candidate even if it is
-up.
+Each position below shows four things: its **original thesis**, the **risks it
+was bought with** — the conditions you yourself said would prove the thesis
+wrong — how the asset is **actually behaving now**, and our unrealised P&L.
+
+Read those together. The P&L is measured from our entry price, so it describes
+our timing, not the asset: a position opened last week reads near zero however
+badly it is behaving. The `now:` line is the asset itself.
+
+**A position whose stated risks have materialised is a sell candidate even if
+it is up. A position that is down but whose thesis is intact is not.**
 
 {POSITIONS}
 
@@ -80,13 +86,23 @@ Return JSON only, matching the provided schema. It has three parts:
 
 1. **`commentary`** — your portfolio-level narrative: what you see, what
    changed, what you are doing and why.
-2. **`decisions`** — one entry per action you want taken. Each needs:
+2. **`review`** — **every** holding, ranked. `rank` 1 is your weakest
+   conviction, ascending to your strongest. One line of `verdict` each.
+
+   For the two lowest-ranked holdings the verdict must answer a specific
+   question: **why is this still held rather than sold?** Not whether it is
+   down — whether the reason it was bought is still true. If you cannot give a
+   reason that would persuade a reviewer, sell it.
+
+   Rank every position, including ones you are selling. If the portfolio holds
+   nothing, return an empty array.
+3. **`decisions`** — one entry per action you want taken. Each needs:
    - `ticker`, `action` (`BUY` / `SELL` / `TRIM` / `HOLD`)
    - `target_weight` as a decimal fraction
    - `thesis` — why this position should exist at all
    - `risks` — what would make the thesis wrong
    - `reason_for_action` — why act *now*, as distinct from the thesis itself
-3. **`considered`** — every candidate you looked at and chose **not** to act
+4. **`considered`** — every candidate you looked at and chose **not** to act
    on, with a one-line `verdict` for each. If you did not act on it, it belongs
    here.
 

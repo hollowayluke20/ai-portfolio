@@ -28,3 +28,6 @@ data/dry-runs/
 
 # simulation output - regenerable, not a record
 sim-out/
+
+# backtest output - regenerable, and the run log is a scratch artifact
+data/backtests/
