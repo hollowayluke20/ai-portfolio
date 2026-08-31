@@ -79,6 +79,15 @@ def main(live: bool) -> int:
     rules = load_rules()
     universe = load_universe()
     universe_metadata = json.loads((REPO / "config" / "universe.json").read_text(encoding="utf-8")).get("metadata", {})
+    # Fundamentals are a file, not a fetch: company accounts change four times
+    # a year, so they are refreshed on their own schedule and read here. A
+    # missing file is not fatal - the cycle runs on price and news, which is
+    # what it did before this existed.
+    try:
+        fundamentals = json.loads((REPO / "data" / "fundamentals.json").read_text(encoding="utf-8"))["tickers"]
+    except Exception as exc:
+        print(f"fundamentals unavailable, continuing without them: {exc}")
+        fundamentals = {}
     held_symbols = [position["symbol"] for position in positions]
     active_records = dec.read_active_records(DECISIONS_DIR, held_symbols)
 
@@ -132,10 +141,10 @@ def main(live: bool) -> int:
     exiting = {d["ticker"] for d in triggered}
     prompt = __import__("src.portfolio.ai", fromlist=["render_prompt"]).render_prompt(
         st, rules, [c for c in candidates if c not in exiting], theses, features,
-        universe_metadata, breadth, news, news_unavailable,
+        universe_metadata, breadth, news, news_unavailable, fundamentals, cycle_date,
     )
     ai_output = propose(st, rules, [c for c in candidates if c not in exiting], theses,
-                        features, universe_metadata, breadth, news, news_unavailable, prompt=prompt)
+                        features, universe_metadata, breadth, news, news_unavailable, prompt=prompt, fundamentals=fundamentals, as_of=cycle_date)
     proposed = ai_output["decisions"]
     print(f"proposed   : {len(proposed)} decisions, "
           f"{len(ai_output.get('considered', []))} candidates considered")

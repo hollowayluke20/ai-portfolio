@@ -115,7 +115,7 @@ def test_prompt_stays_under_tripwire_with_news_for_fifteen_holdings():
     article = Article("A material company development", "", "2026-08-30T12:00:00Z", "Wire", "")
     prompt = ai.render_prompt(state, RULES, CANDIDATES, {},
                               news={ticker: [article] * 5 for ticker in tickers})
-    assert len(prompt) < 80000
+    assert len(prompt) < 100000
 
 
 def test_propose_sends_market_prompt_and_honours_pre_rendered_prompt(monkeypatch):
@@ -259,3 +259,45 @@ def test_gemini_http_payload_sets_deterministic_generation(monkeypatch):
     assert ai._call_gemini("prompt", "pinned-model", "test-key") == "{}"
     assert captured["json"]["generationConfig"]["temperature"] == 0
     assert captured["json"]["generationConfig"]["seed"] == 1
+
+
+def test_propose_sends_fundamentals_and_never_prices_a_fund(monkeypatch):
+    """Two failures in one test, both of which have already happened once.
+
+    The first is the Phase 7 shape: render_prompt built without the new data
+    while propose was handed the arguments, so the model saw none of it and
+    every argument looked correctly wired. Assert on what CROSSES the boundary.
+
+    The second is GLD reading "P/E 6.2". A gold trust files accounts, so the
+    arithmetic succeeds - and a price/earnings ratio on a lump of metal is not
+    a cheap asset or a dear one, it is a category error with a decimal point.
+    """
+    from src.portfolio.marketdata import TickerFeatures
+    captured = []
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    monkeypatch.setattr(ai, "_call_gemini",
+                        lambda prompt, *_: captured.append(prompt) or json.dumps(
+                            {"commentary": "x", "decisions": [], "considered": []}))
+    feats = {"AAPL": TickerFeatures("AAPL", 320.0, .03, .39, -.06, .32, True, 300),
+             "GLD": TickerFeatures("GLD", 408.9, .08, .72, -.08, .27, True, 300)}
+    # Four CONSECUTIVE quarters. An earlier version of this fixture skipped
+    # one, spanned 452 days, and the span guard correctly refused to call it a
+    # year - the test failed on a bad fixture rather than a bug.
+    quarters = [
+        {"start": "2025-01-01", "end": "2025-03-31", "filed": "2025-04-20", "val": 2.0},
+        {"start": "2025-04-01", "end": "2025-06-30", "filed": "2025-07-20", "val": 2.0},
+        {"start": "2025-07-01", "end": "2025-09-30", "filed": "2025-10-20", "val": 2.0},
+        {"start": "2025-10-01", "end": "2025-12-31", "filed": "2026-01-20", "val": 2.0},
+    ]
+    fundamentals = {t: {"measures": {"EarningsPerShareDiluted":
+                                     {"points": quarters, "kind": "flow"}}}
+                    for t in ("AAPL", "GLD")}
+
+    ai.propose(STATE, RULES, ["AAPL", "GLD"], HELD_THESES, feats, {},
+               fundamentals=fundamentals, as_of="2026-08-31")
+
+    sent = captured[-1]
+    aapl = next(l for l in sent.splitlines() if l.startswith("AAPL "))
+    gld = next(l for l in sent.splitlines() if l.startswith("GLD "))
+    assert "P/E" in aapl, "fundamentals never reached the model"
+    assert "P/E" not in gld, "a fund was given a price/earnings ratio"

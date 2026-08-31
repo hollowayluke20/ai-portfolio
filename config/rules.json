@@ -36,8 +36,8 @@
 
   "sell_triggers": {
     "stop_loss_pct": -0.20,
-    "concentration_trim_threshold": 0.12,
-    "concentration_trim_target": 0.063
+    "_comment_trim": "No trim TARGET here on purpose. It used to be 0.063 - the old one-size-fits-all position weight - and stayed after sizing became derived, so the trim would have cut a 12% bond fund back to 6.3% and dragged the sleeve toward its floor. triggers.py now works it out from the book: the sleeve's weight over the number of holdings in it.",
+    "concentration_trim_threshold": 0.12
   },
 
   "ai": {

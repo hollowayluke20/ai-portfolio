@@ -132,7 +132,12 @@ def _render_rules(rules: dict) -> str:
     def walk(prefix: str, obj: object) -> None:
         if isinstance(obj, dict):
             for key, value in obj.items():
-                if not prefix and (key == "schema_version" or key.startswith("_")):
+                # Underscore keys are comments and are skipped at EVERY depth,
+                # not just the top level. Nested ones used to survive and get
+                # rendered into the prompt as if they were rules - a paragraph
+                # of English explaining why a setting was removed, presented to
+                # the model as a constraint it operates under.
+                if key.startswith("_") or (not prefix and key == "schema_version"):
                     continue
                 walk(f"{prefix}.{key}" if prefix else key, value)
         elif isinstance(obj, list):
@@ -144,7 +149,51 @@ def _render_rules(rules: dict) -> str:
     return "\n".join(lines)
 
 
-def _render_positions(state: dict, held_theses: dict[str, str], features=None) -> str:
+
+def _fundamentals_line(ticker, fundamentals, price, as_of, funds=frozenset()):
+    """P/E, revenue growth and margin for one ticker, or "" if unknowable.
+
+    Deliberately blank rather than zero. A fund has no earnings and a company
+    that has not filed four clean quarters has no trailing year - both are
+    facts, and inventing a number for either would be worse than silence,
+    because a figure carries an authority a gap does not.
+
+    This is the half of the evidence price cannot supply. A thesis like "this
+    business is winning" is falsified by revenue shrinking, not by the share
+    price falling.
+    """
+    # Never for a fund.
+    #
+    # A commodity trust files with the SEC like anything else - GLD reports a
+    # small net income from selling gold to cover its expenses - so the
+    # arithmetic happily produces "P/E 6.2" for a lump of metal. It is not a
+    # cheap asset, it is not an expensive one, the ratio simply does not mean
+    # anything. The same goes for a bond fund's revenue growth.
+    #
+    # These figures answer "is this BUSINESS good and is it dear", and a fund
+    # is not a business.
+    if ticker in funds:
+        return ""
+    entry = (fundamentals or {}).get(ticker)
+    if not entry or not as_of:
+        return ""
+    from .fundamentals import summarise
+    try:
+        f = summarise(entry, price, as_of)
+    except Exception:
+        return ""
+    bits = []
+    if f.get("pe") is not None:
+        bits.append(f"P/E {f['pe']:.1f}")
+    if f.get("revenue_growth") is not None:
+        bits.append(f"rev {f['revenue_growth']:+.1%} y/y")
+    if f.get("net_margin") is not None:
+        bits.append(f"margin {f['net_margin']:.1%}")
+    return ("  " + "  ".join(bits)) if bits else ""
+
+
+def _render_positions(state: dict, held_theses: dict[str, str], features=None,
+                      fundamentals=None, as_of=None, funds=frozenset()) -> str:
     """Each holding with its thesis, the risks that would falsify it, and how
     the asset is actually behaving.
 
@@ -180,6 +229,7 @@ def _render_positions(state: dict, held_theses: dict[str, str], features=None) -
             line += (f"\n    now: ${feature.price:.2f}, 1m {pct(feature.ret_1m)}, "
                      f"12m {pct(feature.ret_12m)}, {pct(feature.pct_off_52w_high)} off high, "
                      f"vol {pct(feature.vol_60d)}, {trend}")
+            line += _fundamentals_line(ticker, fundamentals, feature.price, as_of, funds)
         line += f"\n    thesis: {thesis}"
         if p.get("risks"):
             line += f"\n    risks it was bought with: {p['risks']}"
@@ -230,7 +280,8 @@ def _render_news(state: dict, news=None, unavailable: bool = False) -> str:
     return "\n".join(lines)
 
 
-def _market_line(ticker, features, metadata):
+def _market_line(ticker, features, metadata, fundamentals=None, as_of=None,
+                 funds=frozenset()):
     feature = features.get(ticker)
     meta = metadata.get(ticker, {})
     if feature is None:
@@ -238,32 +289,48 @@ def _market_line(ticker, features, metadata):
     pct = lambda value: "n/a" if value is None else f"{value:+.1%}"
     trend = "n/a" if feature.above_200d_ma is None else ("above 200d" if feature.above_200d_ma else "below 200d")
     recent = " (listed recently)" if feature.bars_available < 253 else ""
-    return f"{ticker}  {meta.get('name', 'n/a')}  {meta.get('sector', 'n/a')}  ${feature.price:.2f}  1m {pct(feature.ret_1m)}  12m {pct(feature.ret_12m)}  {pct(feature.pct_off_52w_high)} off high  vol {pct(feature.vol_60d)}  {trend}{recent}"
+    return (f"{ticker}  {meta.get('name', 'n/a')}  {meta.get('sector', 'n/a')}  "
+            f"${feature.price:.2f}  1m {pct(feature.ret_1m)}  12m {pct(feature.ret_12m)}  "
+            f"{pct(feature.pct_off_52w_high)} off high  vol {pct(feature.vol_60d)}  "
+            f"{trend}{recent}"
+            + _fundamentals_line(ticker, fundamentals, feature.price, as_of, funds))
 
 
 def render_prompt(state, rules, candidates, held_theses, features=None, metadata=None,
-                  breadth=None, news=None, news_unavailable: bool = False) -> str:
+                  breadth=None, news=None, news_unavailable: bool = False,
+                  fundamentals=None, as_of=None) -> str:
     """Fill the config/prompt.md template. No placeholder may survive."""
     template = PROMPT_PATH.read_text(encoding="utf-8")
     totals = state.get("totals", {})
+    funds = frozenset(rules.get("etf_universe", []))
     replacements = {
         "{RULES}": _render_rules(rules),
         "{TOTAL_VALUE}": str(totals.get("total_value")),
         "{AVAILABLE_CASH}": str(totals.get("available_cash")),
         "{CASH_WEIGHT}": str(totals.get("cash_weight")),
-        "{POSITIONS}": _render_positions(state, held_theses, features),
+        "{POSITIONS}": _render_positions(state, held_theses, features, fundamentals, as_of, funds),
         "{NEWS}": _render_news(state, news, news_unavailable),
         "{PENDING_ORDERS}": _render_pending_orders(state),
-        "{CANDIDATES}": "\n".join(_market_line(t, features or {}, metadata or {}) for t in candidates) if candidates else "None.",
-        "{MARKET_CONTEXT}": "As of the last close; next-open fills are unknown.\n" + "\n".join(_market_line(t, features or {}, metadata or {}) for t in rules["etf_universe"]) + f"\nMarket breadth: {'n/a' if breadth is None else f'{breadth:.1%}'} of the universe is above its 200-day average.",
+        "{CANDIDATES}": "\n".join(_market_line(t, features or {}, metadata or {}, fundamentals, as_of, funds)
+                              for t in candidates) if candidates else "None.",
+        "{MARKET_CONTEXT}": "As of the last close; next-open fills are unknown.\n" + "\n".join(_market_line(t, features or {}, metadata or {}, fundamentals, as_of, funds)
+                                   for t in rules["etf_universe"]) + f"\nMarket breadth: {'n/a' if breadth is None else f'{breadth:.1%}'} of the universe is above its 200-day average.",
     }
     rendered = template
     for token, value in replacements.items():
         rendered = rendered.replace(token, value)
     if "{" in rendered or "}" in rendered:
         raise AIError(f"prompt template still has an unfilled placeholder: {rendered!r}")
-    if len(rendered) >= 80000:
-        raise AIError(f"prompt is {len(rendered)} characters (tripwire: 80000)")
+    # Raised from 80,000 deliberately on 2026-08-31, not nudged to make a
+    # failure go away: adding P/E, revenue growth and margin to 518 candidate
+    # rows costs about 5,500 characters and took the full prompt to 85,501.
+    # That is worth paying for - "is this expensive" is half the buy decision
+    # and price cannot answer it.
+    #
+    # It is a tripwire, not a budget: it exists so the next thing that doubles
+    # the prompt gets noticed rather than discovered on a bill.
+    if len(rendered) >= 100000:
+        raise AIError(f"prompt is {len(rendered)} characters (tripwire: 100000)")
     return rendered
 
 
@@ -403,7 +470,8 @@ def _parse(text: str) -> dict:
 
 
 def propose(state, rules, candidates, held_theses, features=None, metadata=None,
-            breadth=None, news=None, news_unavailable: bool = False, prompt=None) -> dict:
+            breadth=None, news=None, news_unavailable: bool = False, prompt=None,
+            fundamentals=None, as_of=None) -> dict:
     """Return {"commentary", "decisions", "considered"} or raise AIError.
 
     Retries exactly once on unusable output. Network failures are retried
@@ -416,7 +484,8 @@ def propose(state, rules, candidates, held_theses, features=None, metadata=None,
 
     model = rules["ai"]["model"]
     prompt = prompt or render_prompt(state, rules, candidates, held_theses,
-                                     features, metadata, breadth, news, news_unavailable)
+                                     features, metadata, breadth, news,
+                                     news_unavailable, fundamentals, as_of)
 
     last_error: Exception | None = None
     for attempt in (1, 2):

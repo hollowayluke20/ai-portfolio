@@ -73,6 +73,10 @@ class HistoricalMarket:
 def main(start, end, out_dir, verbose):
     rules, universe = load_rules(), load_universe()
     meta = json.loads((REPO / "config" / "universe.json").read_text(encoding="utf-8")).get("metadata", {})
+    try:
+        fundamentals = json.loads((REPO / "data" / "fundamentals.json").read_text(encoding="utf-8"))["tickers"]
+    except Exception:
+        fundamentals = {}
 
     fetch_from = (datetime.date.fromisoformat(start) - datetime.timedelta(days=400)).isoformat()
     print(f"fetching bars {fetch_from} -> {end} for {len(universe) + 1} tickers ...", flush=True)
@@ -146,8 +150,10 @@ def main(start, end, out_dir, verbose):
             except Exception as exc:
                 print(f"{iso} news fetch failed; continuing without it: {exc}", file=sys.stderr)
                 recent_news, news_unavailable = {}, True
+            # `iso` as the as-of date, not today: a January replay must read
+            # the accounts that were public in January.
             prompt = render_prompt(st, rules, cands, theses, features, meta, breadth,
-                                   recent_news, news_unavailable)
+                                   recent_news, news_unavailable, fundamentals, iso)
             try:
                 ai_out = propose(st, rules, cands, theses, features, meta, breadth,
                                  recent_news, news_unavailable, prompt=prompt)

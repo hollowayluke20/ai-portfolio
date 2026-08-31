@@ -147,6 +147,13 @@ Return JSON only, matching the provided schema. It has three parts:
    this cycle, as a decimal fraction, and **`allocation_reason`** — one or two
    sentences on why *that* number and not a different one.
 
+   **Say in the reason how far your choice sits from each end of the band.**
+   The ends are `sleeves.bond.min` and `sleeves.bond.max` in the rules above —
+   read them, do not assume them. A previous cycle described 0.30 as "the
+   sleeve minimum" when the floor was 0.25, and then defended 0.30 as though
+   it were a limit rather than a choice. If you are near an end, say which and
+   why; if you are in the middle, say what would push you either way.
+
    Answer these from the evidence in this cycle, not from what you chose last
    time. If it is the same as last week, the reason must say why the evidence
    still supports it. If the number never moves across many cycles, that is a
