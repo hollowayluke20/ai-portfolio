@@ -20,9 +20,17 @@ name: Weekly decision cycle (Monday pre-open)
 # trading against live prices. run_cycle.py refuses to submit on a day the
 # market is closed - some Mondays are holidays.
 on:
-  schedule:
-    - cron: '0 8 * * 1'
-      timezone: America/New_York
+  # No GitHub cron. It is not that it fires late - it barely fires at all: one
+  # scheduled run in this repository's entire history, six and a half hours
+  # behind its slot. The trigger is now an external cron calling the
+  # workflow_dispatch API, which arrives on time.
+  #
+  # Keeping GitHub's schedule as a "backstop" would have been worse than
+  # useless. A backstop that fires once in a lifetime is not redundancy, and
+  # two live triggers on one morning is a second set of orders.
+  #
+  # run_cycle.py refuses a second cycle on a day that already has a decision
+  # record, so a repeat is safe rather than merely unlikely.
   workflow_dispatch:
     inputs:
       dry_run:

@@ -56,6 +56,20 @@ def main(live: bool) -> int:
         print(f"cycle      : {cycle_date} is not a trading day - nothing to do.")
         return 0
 
+    # One cycle per day, checked BEFORE anything is bought.
+    #
+    # write_cycle already refuses to overwrite a day's record - but it runs
+    # after executor.execute(), so a second run placed a complete second set
+    # of orders and only then crashed on the duplicate file. The guard existed
+    # and fired after the money had moved, which is no guard at all.
+    #
+    # This matters more than which scheduler fires the job. Any repeat reaches
+    # here: a retry from the external cron, a re-run clicked in the Actions
+    # tab, or two triggers that both survive.
+    if live and (DECISIONS_DIR / f"{cycle_date}.json").exists():
+        print(f"cycle      : {cycle_date} has already run - refusing to trade twice.")
+        return 0
+
     # State is rebuilt fresh rather than read from disk: a decision must never
     # be made against a stale file (ADR 0002).
     account = alpaca.get_account()
