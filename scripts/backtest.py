@@ -188,6 +188,8 @@ def main(start, end, out_dir, verbose):
         if ai_out or decisions_today:
             log.append({"date": iso,
                         "commentary": (ai_out or {}).get("commentary"),
+                        "target_bond_weight": (ai_out or {}).get("target_bond_weight"),
+                        "allocation_reason": (ai_out or {}).get("allocation_reason"),
                         "review": (ai_out or {}).get("review"),
                         "considered": (ai_out or {}).get("considered"),
                         "decisions": done})

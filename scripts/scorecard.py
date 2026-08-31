@@ -58,6 +58,12 @@ def score(out_dir: Path) -> dict:
     theses = [d.get("thesis") or "" for d in executed if d["action"] == "BUY"]
     cited = sum(1 for t in theses if any(ch in t for ch in NUMERIC))
 
+    # Prefer the split the model DECLARED over one inferred from its
+    # decisions. Inferring reads low on a quiet cycle - a week of two HOLDs
+    # looks like a 10% book - which made the range column untrustworthy
+    # exactly where it mattered.
+    declared = [c["target_bond_weight"] for c in log
+                if isinstance(c.get("target_bond_weight"), (int, float))]
     allocs = [sleeves_at(c) for c in log if c.get("decisions")]
     allocs = [(b, r) for b, r in allocs if b + r > 0.2]     # ignore empty cycles
 
@@ -79,6 +85,7 @@ def score(out_dir: Path) -> dict:
         "alloc_first": allocs[0] if allocs else None,
         "alloc_last": allocs[-1] if allocs else None,
         "bond_range": (min(b for b, _ in allocs), max(b for b, _ in allocs)) if allocs else None,
+        "declared_bond": (min(declared), max(declared), len(set(round(d, 3) for d in declared))) if declared else None,
         "trades_per_week": len(executed) / weeks,
         "sells_judged": len(judged),
         "sells_forced": len(stop_sells),
@@ -100,6 +107,10 @@ def show(name, s):
         print(f"  allocation     bonds {fa[0]:.0%} -> {la[0]:.0%}    "
               f"risk {fa[1]:.0%} -> {la[1]:.0%}    "
               f"bond range {s['bond_range'][0]:.0%}-{s['bond_range'][1]:.0%}")
+    d = s.get("declared_bond")
+    if d:
+        print(f"  DECLARED bond  {d[0]:.0%} to {d[1]:.0%} across the run, "
+              f"{d[2]} distinct value(s) chosen")
     print(f"  selling        {s['sells_judged']} on judgement, "
           f"{s['sells_forced']} forced by a trigger    {dict(s['sell_basis'])}")
     print(f"  churn          {s['trades_per_week']:.1f} trades per cycle")

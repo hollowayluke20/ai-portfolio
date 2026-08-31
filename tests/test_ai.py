@@ -160,7 +160,8 @@ def test_schema_valid_response_parses_into_interface_shape(monkeypatch):
 
     out = ai.propose(STATE, RULES, CANDIDATES, HELD_THESES)
 
-    assert set(out) == {"commentary", "review", "decisions", "considered"}
+    assert set(out) == {"commentary", "target_bond_weight", "allocation_reason",
+                        "review", "decisions", "considered"}
     assert isinstance(out["commentary"], str)
     first = out["decisions"][0]
     assert first["ticker"] == "IEF"

@@ -56,6 +56,13 @@ RESPONSE_SCHEMA = {
     "type": "object",
     "properties": {
         "commentary": {"type": "string"},
+        # The allocation it says it is aiming at, as a number rather than a
+        # sentence. Five backtests showed the bond sleeve pinned near 0.30 in
+        # every regime including a 34% crash, and that was only visible by
+        # inferring weights from the decisions. Declared, it is countable -
+        # the same reason `basis` exists.
+        "target_bond_weight": {"type": "number"},
+        "allocation_reason": {"type": "string"},
         "decisions": {
             "type": "array",
             "items": {
@@ -99,7 +106,8 @@ RESPONSE_SCHEMA = {
             },
         },
     },
-    "required": ["commentary", "review", "decisions", "considered"],
+    "required": ["commentary", "target_bond_weight", "allocation_reason",
+                 "review", "decisions", "considered"],
 }
 
 
@@ -385,7 +393,12 @@ def _parse(text: str) -> dict:
                            "verdict": entry["verdict"]})
     review.sort(key=lambda r: r["rank"] if isinstance(r["rank"], int) else 999)
 
+    # Optional on the way out even though the schema requires them, so an
+    # older recorded response still parses. Absent reads as "not declared",
+    # which is exactly what it means.
     return {"commentary": obj["commentary"], "review": review,
+            "target_bond_weight": obj.get("target_bond_weight"),
+            "allocation_reason": obj.get("allocation_reason"),
             "decisions": decisions, "considered": considered}
 
 
