@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "cycle_id": "2026-08-31-weekly",
+  "decided_at": "2026-08-31T09:35:38Z",
+  "portfolio_value_at_decision": 99998.86,
+  "commentary": "The portfolio is currently holding near 100% cash with micro-remnant positions in MSTR and NVDA. Market breadth is high at 71.7% above 200-day moving averages, demonstrating broad risk asset strength across US equities, international markets, and commodities. Bond ETFs (AGG, IEF, TLT) remain below their 200-day moving averages, indicating weak fixed income trend strength. We establish a 0.30 target bond sleeve split across all three permitted bond funds to maintain structural hedging, while allocating 0.65 to a 12-asset equal-weighted risk sleeve focused on strong momentum and trend leaders above their 200-day moving averages. Cash is set at the 0.05 floor.",
+  "decisions": [
+    {
+      "ticker": "MSTR",
+      "action": "SELL",
+      "target_weight": 0.0,
+      "thesis": "Position has no recorded thesis and sits at weight 0.0 with unrealised P&L of -2.61%. Overlaps with speculative tech equity exposure.",
+      "risks": "Bitcoin price rebounds sharply causing MSTR to rally after exit.",
+      "reason_for_action": "Clean up un-thesised dust holding to redeploy cash into strategy candidates.",
+      "basis": "thesis_change",
+      "notional": 4.86,
+      "valid": false,
+      "rejection_reason": "cash is 0.9998, above the ceiling of 0.1500 - redeploy before selling more",
+      "status": "rejected",
+      "order_id": null
+    },
+    {
+      "ticker": "NVDA",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $217.55, up 11.5% over 1m and 20.0% over 12m, sitting -7.6% off high above its 200d average. Overlaps with tech semiconductor exposure.",
+      "risks": "High volatility of 43.1% could lead to sharp pullback if semiconductor momentum slows.",
+      "reason_for_action": "Scale existing micro-position up to standard risk sleeve target weight.",
+      "basis": "momentum",
+      "notional": 5400.64,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "73a970e3-2f2d-4a9e-92e3-4b523f1e808c"
+    },
+    {
+      "ticker": "AGG",
+      "action": "BUY",
+      "target_weight": 0.1,
+      "thesis": "Trading at $97.49, up 0.2% over 1m and 2.0% over 12m with low volatility of 4.1%. Overlaps with fixed income sleeve assets IEF and TLT.",
+      "risks": "Interest rate increases drive price further below 200d average.",
+      "reason_for_action": "Establish core aggregate bond sleeve allocation.",
+      "basis": "allocation",
+      "notional": 9999.89,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "8929be47-15ed-4d46-a217-e9fef7d92937"
+    },
+    {
+      "ticker": "IEF",
+      "action": "BUY",
+      "target_weight": 0.1,
+      "thesis": "Trading at $92.85, 12m return of +0.5% with low volatility of 4.9%. Overlaps with bond sleeve assets AGG and TLT.",
+      "risks": "Intermediate Treasury yields rise, causing further price decline below 200d average.",
+      "reason_for_action": "Build intermediate Treasury bond sleeve allocation.",
+      "basis": "allocation",
+      "notional": 9999.89,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "7fc98867-138a-4fcd-8848-6d49da15944f"
+    },
+    {
+      "ticker": "TLT",
+      "action": "BUY",
+      "target_weight": 0.1,
+      "thesis": "Trading at $82.88, 1m return of +0.5% and volatility of 9.9%. Overlaps with bond sleeve assets AGG and IEF.",
+      "risks": "Long-end rate volatility accelerates price decline below 200d average.",
+      "reason_for_action": "Complete long-duration Treasury bond sleeve allocation.",
+      "basis": "allocation",
+      "notional": 9999.89,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "cd2d98c3-2a1b-4a55-99b2-b2c2c3f644ad"
+    },
+    {
+      "ticker": "SPY",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $769.35, 1m +3.7%, 12m +20.3%, -1.1% off high, above 200d average with broad market breadth at 71.7%. Overlaps with broad US equity exposure.",
+      "risks": "Macro economic contraction pulls S&P 500 below 200d average.",
+      "reason_for_action": "Establish primary US broad market risk exposure.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "6dd2b56b-9b75-4877-9ca5-ad8731607626"
+    },
+    {
+      "ticker": "VEA",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $73.06, 1m +2.8%, 12m +27.9%, -1.0% off high, above 200d average. Overlaps with international equity exposure.",
+      "risks": "European/developed market economic weakening slows momentum.",
+      "reason_for_action": "Diversify risk sleeve into developed international equities.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "946b4490-2c1f-4b01-b773-ec3ab330089e"
+    },
+    {
+      "ticker": "EEM",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $67.14, 1m +5.6%, 12m +37.2%, -5.7% off high, above 200d average. Overlaps with international emerging equity exposure.",
+      "risks": "Volatility of 32.6% triggers sharp pullback in emerging market equities.",
+      "reason_for_action": "Capitalize on strong international emerging market momentum.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "bd6147bb-4826-409e-9b46-ad91d4ebd030"
+    },
+    {
+      "ticker": "DBC",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $30.79, 1m +5.0%, 12m +44.4%, -2.8% off high, above 200d average. Overlaps with commodity real asset exposure.",
+      "risks": "Global commodity demand drop breaks upward trend.",
+      "reason_for_action": "Add broad commodity inflation hedge into risk sleeve.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "9acb2487-0392-47b5-b937-ce96345cf372"
+    },
+    {
+      "ticker": "GLD",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $408.89, 1m +8.4%, 12m +30.8%, volatility at 27.4%. Overlaps with real asset commodity exposure.",
+      "risks": "Strong US dollar causes gold price to drop below 200d average.",
+      "reason_for_action": "Include gold asset as momentum non-equity risk holding.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "8ccde45d-5b2d-4020-912a-1ff212088747"
+    },
+    {
+      "ticker": "AAPL",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $319.70, 12m +39.2%, -5.9% off high, above 200d average. Overlaps with mega-cap tech exposure in SPY.",
+      "risks": "Recent 1m weakness (-4.0%) accelerates into broader trend reversal.",
+      "reason_for_action": "Add high 12m momentum technology leader.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "f652a841-5c3a-4ddc-9faf-c3e4923b80b5"
+    },
+    {
+      "ticker": "AMZN",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $266.43, 1m +13.1%, 12m +16.3%, -6.2% off high, above 200d average. Overlaps with consumer discretionary and tech in SPY.",
+      "risks": "Volatility of 44.9% causes pullback below 200d moving average.",
+      "reason_for_action": "Add strong 1m consumer discretionary/cloud momentum leader.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "f3788d91-8f50-4fcc-b4e6-a0d8c8c38b99"
+    },
+    {
+      "ticker": "GOOGL",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $346.59, 1m +3.9%, 12m +67.5%, -13.9% off high, above 200d average. Overlaps with communication services in SPY.",
+      "risks": "Regulatory headline risk increases volatility beyond 37.1%.",
+      "reason_for_action": "Add outstanding 12m communication services momentum stock.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "5eaa21d8-417b-42a7-b519-b16584e995cb"
+    },
+    {
+      "ticker": "LITE",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $895.00, 1m +29.1%, 12m +611.2%, -15.0% off high, above 200d average. Overlaps with technology hardware in NVDA.",
+      "risks": "Extreme volatility of 99.7% results in steep drawdown.",
+      "reason_for_action": "Capture top performing momentum growth stock in universe.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "82653bc3-353b-48a8-b014-5df145b746d0"
+    },
+    {
+      "ticker": "JPM",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $357.62, 1m +1.9%, 12m +21.8%, -2.1% off high, above 200d average with low volatility of 21.1%. Overlaps with financials exposure in SPY.",
+      "risks": "Banking sector stress reduces 12m trend momentum.",
+      "reason_for_action": "Add low-volatility financial sector leader.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "ebac45e7-13f4-4492-bd22-930d37b5f1ea"
+    },
+    {
+      "ticker": "LLY",
+      "action": "BUY",
+      "target_weight": 0.0542,
+      "thesis": "Trading at $1174.61, 1m +1.8%, 12m +61.0%, -8.3% off high, above 200d average. Overlaps with healthcare sector exposure.",
+      "risks": "Pharmaceutical pricing policy headwinds cause trend reversal below 200d.",
+      "reason_for_action": "Incorporate strong 12m healthcare momentum leader.",
+      "basis": "momentum",
+      "notional": 5419.94,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    }
+  ],
+  "review": [
+    {
+      "ticker": "MSTR",
+      "rank": 1,
+      "verdict": "Selling position as it has no recorded thesis on file and has experienced an unrealised loss of -2.61% amidst high underlying asset volatility."
+    },
+    {
+      "ticker": "NVDA",
+      "rank": 2,
+      "verdict": "Held and scaled up to full risk sleeve weight of 0.0542 because its momentum remains strong at $217.55, up 11.5% over 1m and 20.0% over 12m, remaining above its 200d moving average."
+    }
+  ],
+  "considered": [
+    {
+      "ticker": "VOO",
+      "verdict": "Passed to avoid duplicating S&P 500 exposure already covered by SPY within the broad US equity cap."
+    },
+    {
+      "ticker": "QQQ",
+      "verdict": "Passed in favor of single stock selection (NVDA, AAPL, AMZN, GOOGL, LITE) within tech sleeve."
+    },
+    {
+      "ticker": "VWO",
+      "verdict": "Passed in favor of EEM which showed stronger 1m (+5.6%) and 12m (+37.2%) momentum."
+    },
+    {
+      "ticker": "EFA",
+      "verdict": "Passed in favor of VEA which had higher 1m (+2.8%) and 12m (+27.9%) returns."
+    },
+    {
+      "ticker": "VNQ",
+      "verdict": "Passed due to negative 1m return (-2.3%)."
+    },
+    {
+      "ticker": "REET",
+      "verdict": "Passed due to negative 1m return (-3.0%)."
+    },
+    {
+      "ticker": "USO",
+      "verdict": "Passed due to extreme volatility (+52.4%) and -15.2% off high distance compared to DBC."
+    },
+    {
+      "ticker": "AMD",
+      "verdict": "Passed due to negative 1m return (-4.1%)."
+    },
+    {
+      "ticker": "AVGO",
+      "verdict": "Passed due to negative 1m return (-4.9%)."
+    },
+    {
+      "ticker": "MSFT",
+      "verdict": "Passed as other tech names (LITE, NVDA, AAPL, AMZN) demonstrated higher relative momentum."
+    },
+    {
+      "ticker": "META",
+      "verdict": "Passed because price sits below its 200d moving average."
+    },
+    {
+      "ticker": "TSLA",
+      "verdict": "Passed because price sits below its 200d moving average."
+    },
+    {
+      "ticker": "COST",
+      "verdict": "Passed because price sits below its 200d moving average."
+    },
+    {
+      "ticker": "INTC",
+      "verdict": "Passed due to extreme volatility (+84.0%) and -36.5% off high distance."
+    },
+    {
+      "ticker": "MRNA",
+      "verdict": "Passed due to extreme volatility (+375.0%)."
+    }
+  ]
+}

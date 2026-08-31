@@ -1,26 +1,26 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-29T12:46:01Z",
+  "generated_at": "2026-08-31T09:37:15Z",
   "market_data_as_of": "2026-08-28T19:59:59Z",
   "currency": "USD",
   "run": {
-    "id": "6c4215d5e0f4",
+    "id": "d9526843b223",
     "trigger": "schedule",
-    "workflow": "run-triggers"
+    "workflow": "update-state"
   },
   "account": {
-    "cash": 99974.86,
-    "equity": 99998.76,
-    "buying_power": 399957.82,
+    "cash": 99974.7,
+    "equity": 99998.85,
+    "buying_power": 310357.98,
     "status": "ACTIVE"
   },
   "totals": {
-    "total_value": 99998.76,
-    "invested_value": 23.9,
+    "total_value": 99998.86,
+    "invested_value": 24.16,
     "cash_weight": 0.9998,
     "position_count": 2,
-    "committed_cash": 0.0,
-    "available_cash": 99974.86
+    "committed_cash": 89599.71,
+    "available_cash": 10374.99
   },
   "positions": [
     {
@@ -28,10 +28,10 @@
       "name": "Strategy Inc Common Stock Class A",
       "qty": 0.037238805,
       "avg_entry_price": 134.0,
-      "current_price": 127.31,
-      "market_value": 4.74,
-      "unrealized_pl": -0.25,
-      "unrealized_pl_pct": -0.0501,
+      "current_price": 130.5,
+      "market_value": 4.86,
+      "unrealized_pl": -0.13,
+      "unrealized_pl_pct": -0.0261,
       "thesis": null,
       "risks": null,
       "business": null,
@@ -43,10 +43,10 @@
       "name": "NVIDIA Corporation Common Stock",
       "qty": 0.088057794,
       "avg_entry_price": 227.01,
-      "current_price": 217.55,
-      "market_value": 19.16,
-      "unrealized_pl": -0.83,
-      "unrealized_pl_pct": -0.0415,
+      "current_price": 219.12,
+      "market_value": 19.3,
+      "unrealized_pl": -0.69,
+      "unrealized_pl_pct": -0.0345,
       "thesis": null,
       "risks": null,
       "business": null,
@@ -54,11 +54,140 @@
       "weight": 0.0002
     }
   ],
-  "pending_orders": [],
+  "pending_orders": [
+    {
+      "symbol": "JPM",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:15Z",
+      "order_id": "ebac45e7-13f4-4492-bd22-930d37b5f1ea"
+    },
+    {
+      "symbol": "LITE",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "82653bc3-353b-48a8-b014-5df145b746d0"
+    },
+    {
+      "symbol": "GOOGL",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "5eaa21d8-417b-42a7-b519-b16584e995cb"
+    },
+    {
+      "symbol": "AMZN",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "f3788d91-8f50-4fcc-b4e6-a0d8c8c38b99"
+    },
+    {
+      "symbol": "AAPL",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "f652a841-5c3a-4ddc-9faf-c3e4923b80b5"
+    },
+    {
+      "symbol": "GLD",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "8ccde45d-5b2d-4020-912a-1ff212088747"
+    },
+    {
+      "symbol": "DBC",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "9acb2487-0392-47b5-b937-ce96345cf372"
+    },
+    {
+      "symbol": "EEM",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "bd6147bb-4826-409e-9b46-ad91d4ebd030"
+    },
+    {
+      "symbol": "VEA",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:14Z",
+      "order_id": "946b4490-2c1f-4b01-b773-ec3ab330089e"
+    },
+    {
+      "symbol": "SPY",
+      "side": "buy",
+      "notional": 5419.94,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:13Z",
+      "order_id": "6dd2b56b-9b75-4877-9ca5-ad8731607626"
+    },
+    {
+      "symbol": "TLT",
+      "side": "buy",
+      "notional": 9999.89,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:13Z",
+      "order_id": "cd2d98c3-2a1b-4a55-99b2-b2c2c3f644ad"
+    },
+    {
+      "symbol": "IEF",
+      "side": "buy",
+      "notional": 9999.89,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:13Z",
+      "order_id": "7fc98867-138a-4fcd-8848-6d49da15944f"
+    },
+    {
+      "symbol": "AGG",
+      "side": "buy",
+      "notional": 9999.89,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:13Z",
+      "order_id": "8929be47-15ed-4d46-a217-e9fef7d92937"
+    },
+    {
+      "symbol": "NVDA",
+      "side": "buy",
+      "notional": 5400.64,
+      "qty": null,
+      "status": "new",
+      "submitted_at": "2026-08-31T09:37:13Z",
+      "order_id": "73a970e3-2f2d-4a9e-92e3-4b523f1e808c"
+    }
+  ],
   "performance": null,
   "benchmark": null,
   "health": {
-    "ok": true,
-    "warnings": []
+    "ok": false,
+    "warnings": [
+      "Market data is 61.6h old (>26h): SPY last traded 2026-08-28T19:59:59Z"
+    ]
   }
 }
