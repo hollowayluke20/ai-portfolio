@@ -250,8 +250,23 @@ function renderHero(state, decisions) {
 
   let who, argument;
   if (decisions && decisions.commentary) {
-    who = `Positioning — set ${fmtDateOnly(decisions.decided_at)} · holds until the next cycle`;
-    argument = esc(decisions.commentary);
+    // Say WHEN, and say that it describes the book as it was BEFORE the trade.
+    //
+    // The commentary is the reasoning that produced these holdings, so it
+    // necessarily describes the portfolio it inherited, not the one it left.
+    // Labelled "Positioning — set 31 Aug" and sat above a live holdings table,
+    // a sentence beginning "the portfolio is currently holding near 100% cash"
+    // reads as broken data. It was correct; the page was not saying so.
+    who = `Reasoning from the ${fmtStamp(decisions.decided_at)} cycle`;
+    const target = decisions.target_bond_weight;
+    const chose = (typeof target === "number")
+      ? ` It chose a ${pctPlain(target)} bond sleeve.`
+      : "";
+    argument =
+      `<span class="asof">Describes the portfolio as it stood <em>before</em> `
+      + `this cycle traded — it is the argument for the holdings below, not a `
+      + `description of them.${esc(chose)}</span>`
+      + esc(decisions.commentary);
   } else {
     who = "Positioning";
     argument = "No decision cycle has run yet. The portfolio holds its current "

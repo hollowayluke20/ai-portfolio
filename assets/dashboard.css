@@ -319,3 +319,20 @@ footer{
   *{animation-duration:.001ms !important;animation-iteration-count:1 !important;
     transition-duration:.001ms !important;scroll-behavior:auto !important}
 }
+
+/* The "as of" note above the decision commentary.
+
+   The commentary describes the portfolio the cycle INHERITED, not the one it
+   produced — so on a page showing live holdings it reads as stale data unless
+   the page says otherwise. It has to be visibly a caveat rather than part of
+   the argument, or it gets read as the first sentence of the reasoning. */
+.argument .asof {
+  display: block;
+  margin-bottom: .7em;
+  font-size: .85em;
+  line-height: 1.45;
+  opacity: .72;
+  border-left: 2px solid currentColor;
+  padding-left: .7em;
+}
+.argument .asof em { font-style: normal; font-weight: 600; opacity: 1; }
