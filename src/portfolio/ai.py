@@ -33,7 +33,17 @@ GEMINI_URL = (
 # Network retry — same shape as alpaca.py (house style).
 _MAX_RETRIES = 3
 _BACKOFF_BASE = 0.5
-_REQUEST_TIMEOUT = 60  # the model call is slow; give it room but never hang
+# A real cycle prompt is ~62,000 characters and the model spends ~3,400
+# tokens thinking before it answers. Measured end-to-end: 37 seconds. Against
+# the old 60-second limit that left 23 seconds of headroom, and over a hundred
+# backtest cycles a slower-than-usual call was near-certain - five separate
+# runs died on exactly that, each losing every cycle before it.
+#
+# It matters more in production than in a backtest: the Friday cycle is the
+# only one that spends money, and one slow response would have killed it with
+# nothing placed and no obvious cause. 300s is generous for a call that
+# normally takes 37, while still refusing to hang forever.
+_REQUEST_TIMEOUT = 300
 
 _VALID_ACTIONS = {"BUY", "SELL", "TRIM", "HOLD"}
 _DECISION_FIELDS = (

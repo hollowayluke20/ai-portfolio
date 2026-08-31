@@ -90,7 +90,7 @@ def main(start, end, out_dir, verbose):
 
     market = HistoricalMarket(bars, sessions)
     broker = FakeBroker(100000.0, market)
-    records, log, hist = {}, [], []
+    records, log, hist, skipped = {}, [], [], []
     inception = None
 
     for _ in sessions:
@@ -148,9 +148,24 @@ def main(start, end, out_dir, verbose):
                 recent_news, news_unavailable = {}, True
             prompt = render_prompt(st, rules, cands, theses, features, meta, breadth,
                                    recent_news, news_unavailable)
-            ai_out = propose(st, rules, cands, theses, features, meta, breadth,
-                             recent_news, news_unavailable, prompt=prompt)
-            decisions_today += ai_out["decisions"]
+            try:
+                ai_out = propose(st, rules, cands, theses, features, meta, breadth,
+                                 recent_news, news_unavailable, prompt=prompt)
+                decisions_today += ai_out["decisions"]
+            except Exception as exc:
+                # One bad cycle must not destroy the run.
+                #
+                # A backtest is a hundred-odd independent decisions; production
+                # is one, and there aborting is right - better no trade than a
+                # half-informed one. Here the same behaviour meant a single
+                # slow API response threw away every cycle that came before it.
+                # Five runs died that way and produced nothing at all.
+                #
+                # A skipped week is a gap in the record, so it is logged as one
+                # rather than passed over silently.
+                print(f"{iso} AI cycle failed, skipping this week: {exc}",
+                      file=sys.stderr)
+                skipped.append(iso)
 
         done = []
         if decisions_today:
@@ -189,6 +204,12 @@ def main(start, end, out_dir, verbose):
     out.mkdir(parents=True, exist_ok=True)
     (out / "log.json").write_text(json.dumps(log, indent=2), encoding="utf-8")
     (out / "history.json").write_text(json.dumps(hist, indent=2), encoding="utf-8")
+    if skipped:
+        # Loud, and in the output rather than only in stderr. A run with holes
+        # in it is still useful, but only if the holes are visible - a quietly
+        # shorter result reads exactly like a quiet market.
+        print(f"\n{len(skipped)} CYCLE(S) SKIPPED after an AI failure: "
+              f"{', '.join(skipped)}")
     print(f"\nwrote {out}/log.json and {out}/history.json")
     return 0
 
