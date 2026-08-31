@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-31T09:37:15Z",
+  "generated_at": "2026-08-31T10:07:15Z",
   "market_data_as_of": "2026-08-28T19:59:59Z",
   "currency": "USD",
   "run": {
-    "id": "d9526843b223",
+    "id": "1367282446fb",
     "trigger": "schedule",
-    "workflow": "update-state"
+    "workflow": "run-triggers"
   },
   "account": {
     "cash": 99974.7,
-    "equity": 99998.85,
-    "buying_power": 310357.98,
+    "equity": 99998.8,
+    "buying_power": 310357.88,
     "status": "ACTIVE"
   },
   "totals": {
-    "total_value": 99998.86,
-    "invested_value": 24.16,
+    "total_value": 99998.8,
+    "invested_value": 24.1,
     "cash_weight": 0.9998,
     "position_count": 2,
     "committed_cash": 89599.71,
@@ -28,10 +28,10 @@
       "name": "Strategy Inc Common Stock Class A",
       "qty": 0.037238805,
       "avg_entry_price": 134.0,
-      "current_price": 130.5,
-      "market_value": 4.86,
-      "unrealized_pl": -0.13,
-      "unrealized_pl_pct": -0.0261,
+      "current_price": 129.65,
+      "market_value": 4.83,
+      "unrealized_pl": -0.16,
+      "unrealized_pl_pct": -0.0321,
       "thesis": null,
       "risks": null,
       "business": null,
@@ -43,14 +43,14 @@
       "name": "NVIDIA Corporation Common Stock",
       "qty": 0.088057794,
       "avg_entry_price": 227.01,
-      "current_price": 219.12,
-      "market_value": 19.3,
-      "unrealized_pl": -0.69,
-      "unrealized_pl_pct": -0.0345,
-      "thesis": null,
-      "risks": null,
+      "current_price": 218.87,
+      "market_value": 19.27,
+      "unrealized_pl": -0.72,
+      "unrealized_pl_pct": -0.036,
+      "thesis": "Trading at $217.55, up 11.5% over 1m and 20.0% over 12m, sitting -7.6% off high above its 200d average. Overlaps with tech semiconductor exposure.",
+      "risks": "High volatility of 43.1% could lead to sharp pullback if semiconductor momentum slows.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0002
     }
   ],
@@ -187,7 +187,7 @@
   "health": {
     "ok": false,
     "warnings": [
-      "Market data is 61.6h old (>26h): SPY last traded 2026-08-28T19:59:59Z"
+      "Market data is 62.1h old (>26h)"
     ]
   }
 }

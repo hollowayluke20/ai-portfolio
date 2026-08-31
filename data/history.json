@@ -11,9 +11,9 @@
     },
     {
       "date": "2026-08-28",
-      "portfolio_value": 99998.86,
+      "portfolio_value": 99998.8,
       "portfolio_return_pct": null,
-      "benchmark_price": 769.28,
+      "benchmark_price": null,
       "benchmark_return_pct": null,
       "cash": 99974.7
     }
