@@ -1,18 +1,27 @@
-name: Weekly decision cycle
+name: Weekly decision cycle (Monday pre-open)
 
 # THE ONLY WORKFLOW THAT SPENDS MONEY.
 #
-# Friday, 25 minutes after the closing bell, in the market's own timezone.
-# Orders are market/day, so they queue over the weekend and fill at Monday's
-# open at a price nobody knows on Friday. That is the documented design
-# (ADR 0003), not a defect.
+# Monday, 08:00 New York - 90 minutes before the opening bell. Orders are
+# market/day, so they fill at that morning's open at a price nobody knows when
+# the decision is made.
 #
-# Friday deliberately: it gives a whole weekend to notice a bad cycle before
-# anything fills, and it keeps decisions out of market hours, where a
-# 15-minute-delayed data feed has no business trading.
+# It used to run Friday after the close, on the reasoning that a whole weekend
+# to notice a bad cycle was worth having. Two things killed that:
+#
+#   * Nobody reviews it. The brief asks for a system that runs unattended, and
+#     it does - so the review window was a cost paid for a check never made.
+#   * News reached the prompt AFTER this schedule was written. Deciding on
+#     Friday now means deciding without the weekend's news, which is exactly
+#     when takeovers and geopolitics land. That was free when the model could
+#     not see news. It is not free now.
+#
+# Still outside market hours: a 15-minute-delayed data feed has no business
+# trading against live prices. run_cycle.py refuses to submit on a day the
+# market is closed - some Mondays are holidays.
 on:
   schedule:
-    - cron: '25 16 * * 5'
+    - cron: '0 8 * * 1'
       timezone: America/New_York
   workflow_dispatch:
     inputs:

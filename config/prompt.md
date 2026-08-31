@@ -187,6 +187,6 @@ Return JSON only, matching the provided schema. It has three parts:
 - **The buy list is a priority order.** Orders are executed top to bottom, and
   if cash runs short the tail is dropped. Put the buy you most want filled
   first. Do not assume every buy will happen.
-- **Fill prices are unknown right now.** Orders are placed after the close and
-  fill at the next open, at a price nobody yet knows. Your reasoning must not
-  depend on getting in at a particular price.
+- **Fill prices are unknown right now.** You are deciding before the opening
+  bell, and orders fill at that open, at a price nobody yet knows. Your
+  reasoning must not depend on getting in at a particular price.

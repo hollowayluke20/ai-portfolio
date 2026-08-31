@@ -43,6 +43,19 @@ def main(live: bool) -> int:
     decided_at = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     cycle_date = now.date().isoformat()
 
+    # Never submit into a closed market.
+    #
+    # The cycle now runs Monday pre-open, and some Mondays are holidays -
+    # 7 September is Labor Day, the very next one. `is_trading_day` has existed
+    # in the broker module since Phase 1 and nothing ever called it, so a
+    # holiday cycle would have placed orders into a market that was not there
+    # and reported success.
+    #
+    # Dry runs are exempt: testing on a Sunday is a normal thing to want.
+    if live and not alpaca.is_trading_day(now.date()):
+        print(f"cycle      : {cycle_date} is not a trading day - nothing to do.")
+        return 0
+
     # State is rebuilt fresh rather than read from disk: a decision must never
     # be made against a stale file (ADR 0002).
     account = alpaca.get_account()
