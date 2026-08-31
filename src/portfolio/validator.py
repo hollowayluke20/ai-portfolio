@@ -92,7 +92,20 @@ def validate_static(decisions, state, rules, universe):
     projected_bond, projected_risk = _projected_sleeves(decisions, held, rules)
     limits = rules["position_count"]
     ceiling = rules.get("cash", {}).get("ceiling")
-    cash_weight = float(state.get("totals", {}).get("cash_weight") or 0.0)
+    # Cash AFTER this cycle's proposals, not cash right now.
+    #
+    # Judging it on the current balance broke the very first live cycle: the
+    # book was 99.98% cash because it was starting from scratch, the model
+    # sensibly proposed clearing a few dollars of leftover dust, and the
+    # ceiling refused it for having too much cash - while the same cycle's
+    # fourteen buys were taking cash to 5%.
+    #
+    # Selling dust does not meaningfully raise cash. What the rule is actually
+    # for is stopping the book sell itself into idleness, and that is a
+    # property of where the cycle ENDS. The sleeves were already judged that
+    # way; cash was not, and the inconsistency was the bug.
+    projected_cash = max(0.0, 1.0 - projected_bond - projected_risk)
+    cash_weight = projected_cash
     projected = set(held)
     for proposal in decisions:
         ticker, action = proposal.get("ticker"), proposal.get("action")

@@ -16,6 +16,14 @@ def write_cycle(path, cycle_id, decided_at, state, ai_output, executed):
         "decided_at": decided_at,
         "portfolio_value_at_decision": state["totals"]["total_value"],
         "commentary": ai_output["commentary"],
+        # The allocation it said it was steering towards, and why. Kept as a
+        # number because that is the whole point: five backtests only revealed
+        # a bond sleeve pinned near 0.30 in every regime once it could be
+        # counted rather than read out of prose. The first live cycle wrote
+        # None here, because these were wired into the backtest log and not
+        # into the record that actually matters.
+        "target_bond_weight": ai_output.get("target_bond_weight"),
+        "allocation_reason": ai_output.get("allocation_reason"),
         "decisions": executed,
         # The weakest-to-strongest ranking. Kept in the record because it is
         # the evidence that every holding was actually re-examined this cycle,

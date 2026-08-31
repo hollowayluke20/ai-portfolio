@@ -150,8 +150,14 @@ def main() -> int:
         "", [sell("SPY")], state(thin, cash=0.10), "SPY", "below the minimum")))
 
     # --- cash ------------------------------------------------------------
+    # The ceiling judges cash AFTER the cycle, so the attack has to be a sell
+    # that LEAVES the book idle - not merely one made while cash happens to be
+    # high. Selling dust from an otherwise-cash book was the old attack, and
+    # blocking that was the bug: the first live cycle proposed exactly that
+    # while its own buys were taking cash from 99.98% to 5%.
+    idle = {t: 0.10 for t in BONDS} | {t: 0.05 for t in RISK[:10]}   # 30/50/20
     results.append(("cash ceiling on a discretionary sell", *attack(
-        "", [sell("SPY")], state(BALANCED, cash=0.32), "SPY")))
+        "", [sell(RISK[0])], state(idle), RISK[0], "above the ceiling")))
 
     fired = check_cash(buy("AAPL", 0.05) | {"notional": 99_000.0},
                        100_000.0, 100_000.0, RULES) is not None
