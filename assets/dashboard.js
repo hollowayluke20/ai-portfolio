@@ -262,10 +262,16 @@ function renderHero(state, decisions) {
     const chose = (typeof target === "number")
       ? ` It chose a ${pctPlain(target)} bond sleeve.`
       : "";
+    // Neutral about WHICH portfolio it describes.
+    //
+    // The first version said "describes the book before this cycle traded",
+    // which was true of the cycle that prompted it and stops being true from
+    // the next one - the prompt now asks for a description of the resulting
+    // portfolio. A caveat that expires is worse than none, so this states the
+    // moment and the purpose and leaves the tense to the text itself.
     argument =
-      `<span class="asof">Describes the portfolio as it stood <em>before</em> `
-      + `this cycle traded — it is the argument for the holdings below, not a `
-      + `description of them.${esc(chose)}</span>`
+      `<span class="asof">Written at the moment of deciding — the argument `
+      + `behind the holdings below.${esc(chose)}</span>`
       + esc(decisions.commentary);
   } else {
     who = "Positioning";

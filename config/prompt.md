@@ -141,8 +141,19 @@ no longer holds; and `other` is for a different stated basis.
 
 Return JSON only, matching the provided schema. It has three parts:
 
-1. **`commentary`** — your portfolio-level narrative: what you see, what
-   changed, what you are doing and why.
+1. **`commentary`** — describe **the portfolio your decisions produce**, not
+   the one you inherited.
+
+   Write it as a description of where the book ENDS this cycle: what it holds,
+   how it is split, and why that is the right shape given what you are looking
+   at. Mention what you are changing and why, but the subject of the paragraph
+   is the resulting portfolio.
+
+   This is read on a dashboard beside a live list of holdings. A commentary
+   that opens "the portfolio is currently holding near 100% cash" while the
+   table beneath it shows fifteen positions is not wrong, but it is unusable —
+   it reads as broken data, and the reader has to be told to disregard their
+   own eyes. Write about the book you are leaving behind.
 2. **`target_bond_weight`** — the bond sleeve weight you are steering towards
    this cycle, as a decimal fraction, and **`allocation_reason`** — one or two
    sentences on why *that* number and not a different one.
@@ -171,17 +182,30 @@ Return JSON only, matching the provided schema. It has three parts:
 4. **`decisions`** — one entry per action you want taken. Each needs:
    - `ticker`, `action` (`BUY` / `SELL` / `TRIM` / `HOLD`)
    - `target_weight` as a decimal fraction
-   - `thesis` — why this position should exist at all. **It must quote at
-     least one figure from the data above** — a price, a return, a distance
-     from the 52-week high, a volatility, the breadth number. Write the number
-     itself, not a description of it.
+   - `thesis` — **why this is worth owning.** Quote at least one figure from
+     the data above, and then say **what that figure implies and why it makes
+     the position worth holding.** The number is the evidence; the thesis is
+     the argument you build on it.
 
-     A thesis built only on what you already know about the company is not
-     acceptable here, however true it is. "Leading pharmaceutical innovator
-     with a strong GLP-1 franchise" is a memory; you were not shown it, it
-     cannot be checked against anything in front of you, and it cannot later
-     be found to have broken. "Up 46% over twelve months while sitting 25%
-     below its high, with volatility at 67%" is evidence. Use the evidence.
+     Two ways to get this wrong, and both have happened:
+
+     *Memory.* "Leading pharmaceutical innovator with a strong GLP-1 franchise"
+     — true, perhaps, but you were not shown it, it cannot be checked against
+     anything in front of you, and it can never later be found to have broken.
+
+     *Transcription.* "Trading at $97.49, up 0.2% over 1m and 2.0% over 12m
+     with low volatility of 4.1%." That is the data row read back. It contains
+     figures and no argument, and it would justify buying anything that had
+     gone up.
+
+     What is wanted is the step between: **"volatility of 4.1% against the
+     book's 27% average makes this the ballast the risk sleeve needs, and it
+     is doing that job — up 2.0% over a year in which shares fell."**
+
+     If a holding is up sharply and violently volatile, say why you want that
+     rather than reciting both facts. A 611% twelve-month gain at 99.7%
+     volatility needs a reason, not a description — and if you cannot give one
+     that survives being read back in a month, do not buy it.
    - `risks` — what would make the thesis wrong. State it as something that
      could be **observed in this data later**, so a future cycle can check it.
    - `reason_for_action` — why act *now*, as distinct from the thesis itself
