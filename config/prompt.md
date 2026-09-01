@@ -141,19 +141,29 @@ no longer holds; and `other` is for a different stated basis.
 
 Return JSON only, matching the provided schema. It has three parts:
 
-1. **`commentary`** — describe **the portfolio your decisions produce**, not
-   the one you inherited.
+1. **`commentary`** — **your view, not an inventory.** Three things, about
+   the portfolio you are leaving behind rather than the one you inherited:
 
-   Write it as a description of where the book ENDS this cycle: what it holds,
-   how it is split, and why that is the right shape given what you are looking
-   at. Mention what you are changing and why, but the subject of the paragraph
-   is the resulting portfolio.
+   - **What you think is happening**, from the evidence in front of you. Not
+     "breadth is 68.6%" — what that *means* for how to be positioned.
+   - **How this book is placed for it**, and where you are deliberately taking
+     risk or refusing to.
+   - **What would change your mind**, specifically enough that a future cycle
+     could check whether it happened.
 
-   This is read on a dashboard beside a live list of holdings. A commentary
-   that opens "the portfolio is currently holding near 100% cash" while the
-   table beneath it shows fifteen positions is not wrong, but it is unusable —
-   it reads as broken data, and the reader has to be told to disregard their
-   own eyes. Write about the book you are leaving behind.
+   Two things to leave out.
+
+   **The contents.** They are listed on the same page, holding by holding, with
+   weights. "15 active positions with a 0.30 bond sleeve, 0.60 risk sleeve and
+   0.10 cash buffer" tells a reader nothing the table beside it does not.
+
+   **Rule compliance.** "Precisely matching the strategy target count", "sits
+   comfortably within its 0.05 to 0.15 corridor" — the validator enforces
+   those and will reject you if you breach them. Saying you obeyed is not a
+   thought, and a paragraph of it reads as a system with nothing to say.
+
+   Write it as though explaining to someone who can already see the holdings
+   and wants to know what you were thinking.
 2. **`target_bond_weight`** — the bond sleeve weight you are steering towards
    this cycle, as a decimal fraction, and **`allocation_reason`** — one or two
    sentences on why *that* number and not a different one.

@@ -20,9 +20,18 @@ class Article:
 
 
 def fetch_news(
-    tickers: list[str], start: str, end: str, per_ticker: int = 5
+    tickers: list[str], start: str, end: str, per_ticker: int = 8,
+    per_day: int = 2
 ) -> dict[str, list[Article]]:
-    """Return up to ``per_ticker`` articles per requested ticker, newest first."""
+    """Up to ``per_ticker`` articles per ticker, spread across the window.
+
+    The cap is applied PER DAY first, then overall. Taking the newest few
+    outright looked like it covered the week and did not: a busy Thursday and
+    Friday silently deleted Monday to Wednesday, so a story that broke early
+    and mattered all week vanished the moment anything louder happened later.
+
+    A thesis breaks over days, not in the last twelve hours before a cycle.
+    Capping by day means a quiet Tuesday still gets its say."""
     if per_ticker <= 0:
         return {}
 
@@ -59,7 +68,13 @@ def fetch_news(
                 break
             params = {**params, "page_token": token}
 
-    return {
-        ticker: sorted(articles, key=lambda article: article.created_at, reverse=True)[:per_ticker]
-        for ticker, articles in grouped.items()
-    }
+    def spread(articles):
+        by_day: dict[str, list[Article]] = {}
+        for a in sorted(articles, key=lambda x: x.created_at, reverse=True):
+            day = a.created_at[:10]
+            if len(by_day.setdefault(day, [])) < per_day:
+                by_day[day].append(a)
+        picked = [a for day in sorted(by_day, reverse=True) for a in by_day[day]]
+        return picked[:per_ticker]
+
+    return {ticker: spread(articles) for ticker, articles in grouped.items()}

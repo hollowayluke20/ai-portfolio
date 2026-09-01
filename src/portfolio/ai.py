@@ -321,16 +321,23 @@ def render_prompt(state, rules, candidates, held_theses, features=None, metadata
         rendered = rendered.replace(token, value)
     if "{" in rendered or "}" in rendered:
         raise AIError(f"prompt template still has an unfilled placeholder: {rendered!r}")
-    # Raised from 80,000 deliberately on 2026-08-31, not nudged to make a
-    # failure go away: adding P/E, revenue growth and margin to 518 candidate
-    # rows costs about 5,500 characters and took the full prompt to 85,501.
-    # That is worth paying for - "is this expensive" is half the buy decision
-    # and price cannot answer it.
+    # 130,000, measured on a FULLY INVESTED book.
     #
-    # It is a tripwire, not a budget: it exists so the next thing that doubles
-    # the prompt gets noticed rather than discovered on a bill.
-    if len(rendered) >= 100000:
-        raise AIError(f"prompt is {len(rendered)} characters (tripwire: 100000)")
+    # This has moved twice. 80,000 was set before fundamentals; 100,000 was set
+    # after them but measured against an EMPTY portfolio, which is the error
+    # worth recording - fifteen holdings each carry a thesis, the risks it was
+    # bought with, its price data and its fundamentals, and that block alone is
+    # about 10,000 characters. A real cycle came to 102,256 and tripped a limit
+    # set from a case that cannot occur in production.
+    #
+    # Measure the biggest legitimate case, not the convenient one.
+    #
+    # It stays a tripwire rather than a budget: ~25,000 tokens is pennies and
+    # nowhere near the model's context. The number exists so that the next
+    # thing which doubles the prompt gets noticed rather than discovered on a
+    # bill.
+    if len(rendered) >= 130000:
+        raise AIError(f"prompt is {len(rendered)} characters (tripwire: 130000)")
     return rendered
 
 

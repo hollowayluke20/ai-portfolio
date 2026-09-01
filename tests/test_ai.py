@@ -115,7 +115,7 @@ def test_prompt_stays_under_tripwire_with_news_for_fifteen_holdings():
     article = Article("A material company development", "", "2026-08-30T12:00:00Z", "Wire", "")
     prompt = ai.render_prompt(state, RULES, CANDIDATES, {},
                               news={ticker: [article] * 5 for ticker in tickers})
-    assert len(prompt) < 100000
+    assert len(prompt) < 130000
 
 
 def test_propose_sends_market_prompt_and_honours_pre_rendered_prompt(monkeypatch):
