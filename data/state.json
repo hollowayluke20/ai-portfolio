@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-07T12:00:53Z",
+  "generated_at": "2026-09-07T20:25:24Z",
   "market_data_as_of": "2026-09-04T19:59:59Z",
   "currency": "USD",
   "run": {
-    "id": "54d19b1ff03e",
+    "id": "3530d05e9ea4",
     "trigger": "schedule",
-    "workflow": "update-state"
+    "workflow": "run-triggers"
   },
   "account": {
     "cash": 10375.12,
@@ -32,10 +32,10 @@
       "market_value": 5434.84,
       "unrealized_pl": 14.91,
       "unrealized_pl_pct": 0.0028,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $319.70, 12m +39.2%, -5.9% off high, above 200d average. Overlaps with mega-cap tech exposure in SPY.",
+      "risks": "Recent 1m weakness (-4.0%) accelerates into broader trend reversal.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0542
     },
     {
@@ -47,10 +47,10 @@
       "market_value": 9957.79,
       "unrealized_pl": -42.09,
       "unrealized_pl_pct": -0.0042,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $97.49, up 0.2% over 1m and 2.0% over 12m with low volatility of 4.1%. Overlaps with fixed income sleeve assets IEF and TLT.",
+      "risks": "Interest rate increases drive price further below 200d average.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0993
     },
     {
@@ -62,10 +62,10 @@
       "market_value": 5347.3,
       "unrealized_pl": -72.63,
       "unrealized_pl_pct": -0.0134,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $266.43, 1m +13.1%, 12m +16.3%, -6.2% off high, above 200d average. Overlaps with consumer discretionary and tech in SPY.",
+      "risks": "Volatility of 44.9% causes pullback below 200d moving average.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0533
     },
     {
@@ -77,10 +77,10 @@
       "market_value": 5542.93,
       "unrealized_pl": 123.0,
       "unrealized_pl_pct": 0.0227,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $30.79, 1m +5.0%, 12m +44.4%, -2.8% off high, above 200d average. Overlaps with commodity real asset exposure.",
+      "risks": "Global commodity demand drop breaks upward trend.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0553
     },
     {
@@ -92,10 +92,10 @@
       "market_value": 5528.55,
       "unrealized_pl": 108.62,
       "unrealized_pl_pct": 0.02,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $67.14, 1m +5.6%, 12m +37.2%, -5.7% off high, above 200d average. Overlaps with international emerging equity exposure.",
+      "risks": "Volatility of 32.6% triggers sharp pullback in emerging market equities.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0551
     },
     {
@@ -107,10 +107,10 @@
       "market_value": 5418.44,
       "unrealized_pl": -1.49,
       "unrealized_pl_pct": -0.0003,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $408.89, 1m +8.4%, 12m +30.8%, volatility at 27.4%. Overlaps with real asset commodity exposure.",
+      "risks": "Strong US dollar causes gold price to drop below 200d average.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.054
     },
     {
@@ -122,10 +122,10 @@
       "market_value": 5356.08,
       "unrealized_pl": -63.85,
       "unrealized_pl_pct": -0.0118,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $346.59, 1m +3.9%, 12m +67.5%, -13.9% off high, above 200d average. Overlaps with communication services in SPY.",
+      "risks": "Regulatory headline risk increases volatility beyond 37.1%.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0534
     },
     {
@@ -137,10 +137,10 @@
       "market_value": 9948.12,
       "unrealized_pl": -51.76,
       "unrealized_pl_pct": -0.0052,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $92.85, 12m return of +0.5% with low volatility of 4.9%. Overlaps with bond sleeve assets AGG and TLT.",
+      "risks": "Intermediate Treasury yields rise, causing further price decline below 200d average.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0992
     },
     {
@@ -152,10 +152,10 @@
       "market_value": 5458.28,
       "unrealized_pl": 38.35,
       "unrealized_pl_pct": 0.0071,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $357.62, 1m +1.9%, 12m +21.8%, -2.1% off high, above 200d average with low volatility of 21.1%. Overlaps with financials exposure in SPY.",
+      "risks": "Banking sector stress reduces 12m trend momentum.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0544
     },
     {
@@ -167,10 +167,10 @@
       "market_value": 5313.89,
       "unrealized_pl": -106.04,
       "unrealized_pl_pct": -0.0196,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $895.00, 1m +29.1%, 12m +611.2%, -15.0% off high, above 200d average. Overlaps with technology hardware in NVDA.",
+      "risks": "Extreme volatility of 99.7% results in steep drawdown.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.053
     },
     {
@@ -197,10 +197,10 @@
       "market_value": 5749.46,
       "unrealized_pl": 328.84,
       "unrealized_pl_pct": 0.0607,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $217.55, up 11.5% over 1m and 20.0% over 12m, sitting -7.6% off high above its 200d average. Overlaps with tech semiconductor exposure.",
+      "risks": "High volatility of 43.1% could lead to sharp pullback if semiconductor momentum slows.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0573
     },
     {
@@ -212,10 +212,10 @@
       "market_value": 5447.2,
       "unrealized_pl": 27.27,
       "unrealized_pl_pct": 0.005,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $769.35, 1m +3.7%, 12m +20.3%, -1.1% off high, above 200d average with broad market breadth at 71.7%. Overlaps with broad US equity exposure.",
+      "risks": "Macro economic contraction pulls S&P 500 below 200d average.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0543
     },
     {
@@ -227,10 +227,10 @@
       "market_value": 9970.07,
       "unrealized_pl": -29.81,
       "unrealized_pl_pct": -0.003,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $82.88, 1m return of +0.5% and volatility of 9.9%. Overlaps with bond sleeve assets AGG and IEF.",
+      "risks": "Long-end rate volatility accelerates price decline below 200d average.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0994
     },
     {
@@ -242,10 +242,10 @@
       "market_value": 5454.3,
       "unrealized_pl": 34.37,
       "unrealized_pl_pct": 0.0063,
-      "thesis": null,
-      "risks": null,
+      "thesis": "Trading at $73.06, 1m +2.8%, 12m +27.9%, -1.0% off high, above 200d average. Overlaps with international equity exposure.",
+      "risks": "European/developed market economic weakening slows momentum.",
       "business": null,
-      "opened_at": null,
+      "opened_at": "2026-08-31T09:35:38Z",
       "weight": 0.0544
     }
   ],
@@ -255,7 +255,7 @@
   "health": {
     "ok": false,
     "warnings": [
-      "Market data is 64.0h old (>26h): SPY last traded 2026-09-04T19:59:59Z"
+      "Market data is 72.4h old (>26h)"
     ]
   }
 }
