@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-01T15:32:05.445486Z",
+  "generated_at": "2026-10-01T17:28:51.154309Z",
   "source_url": "https://raw.githubusercontent.com/datasets/s-and-p-500-companies/main/data/constituents.csv",
   "etf_sleeve": [
     "SPY",
@@ -77,13 +77,13 @@
     "BAX",
     "BBY",
     "BDX",
+    "BE",
     "BEN",
     "BF.B",
     "BG",
     "BIIB",
     "BKNG",
     "BKR",
-    "BLDR",
     "BLK",
     "BMY",
     "BNY",
@@ -269,6 +269,7 @@
     "IEF",
     "IEX",
     "IFF",
+    "ILMN",
     "INCY",
     "INTC",
     "INTU",
@@ -379,6 +380,7 @@
     "ORLY",
     "OTIS",
     "OXY",
+    "P",
     "PANW",
     "PAYX",
     "PCAR",
@@ -455,7 +457,6 @@
     "SYK",
     "SYY",
     "T",
-    "TAP",
     "TDG",
     "TDY",
     "TECH",
@@ -478,7 +479,6 @@
     "TSLA",
     "TSN",
     "TT",
-    "TTD",
     "TTWO",
     "TXN",
     "TXT",
@@ -808,6 +808,10 @@
       "name": "Block, Inc.",
       "sector": "Financials"
     },
+    "BE": {
+      "name": "Bloom Energy",
+      "sector": "Industrials"
+    },
     "BNY": {
       "name": "BNY Mellon",
       "sector": "Financials"
@@ -843,10 +847,6 @@
     "BF.B": {
       "name": "Brown\u2013Forman",
       "sector": "Consumer Staples"
-    },
-    "BLDR": {
-      "name": "Builders FirstSource",
-      "sector": "Industrials"
     },
     "BG": {
       "name": "Bunge Global",
@@ -1256,6 +1256,10 @@
       "name": "Evergy",
       "sector": "Utilities"
     },
+    "P": {
+      "name": "Everpure",
+      "sector": "Information Technology"
+    },
     "ES": {
       "name": "Eversource Energy",
       "sector": "Utilities"
@@ -1527,6 +1531,10 @@
     "ITW": {
       "name": "Illinois Tool Works",
       "sector": "Industrials"
+    },
+    "ILMN": {
+      "name": "Illumina, Inc.",
+      "sector": "Health Care"
     },
     "INCY": {
       "name": "Incyte",
@@ -1807,10 +1815,6 @@
     "MRNA": {
       "name": "Moderna",
       "sector": "Health Care"
-    },
-    "TAP": {
-      "name": "Molson Coors Beverage Company",
-      "sector": "Consumer Staples"
     },
     "MDLZ": {
       "name": "Mondelez International",
@@ -2314,10 +2318,6 @@
     },
     "TKO": {
       "name": "TKO Group Holdings",
-      "sector": "Communication Services"
-    },
-    "TTD": {
-      "name": "Trade Desk (The)",
       "sector": "Communication Services"
     },
     "TSCO": {
