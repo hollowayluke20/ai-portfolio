@@ -243,9 +243,9 @@
     },
     {
       "date": "2026-10-09",
-      "portfolio_value": 100916.51,
+      "portfolio_value": 100823.01,
       "portfolio_return_pct": null,
-      "benchmark_price": null,
+      "benchmark_price": 778.6,
       "benchmark_return_pct": null,
       "cash": 10642.19
     }
