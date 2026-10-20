@@ -1,23 +1,23 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T20:25:22Z",
-  "market_data_as_of": "2026-10-20T19:59:59Z",
+  "generated_at": "2026-10-20T23:13:49Z",
+  "market_data_as_of": "2026-10-20T20:47:39Z",
   "currency": "USD",
   "run": {
-    "id": "276c07097608",
+    "id": "3489e2117a09",
     "trigger": "schedule",
     "workflow": "run-triggers"
   },
   "account": {
     "cash": 5429.35,
-    "equity": 98744.68,
-    "buying_power": 283000.34,
+    "equity": 99106.09,
+    "buying_power": 284012.27,
     "status": "ACTIVE"
   },
   "totals": {
-    "total_value": 98744.69,
-    "invested_value": 93315.34,
-    "cash_weight": 0.055,
+    "total_value": 99105.58,
+    "invested_value": 93676.23,
+    "cash_weight": 0.0548,
     "position_count": 15,
     "committed_cash": 0.0,
     "available_cash": 5429.35
@@ -28,15 +28,15 @@
       "name": "Apple Inc. Common Stock",
       "qty": 16.985469495,
       "avg_entry_price": 319.09,
-      "current_price": 340.15,
-      "market_value": 5777.61,
-      "unrealized_pl": 357.68,
-      "unrealized_pl_pct": 0.066,
+      "current_price": 338.35,
+      "market_value": 5747.02,
+      "unrealized_pl": 327.09,
+      "unrealized_pl_pct": 0.0603,
       "thesis": "Trading at $319.70, 12m +39.2%, -5.9% off high, above 200d average. Overlaps with mega-cap tech exposure in SPY.",
       "risks": "Recent 1m weakness (-4.0%) accelerates into broader trend reversal.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0585
+      "weight": 0.058
     },
     {
       "ticker": "AGG",
@@ -51,17 +51,17 @@
       "risks": "Interest rate increases drive price further below 200d average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.099
+      "weight": 0.0987
     },
     {
       "ticker": "AMZN",
       "name": "Amazon.com, Inc. Common Stock",
       "qty": 20.685076335,
       "avg_entry_price": 262.02,
-      "current_price": 263.25,
-      "market_value": 5445.35,
-      "unrealized_pl": 25.42,
-      "unrealized_pl_pct": 0.0047,
+      "current_price": 263.9,
+      "market_value": 5458.88,
+      "unrealized_pl": 38.95,
+      "unrealized_pl_pct": 0.0072,
       "thesis": "Trading at $266.43, 1m +13.1%, 12m +16.3%, -6.2% off high, above 200d average. Overlaps with consumer discretionary and tech in SPY.",
       "risks": "Volatility of 44.9% causes pullback below 200d moving average.",
       "business": null,
@@ -81,37 +81,37 @@
       "risks": "Global commodity demand drop breaks upward trend.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0591
+      "weight": 0.0589
     },
     {
       "ticker": "EEM",
       "name": "iShares MSCI Emerging Markets ETF",
       "qty": 80.473840665,
       "avg_entry_price": 67.35,
-      "current_price": 63.38,
-      "market_value": 5100.43,
-      "unrealized_pl": -319.5,
-      "unrealized_pl_pct": -0.0589,
+      "current_price": 63.6,
+      "market_value": 5118.14,
+      "unrealized_pl": -301.79,
+      "unrealized_pl_pct": -0.0557,
       "thesis": "Trading at $67.14, 1m +5.6%, 12m +37.2%, -5.7% off high, above 200d average. Overlaps with international emerging equity exposure.",
       "risks": "Volatility of 32.6% triggers sharp pullback in emerging market equities.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0517
+      "weight": 0.0516
     },
     {
       "ticker": "GOOGL",
       "name": "Alphabet Inc. Class A Common Stock",
       "qty": 15.824848024,
       "avg_entry_price": 342.49,
-      "current_price": 340.28,
-      "market_value": 5384.88,
-      "unrealized_pl": -35.05,
-      "unrealized_pl_pct": -0.0065,
+      "current_price": 340.92,
+      "market_value": 5395.0,
+      "unrealized_pl": -24.93,
+      "unrealized_pl_pct": -0.0046,
       "thesis": "Trading at $346.59, 1m +3.9%, 12m +67.5%, -13.9% off high, above 200d average. Overlaps with communication services in SPY.",
       "risks": "Regulatory headline risk increases volatility beyond 37.1%.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0545
+      "weight": 0.0544
     },
     {
       "ticker": "IEF",
@@ -126,97 +126,97 @@
       "risks": "Intermediate Treasury yields rise, causing further price decline below 200d average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0986
+      "weight": 0.0982
     },
     {
       "ticker": "JPM",
       "name": "JPMorgan Chase & Co.",
       "qty": 15.219392339,
       "avg_entry_price": 356.12,
-      "current_price": 335.6,
-      "market_value": 5107.63,
-      "unrealized_pl": -312.3,
-      "unrealized_pl_pct": -0.0576,
+      "current_price": 335.26,
+      "market_value": 5102.45,
+      "unrealized_pl": -317.48,
+      "unrealized_pl_pct": -0.0586,
       "thesis": "Trading at $357.62, 1m +1.9%, 12m +21.8%, -2.1% off high, above 200d average with low volatility of 21.1%. Overlaps with financials exposure in SPY.",
       "risks": "Banking sector stress reduces 12m trend momentum.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0517
+      "weight": 0.0515
     },
     {
       "ticker": "LITE",
       "name": "Lumentum Holdings Inc. Common Stock",
       "qty": 6.029916336,
       "avg_entry_price": 898.84,
-      "current_price": 822.51,
-      "market_value": 4959.67,
-      "unrealized_pl": -460.26,
-      "unrealized_pl_pct": -0.0849,
+      "current_price": 863.0,
+      "market_value": 5203.82,
+      "unrealized_pl": -216.11,
+      "unrealized_pl_pct": -0.0399,
       "thesis": "Trading at $895.00, 1m +29.1%, 12m +611.2%, -15.0% off high, above 200d average. Overlaps with technology hardware in NVDA.",
       "risks": "Extreme volatility of 99.7% results in steep drawdown.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0502
+      "weight": 0.0525
     },
     {
       "ticker": "NVDA",
       "name": "NVIDIA Corporation Common Stock",
       "qty": 24.958567362,
       "avg_entry_price": 217.18,
-      "current_price": 216.68,
-      "market_value": 5408.02,
-      "unrealized_pl": -12.6,
-      "unrealized_pl_pct": -0.0023,
+      "current_price": 220.65,
+      "market_value": 5507.11,
+      "unrealized_pl": 86.49,
+      "unrealized_pl_pct": 0.016,
       "thesis": "Trading at $217.55, up 11.5% over 1m and 20.0% over 12m, sitting -7.6% off high above its 200d average. Overlaps with tech semiconductor exposure.",
       "risks": "High volatility of 43.1% could lead to sharp pullback if semiconductor momentum slows.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0548
+      "weight": 0.0556
     },
     {
       "ticker": "QQQ",
       "name": "Invesco QQQ Trust, Series 1",
       "qty": 6.963593367,
       "avg_entry_price": 748.58,
-      "current_price": 718.28,
-      "market_value": 5001.81,
-      "unrealized_pl": -211.02,
-      "unrealized_pl_pct": -0.0405,
+      "current_price": 722.75,
+      "market_value": 5032.93,
+      "unrealized_pl": -179.9,
+      "unrealized_pl_pct": -0.0345,
       "thesis": "QQQ demonstrates strong momentum with a 1m return of +6.1% and 12m return of +23.4%, sitting -1.1% off its high and above its 200d moving average with reasonable volatility of 18.2%. This performance indicates robust large-cap technology leadership in a split market, making it an ideal holding to bring total portfolio position count to the target of 15. Overlaps with existing broad market tech exposure in SPY, AAPL, AMZN, GOOGL, and NVDA.",
       "risks": "Tech sector valuation contraction or macroeconomic slowdown pushing price below 200d moving average.",
       "business": null,
       "opened_at": "2026-10-12T12:00:58Z",
-      "weight": 0.0507
+      "weight": 0.0508
     },
     {
       "ticker": "SPY",
       "name": "State Street SPDR S&P 500 ETF Trust",
       "qty": 7.072542107,
       "avg_entry_price": 766.33,
-      "current_price": 769.53,
-      "market_value": 5442.53,
-      "unrealized_pl": 22.6,
-      "unrealized_pl_pct": 0.0042,
+      "current_price": 770.78,
+      "market_value": 5451.37,
+      "unrealized_pl": 31.44,
+      "unrealized_pl_pct": 0.0058,
       "thesis": "Trading at $769.35, 1m +3.7%, 12m +20.3%, -1.1% off high, above 200d average with broad market breadth at 71.7%. Overlaps with broad US equity exposure.",
       "risks": "Macro economic contraction pulls S&P 500 below 200d average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0551
+      "weight": 0.055
     },
     {
       "ticker": "TLT",
       "name": "iShares 20 Year Treasury Bond ETF",
       "qty": 121.275673707,
       "avg_entry_price": 82.46,
-      "current_price": 80.15,
-      "market_value": 9720.25,
-      "unrealized_pl": -279.63,
-      "unrealized_pl_pct": -0.028,
+      "current_price": 79.92,
+      "market_value": 9692.35,
+      "unrealized_pl": -307.53,
+      "unrealized_pl_pct": -0.0308,
       "thesis": "Trading at $82.88, 1m return of +0.5% and volatility of 9.9%. Overlaps with bond sleeve assets AGG and IEF.",
       "risks": "Long-end rate volatility accelerates price decline below 200d average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0984
+      "weight": 0.0978
     },
     {
       "ticker": "VEA",
@@ -231,7 +231,7 @@
       "risks": "European/developed market economic weakening slows momentum.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0523
+      "weight": 0.0521
     },
     {
       "ticker": "VLO",
@@ -246,7 +246,7 @@
       "risks": "Crude oil demand destruction causes refining margins to collapse below 200d moving average.",
       "business": null,
       "opened_at": "2026-09-14T12:00:59Z",
-      "weight": 0.0553
+      "weight": 0.0551
     }
   ],
   "pending_orders": [],
