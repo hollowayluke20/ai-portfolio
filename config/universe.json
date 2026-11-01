@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-01T17:28:51.154309Z",
+  "generated_at": "2026-11-01T18:05:14.461878Z",
   "source_url": "https://raw.githubusercontent.com/datasets/s-and-p-500-companies/main/data/constituents.csv",
   "etf_sleeve": [
     "SPY",
@@ -142,7 +142,6 @@
     "CSX",
     "CTAS",
     "CTSH",
-    "CTVA",
     "CVNA",
     "CVS",
     "CVX",
@@ -405,7 +404,6 @@
     "PPL",
     "PRU",
     "PSA",
-    "PSKY",
     "PSX",
     "PTC",
     "PWR",
@@ -434,6 +432,7 @@
     "SCHW",
     "SHW",
     "SJM",
+    "SKYD",
     "SLB",
     "SMCI",
     "SNA",
@@ -480,6 +479,7 @@
     "TSN",
     "TT",
     "TTWO",
+    "TWLO",
     "TXN",
     "TXT",
     "TYL",
@@ -512,10 +512,10 @@
     "VTR",
     "VTRS",
     "VWO",
+    "VYLR",
     "VZ",
     "WAB",
     "WAT",
-    "WBD",
     "WDAY",
     "WDC",
     "WEC",
@@ -1051,10 +1051,6 @@
     "CPAY": {
       "name": "Corpay",
       "sector": "Financials"
-    },
-    "CTVA": {
-      "name": "Corteva",
-      "sector": "Materials"
     },
     "CSGP": {
       "name": "CoStar Group",
@@ -1769,7 +1765,7 @@
       "sector": "Consumer Discretionary"
     },
     "MCK": {
-      "name": "McKesson Corporation",
+      "name": "McKesson",
       "sector": "Health Care"
     },
     "MDT": {
@@ -1972,10 +1968,6 @@
       "name": "Palo Alto Networks",
       "sector": "Information Technology"
     },
-    "PSKY": {
-      "name": "Paramount Skydance Corporation",
-      "sector": "Communication Services"
-    },
     "PH": {
       "name": "Parker Hannifin",
       "sector": "Industrials"
@@ -2048,13 +2040,13 @@
       "name": "Prudential Financial",
       "sector": "Financials"
     },
-    "PEG": {
-      "name": "Public Service Enterprise Group",
-      "sector": "Utilities"
-    },
     "PTC": {
       "name": "PTC Inc.",
       "sector": "Information Technology"
+    },
+    "PEG": {
+      "name": "Public Service Enterprise Group",
+      "sector": "Utilities"
     },
     "PSA": {
       "name": "Public Storage",
@@ -2064,21 +2056,21 @@
       "name": "PulteGroup",
       "sector": "Consumer Discretionary"
     },
-    "PWR": {
-      "name": "Quanta Services",
-      "sector": "Industrials"
+    "Q": {
+      "name": "Qnity Electronics",
+      "sector": "Information Technology"
     },
     "QCOM": {
       "name": "Qualcomm",
       "sector": "Information Technology"
     },
+    "PWR": {
+      "name": "Quanta Services",
+      "sector": "Industrials"
+    },
     "DGX": {
       "name": "Quest Diagnostics",
       "sector": "Health Care"
-    },
-    "Q": {
-      "name": "Qnity Electronics",
-      "sector": "Information Technology"
     },
     "RL": {
       "name": "Ralph Lauren Corporation",
@@ -2091,10 +2083,6 @@
     "RDDT": {
       "name": "Reddit",
       "sector": "Communication Services"
-    },
-    "RTX": {
-      "name": "RTX Corporation",
-      "sector": "Industrials"
     },
     "O": {
       "name": "Realty Income",
@@ -2117,7 +2105,7 @@
       "sector": "Industrials"
     },
     "RMD": {
-      "name": "ResMed|",
+      "name": "ResMed",
       "sector": "Health Care"
     },
     "RVTY": {
@@ -2147,6 +2135,10 @@
     "RCL": {
       "name": "Royal Caribbean Group",
       "sector": "Consumer Discretionary"
+    },
+    "RTX": {
+      "name": "RTX Corporation",
+      "sector": "Industrials"
     },
     "SPGI": {
       "name": "S&P Global",
@@ -2187,6 +2179,10 @@
     "SPG": {
       "name": "Simon Property Group",
       "sector": "Real Estate"
+    },
+    "SKYD": {
+      "name": "Skydance",
+      "sector": "Communication Services"
     },
     "SWKS": {
       "name": "Skyworks Solutions",
@@ -2344,6 +2340,10 @@
       "name": "Truist Financial",
       "sector": "Financials"
     },
+    "TWLO": {
+      "name": "Twilio",
+      "sector": "Information Technology"
+    },
     "TYL": {
       "name": "Tyler Technologies",
       "sector": "Information Technology"
@@ -2452,6 +2452,10 @@
       "name": "Vulcan Materials Company",
       "sector": "Materials"
     },
+    "VYLR": {
+      "name": "Vylor",
+      "sector": "Consumer Staples"
+    },
     "WRB": {
       "name": "W. R. Berkley Corporation",
       "sector": "Financials"
@@ -2470,10 +2474,6 @@
     },
     "DIS": {
       "name": "Walt Disney Company (The)",
-      "sector": "Communication Services"
-    },
-    "WBD": {
-      "name": "Warner Bros. Discovery",
       "sector": "Communication Services"
     },
     "WM": {
