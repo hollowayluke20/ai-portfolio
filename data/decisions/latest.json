@@ -1,139 +1,324 @@
 {
   "schema_version": 1,
-  "cycle_id": "2026-10-12-weekly",
-  "decided_at": "2026-10-12T12:00:58Z",
-  "portfolio_value_at_decision": 100828.69,
-  "commentary": "Market breadth sits at 50.0%, reflecting a split market where broad indices hold near record highs while rising interest rates apply downward pressure to fixed income duration. Bonds are currently failing to serve as an effective equity hedge as IEF, AGG, and TLT all trade below their 200-day moving averages amid 24-year high Treasury yields. The portfolio remains structured around high-momentum idiosyncratic risk winners in technology hardware and energy refining while anchoring the bond sleeve near its floor to limit duration drag. A drop in market breadth below 35% alongside bond funds recovering above their 200-day moving averages would prompt a shift toward defensively expanding the bond sleeve.",
-  "target_bond_weight": 0.28,
-  "allocation_reason": "The target bond weight of 0.28 sits 0.03 above the 0.25 sleeve minimum and 0.47 below the 0.75 maximum. With Treasury yields pressing higher and all three bond funds trading below their 200-day moving averages, fixed income is providing negative momentum rather than downside protection, justifying maintaining an allocation close to the lower limit.",
+  "cycle_id": "2026-11-02-weekly",
+  "decided_at": "2026-11-02T13:01:12Z",
+  "portfolio_value_at_decision": 96773.73,
+  "commentary": "Market breadth at 61.6% alongside a pullback in mega-cap technology names (QQQ -6.9% over 1m) signals broad index consolidation while sector rotation into energy, financials, and defensive real assets continues. The current book is placed defensively with a ~0.31 bond sleeve providing ballast as Treasuries rebound (+5.3% 1m in TLT), alongside exposure to commodity momentum (DBC, VLO). Risk is selectively taken in high-margin tech leaders whose revenue growth remains strong despite short-term price pullbacks. A shift in broader market breadth below 50% or a sustained breakdown in long-duration Treasury hedges during an equity drop would trigger an increase in the bond target weight.",
+  "target_bond_weight": 0.3,
+  "allocation_reason": "Setting the bond target at 0.30 positions the sleeve 0.050 above the 0.250 minimum floor and 0.450 below the 0.750 maximum ceiling. This split remains appropriate as Treasuries demonstrate hedging efficacy (TLT up +5.3% over 1m) during equity sector weakness, without over-allocating away from cyclical risk opportunities.",
   "decisions": [
     {
-      "ticker": "QQQ",
-      "action": "BUY",
-      "target_weight": 0.0517,
-      "thesis": "QQQ demonstrates strong momentum with a 1m return of +6.1% and 12m return of +23.4%, sitting -1.1% off its high and above its 200d moving average with reasonable volatility of 18.2%. This performance indicates robust large-cap technology leadership in a split market, making it an ideal holding to bring total portfolio position count to the target of 15. Overlaps with existing broad market tech exposure in SPY, AAPL, AMZN, GOOGL, and NVDA.",
-      "risks": "Tech sector valuation contraction or macroeconomic slowdown pushing price below 200d moving average.",
-      "reason_for_action": "Completes portfolio count to target of 15 while capturing persistent growth momentum.",
-      "basis": "momentum",
-      "notional": 5212.84,
+      "ticker": "GOOGL",
+      "action": "HOLD",
+      "target_weight": 0.0461,
+      "thesis": "P/E of 14.1 alongside +20.1% y/y revenue growth implies significant fundamental undervaluation relative to tech peers, making it worth holding despite recent CapEx jitter drawdowns.",
+      "risks": "Revenue growth decelerates below 10% y/y or volatility exceeds 45%.",
+      "reason_for_action": "Maintain conviction through non-fundamental tech sector selloff.",
+      "basis": "other",
+      "notional": null,
       "valid": true,
-      "rejection_reason": null,
-      "status": "executed",
-      "order_id": "3ac61523-742d-49ee-97a7-57dabb137a35"
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "AMZN",
+      "action": "HOLD",
+      "target_weight": 0.0515,
+      "thesis": "Operating margin of 17.4% on +15.8% y/y revenue growth demonstrates high AWS profitability that justifies position retention.",
+      "risks": "12m performance turns negative or operating margins shrink below 10%.",
+      "reason_for_action": "Fundamentals remain intact despite price dipping below the 200-day average.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "EEM",
+      "action": "HOLD",
+      "target_weight": 0.0515,
+      "thesis": "+11.1% 12m performance provides emerging markets diversification within the international risk sleeve.",
+      "risks": "12m return drops below 0% or volatility surges above 30%.",
+      "reason_for_action": "Maintain balanced global exposure through short-term EM weakness.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "LITE",
+      "action": "HOLD",
+      "target_weight": 0.0515,
+      "thesis": "+292.3% 12m return highlights powerful optical hardware demand driving growth above its 200-day moving average.",
+      "risks": "Price breaks below 200-day moving average or drawdown from high exceeds 40%.",
+      "reason_for_action": "Hold momentum leader while monitoring buyout developments.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "NVDA",
+      "action": "HOLD",
+      "target_weight": 0.0533,
+      "thesis": "+83.4% y/y revenue growth and 63.7% operating margins confirm structural semiconductor demand above its 200d average.",
+      "risks": "Revenue growth falls below 30% y/y or price crosses below 200d average.",
+      "reason_for_action": "Fundamental earnings engine remains unmatched despite short-term market noise.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "QQQ",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "+9.1% 12m gain holding above its 200-day average provides diversified large-cap technology leadership.",
+      "risks": "Index breaches 200-day moving average.",
+      "reason_for_action": "Maintain core tech allocation to keep target position count at 15.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "VEA",
+      "action": "HOLD",
+      "target_weight": 0.0534,
+      "thesis": "+16.3% 12m gain with reasonable 12.9% volatility provides stable developed market exposure above its 200d average.",
+      "risks": "12m return turns negative or price drops below 200d average.",
+      "reason_for_action": "Maintain international developed market risk balance.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "JPM",
+      "action": "HOLD",
+      "target_weight": 0.0533,
+      "thesis": "Low 16.0% volatility combined with 32.6% operating margin and +12.4% 12m return provides defensive financial sector strength.",
+      "risks": "Price falls below 200-day moving average.",
+      "reason_for_action": "Keep high-quality banking exposure as financial sector outperforms.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "SPY",
+      "action": "HOLD",
+      "target_weight": 0.0554,
+      "thesis": "Low 10.0% volatility and +11.1% 12m return above the 200d average deliver core US equity market representation.",
+      "risks": "S&P 500 index falls below its 200-day moving average.",
+      "reason_for_action": "Maintain broad market anchor.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "VLO",
+      "action": "HOLD",
+      "target_weight": 0.0511,
+      "thesis": "+139.1% 12m return and P/E of 16.6 confirm strong refining margin capture above its 200d average.",
+      "risks": "Refining margins collapse pushing price below 200d average.",
+      "reason_for_action": "Maintain profitable energy refining exposure.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "DBC",
+      "action": "HOLD",
+      "target_weight": 0.06,
+      "thesis": "+53.0% 12m return with low -1.4% distance from highs demonstrates strong real-asset trend above 200d average.",
+      "risks": "Broad commodity index trends down below 200d moving average.",
+      "reason_for_action": "Preserve inflation and real asset hedge.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "AAPL",
+      "action": "HOLD",
+      "target_weight": 0.0605,
+      "thesis": "27.6% operating margin and relative 1m strength (+4.3%, -1.2% off high) validate thesis as mega-cap quality leader.",
+      "risks": "Price drops below 200-day moving average.",
+      "reason_for_action": "Hold resilient mega-cap technology champion.",
+      "basis": "other",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "AGG",
+      "action": "HOLD",
+      "target_weight": 0.1022,
+      "thesis": "Low 4.8% volatility and positive 1m trend (+2.1%) provide primary fixed income core stabilization.",
+      "risks": "1m return turns sharply negative driven by interest rate shocks.",
+      "reason_for_action": "Maintain equal-weighted core bond sleeve component.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "IEF",
+      "action": "HOLD",
+      "target_weight": 0.1018,
+      "thesis": "5.8% volatility with positive 1m momentum (+2.8%) offers effective intermediate duration treasury balance.",
+      "risks": "Intermediate yield spikes drive 1m performance negative.",
+      "reason_for_action": "Maintain treasury sleeve target allocation.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "TLT",
+      "action": "HOLD",
+      "target_weight": 0.1023,
+      "thesis": "+5.3% 1m gain shows long-end Treasuries actively functioning as risk sleeve hedge during tech drawdowns.",
+      "risks": "Long-end rate volatility causes price to resume downward trend.",
+      "reason_for_action": "Keep long-duration bond ballast active.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
     }
   ],
   "review": [
     {
-      "ticker": "TLT",
+      "ticker": "GOOGL",
       "rank": 1,
-      "verdict": "Held despite negative 1m (-3.1%) and 12m (-8.6%) returns to satisfy mandatory bond sleeve requirements and maintain long-end Treasury duration ballast."
-    },
-    {
-      "ticker": "IEF",
-      "rank": 2,
-      "verdict": "Held despite negative 1m (-1.6%) performance to preserve intermediate Treasury duration exposure required by the bond sleeve minimum."
-    },
-    {
-      "ticker": "AGG",
-      "rank": 3,
-      "verdict": "Serves as core aggregate bond ballast with lowest volatility in the bond sleeve."
-    },
-    {
-      "ticker": "JPM",
-      "rank": 4,
-      "verdict": "Financial sector leader maintaining position above 200d average despite recent pullback."
-    },
-    {
-      "ticker": "VEA",
-      "rank": 5,
-      "verdict": "Provides international developed equity diversification above 200d average."
-    },
-    {
-      "ticker": "EEM",
-      "rank": 6,
-      "verdict": "Delivers emerging market equity exposure with strong 12m gain of +25.0%."
+      "verdict": "Held despite 1m decline (-17.3%) because a P/E of 14.1 and +20.1% y/y revenue growth confirm that core search and cloud fundamentals remain intact despite headline AI CapEx fears."
     },
     {
       "ticker": "AMZN",
-      "rank": 7,
-      "verdict": "Core e-commerce and cloud holding maintaining trend above 200d moving average."
+      "rank": 2,
+      "verdict": "Held despite dipping below its 200d average because +15.8% y/y revenue growth and a 17.4% margin show operational execution remains robust."
     },
     {
-      "ticker": "SPY",
-      "rank": 8,
-      "verdict": "Broad S&P 500 index anchor trading near record highs with low volatility."
-    },
-    {
-      "ticker": "NVDA",
-      "rank": 9,
-      "verdict": "Semiconductor leader showing +83.4% y/y revenue growth and intact trend."
-    },
-    {
-      "ticker": "AAPL",
-      "rank": 10,
-      "verdict": "Solid mega-cap technology exposure trading near highs above 200d moving average."
-    },
-    {
-      "ticker": "GOOGL",
-      "rank": 11,
-      "verdict": "Communication leader displaying strong 12m return of +44.1% and robust margins."
-    },
-    {
-      "ticker": "DBC",
-      "rank": 12,
-      "verdict": "Real asset commodity hedge exhibiting +49.7% 12m return above 200d moving average."
-    },
-    {
-      "ticker": "VLO",
-      "rank": 13,
-      "verdict": "Refining momentum driver with +172.7% 12m return and expanding margins."
+      "ticker": "EEM",
+      "rank": 3,
+      "verdict": "Emerging markets face near-term weakness (-8.6% 1m), but +11.1% 12m gain keeps thesis intact for global diversification."
     },
     {
       "ticker": "LITE",
+      "rank": 4,
+      "verdict": "High volatility (+89.6%) is counterbalanced by +292.3% 12m return and M&A speculation in optical networking."
+    },
+    {
+      "ticker": "NVDA",
+      "rank": 5,
+      "verdict": "Pullback of -11.4% over 1m is tolerable given extraordinary +83.4% y/y revenue growth and 63.7% operating margins."
+    },
+    {
+      "ticker": "QQQ",
+      "rank": 6,
+      "verdict": "Tech leadership remains key long-term exposure, holding above 200d with +9.1% 12m return."
+    },
+    {
+      "ticker": "VEA",
+      "rank": 7,
+      "verdict": "Stable international exposure holding above 200d with +16.3% 12m gain."
+    },
+    {
+      "ticker": "JPM",
+      "rank": 8,
+      "verdict": "Financial sector stability with low volatility (+16.0%) and +12.4% 12m performance."
+    },
+    {
+      "ticker": "SPY",
+      "rank": 9,
+      "verdict": "Core broad market anchor holding above 200d average with low 10.0% volatility."
+    },
+    {
+      "ticker": "VLO",
+      "rank": 10,
+      "verdict": "Refining margin strength reflected in +139.1% 12m gain and modest 16.6 P/E."
+    },
+    {
+      "ticker": "DBC",
+      "rank": 11,
+      "verdict": "Commodity inflation hedge performing strongly (+53.0% 12m, +2.6% 1m) above 200d."
+    },
+    {
+      "ticker": "AAPL",
+      "rank": 12,
+      "verdict": "Strong relative strength (+4.3% 1m, -1.2% off high) backed by 27.6% operating margin."
+    },
+    {
+      "ticker": "AGG",
+      "rank": 13,
+      "verdict": "Essential aggregate bond ballast with low 4.8% volatility and positive 1m momentum (+2.1%)."
+    },
+    {
+      "ticker": "IEF",
       "rank": 14,
-      "verdict": "Top conviction performer with +576.5% 12m return and sold-out capacity through 2029."
+      "verdict": "Intermediate Treasury stabilization asset with +2.8% 1m gain and 5.8% volatility."
+    },
+    {
+      "ticker": "TLT",
+      "rank": 15,
+      "verdict": "Strongest bond hedge momentum (+5.3% 1m) offsetting risk sleeve pullbacks."
     }
   ],
   "considered": [
     {
       "ticker": "VOO",
-      "verdict": "Duplicates existing SPY holding within broad US equity sleeve."
-    },
-    {
-      "ticker": "EFA",
-      "verdict": "Lower 12m momentum compared to held developed market ETF VEA."
-    },
-    {
-      "ticker": "VWO",
-      "verdict": "Weaker 12m performance relative to held emerging market fund EEM."
+      "verdict": "Redundant with existing SPY holding and capped by broad US equity limit."
     },
     {
       "ticker": "GLD",
-      "verdict": "Trading -22.4% off high and below 200d moving average."
-    },
-    {
-      "ticker": "VNQ",
-      "verdict": "Real estate sector weakness with price trading below 200d moving average."
-    },
-    {
-      "ticker": "REET",
-      "verdict": "Global real estate remains in a downtrend below 200d moving average."
+      "verdict": "Trading below 200d average (-28.3% off high) with negative 1m momentum (-7.0%)."
     },
     {
       "ticker": "USO",
-      "verdict": "Extremely high volatility of 50.1% makes DBC and VLO preferable energy/commodity exposures."
+      "verdict": "High momentum (+12.5% 1m) but DBC and VLO already cover commodity/energy risk sleeve."
     },
     {
-      "ticker": "FTNT",
-      "verdict": "Strong momentum but current position count filled by broader tech index QQQ."
+      "ticker": "VNQ",
+      "verdict": "Positive momentum (+5.3% 1m) but portfolio is currently complete at target 15 positions."
     },
     {
-      "ticker": "PLTR",
-      "verdict": "High volatility of 77.1% poses higher drawdown risk than index allocation."
+      "ticker": "AMD",
+      "verdict": "High volatility (+58.1%) and 1m decline (-18.0%) make NVDA the preferred semiconductor hold."
     },
     {
-      "ticker": "MPC",
-      "verdict": "Existing VLO position already captures refining sector momentum effectively."
+      "ticker": "MSFT",
+      "verdict": "Flat 1m performance (+1.8%) and -2.8% 12m return offers less momentum than existing tech holdings."
     }
   ]
 }
