@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "cycle_id": "2026-11-16-weekly",
+  "decided_at": "2026-11-16T13:01:00Z",
+  "portfolio_value_at_decision": 94611.02,
+  "commentary": "Market breadth at 66.6% indicates that equity participation remains healthy despite recent tech consolidation, while fixed income assets continue to trade below their 200-day moving averages under ongoing interest rate pressure. The portfolio is currently carrying excess uninvested cash of nearly 25%, leaving it under-allocated to active momentum. We are deploying this cash into high-conviction equity leaders and real estate while keeping the bond sleeve light to protect against duration drag. What would change our mind is market breadth dropping below 50% alongside broad equity index breakdowns below 200-day averages, which would trigger a aggressive shift toward capital preservation.",
+  "target_bond_weight": 0.3,
+  "allocation_reason": "A 0.30 bond weight sits just 0.05 above the 0.25 minimum floor and 0.45 below the 0.75 maximum ceiling. We maintain this lower-tier allocation because fixed income instruments (IEF, AGG, TLT) remain below their 200-day moving averages and offer minimal downside hedging efficiency in the current rate environment.",
+  "decisions": [
+    {
+      "ticker": "AAPL",
+      "action": "TRIM",
+      "target_weight": 0.05,
+      "thesis": "Trading at peak levels (+0.0% off high) with 30.7% 12m gain and 27.6% net margin, confirming intact thesis.",
+      "risks": "Pullback below 200d moving average on tech sector profit taking.",
+      "reason_for_action": "Rebalance position weight from 0.0642 down to target equal sleeve weight of 0.05.",
+      "basis": "allocation",
+      "notional": 1343.62,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "d9bca28d-7ca8-4933-bfcc-9d063f06b3f1"
+    },
+    {
+      "ticker": "AGG",
+      "action": "HOLD",
+      "target_weight": 0.1,
+      "thesis": "Volatility of 5.0% keeps fixed income sleeve anchored as essential risk ballast despite -1.4% 12m return.",
+      "risks": "Yield expansion drives further price decline.",
+      "reason_for_action": "Maintain required equal-weighted bond sleeve allocation.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "AMZN",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "15.8% y/y revenue growth and 4.7% 1m gain confirm solid e-commerce and cloud trend above 200d average.",
+      "risks": "Volatility exceeding 40% pulling price below 200d average.",
+      "reason_for_action": "Maintain target risk sleeve weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "DBC",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "12m gain of 38.1% above 200d average maintains critical commodity asset class diversification.",
+      "risks": "Global demand destruction breaking upward trend.",
+      "reason_for_action": "Maintain target risk sleeve weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "GOOGL",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "20.1% y/y revenue growth and 54.8% operating margin at a 14.9 P/E justify holding through short-term headline volatility.",
+      "risks": "Continued decline extending more than 20% below 200d average.",
+      "reason_for_action": "Maintain position while fundamental earnings thesis remains intact.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "IEF",
+      "action": "HOLD",
+      "target_weight": 0.1,
+      "thesis": "6.2% volatility offers intermediate treasury stability within the mandatory bond sleeve.",
+      "risks": "Rising intermediate rates driving price lower.",
+      "reason_for_action": "Maintain required equal-weighted bond sleeve allocation.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "JPM",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "13.5% y/y revenue growth and 3.2% 1m gain confirm strong financial sector leadership above 200d average.",
+      "risks": "Banking industry margin compression below 200d average.",
+      "reason_for_action": "Maintain target risk sleeve weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "SPY",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "11.6% 12m return with low 14.8% volatility provides steady broad market equity exposure above 200d average.",
+      "risks": "Macro economic contraction pulling index below 200d average.",
+      "reason_for_action": "Maintain target risk sleeve weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "TLT",
+      "action": "HOLD",
+      "target_weight": 0.1,
+      "thesis": "10.8% volatility provides long-end Treasury duration exposure inside the bond sleeve.",
+      "risks": "Long-end rate volatility accelerating price losses.",
+      "reason_for_action": "Maintain required equal-weighted bond sleeve allocation.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "VEA",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "14.7% 12m return above 200d average provides international developed equity diversification.",
+      "risks": "European economic slowdown driving price below 200d average.",
+      "reason_for_action": "Maintain target risk sleeve weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "VLO",
+      "action": "HOLD",
+      "target_weight": 0.05,
+      "thesis": "118.5% 12m return above 200d average reflects long-term refining capacity tightness.",
+      "risks": "Refining margin collapse breaking 200d support.",
+      "reason_for_action": "Maintain target risk sleeve weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "VNQ",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 1m gain of +5.5% with low volatility of 15.1% demonstrates strengthening real estate momentum above its 200d average, providing yield and real asset diversification. Overlaps with broad equity market exposure in SPY.",
+      "risks": "Rising interest rates push real estate valuations below the 200d moving average.",
+      "reason_for_action": "Deploy excess cash into non-correlated real estate assets showing strong 1m momentum.",
+      "basis": "momentum",
+      "notional": 4730.55,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "1b6e066e-1cea-41d2-9007-8f5f05ff3e67"
+    },
+    {
+      "ticker": "LLY",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "Revenue growth of +49.6% y/y and 33.5% net margin drive exceptional fundamental performance, pushing price to all-time highs (+0.0% off high) up 15.5% over 1m. Overlaps with healthcare exposure in SPY.",
+      "risks": "Deceleration in quarterly revenue growth below 20% or pullback below 200d average.",
+      "reason_for_action": "Capitalize on high earnings growth and breakout price momentum to expand risk sleeve.",
+      "basis": "momentum",
+      "notional": 4730.55,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "4ce20e19-5b81-4a15-ba7a-1154e8d26b7e"
+    },
+    {
+      "ticker": "COST",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 13.3% 1m gain pushing stock to all-time highs (+0.0% off high) at 20.1% volatility highlights steady non-cyclical consumer demand above 200d average. Overlaps with consumer staples in SPY.",
+      "risks": "Consumer spending contraction drives price below 200d moving average.",
+      "reason_for_action": "Add resilient consumer staples market leader to deploy cash buffer.",
+      "basis": "momentum",
+      "notional": 4730.55,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "3df26c14-9a8f-4924-bf04-66643febfe66"
+    },
+    {
+      "ticker": "BRK.B",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "Trading at all-time highs (+0.0% off high) with 12.8% 1m gain and low 14.5% volatility offers defensive multi-sector equity exposure above its 200d moving average. Overlaps with financial holdings in JPM and SPY.",
+      "risks": "Broad financial sector contraction pushes stock below 200d moving average.",
+      "reason_for_action": "Strengthen risk sleeve stability with ultra-low volatility large-cap compounder.",
+      "basis": "momentum",
+      "notional": 4730.55,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    }
+  ],
+  "review": [
+    {
+      "ticker": "GOOGL",
+      "rank": 1,
+      "verdict": "Held despite recent 15.3% 1m pullback below its 200d average because 20.1% y/y revenue growth and a 14.9 P/E indicate underlying business strength rather than structural breakdown."
+    },
+    {
+      "ticker": "AGG",
+      "rank": 2,
+      "verdict": "Held despite negative 12m returns because its low 5.0% volatility serves as essential baseline fixed income ballast to anchor risk sleeve fluctuations."
+    },
+    {
+      "ticker": "TLT",
+      "rank": 3,
+      "verdict": "Provides long-duration exposure within the mandated bond sleeve despite recent interest rate headwinds."
+    },
+    {
+      "ticker": "IEF",
+      "rank": 4,
+      "verdict": "Offers intermediate treasury stability with modest 6.2% volatility to meet sleeve requirements."
+    },
+    {
+      "ticker": "VLO",
+      "rank": 5,
+      "verdict": "Maintains robust 118.5% 12m return above its 200d average despite recent refining margin volatility."
+    },
+    {
+      "ticker": "VEA",
+      "rank": 6,
+      "verdict": "Delivers core international developed market equity exposure above its 200d moving average."
+    },
+    {
+      "ticker": "SPY",
+      "rank": 7,
+      "verdict": "Anchors broad US large-cap market exposure sitting safely above its 200d moving average."
+    },
+    {
+      "ticker": "DBC",
+      "rank": 8,
+      "verdict": "Provides strong commodity real asset inflation hedging with 38.1% 12m gain."
+    },
+    {
+      "ticker": "JPM",
+      "rank": 9,
+      "verdict": "Demonstrates consistent financial sector strength with 3.2% 1m gain and solid profit margins."
+    },
+    {
+      "ticker": "AMZN",
+      "rank": 10,
+      "verdict": "Shows steady consumer discretionary and cloud momentum up 4.7% over 1m above 200d average."
+    },
+    {
+      "ticker": "AAPL",
+      "rank": 11,
+      "verdict": "Strongest risk asset, trading at all-time highs (+0.0% off high) with 30.7% 12m gain."
+    }
+  ],
+  "considered": [
+    {
+      "ticker": "VOO",
+      "verdict": "Passed to avoid duplicating existing core S&P 500 exposure held via SPY."
+    },
+    {
+      "ticker": "QQQ",
+      "verdict": "Passed due to -6.6% 1m weakness and price sitting below its 200-day moving average."
+    },
+    {
+      "ticker": "GLD",
+      "verdict": "Passed due to negative short-term momentum (-7.1% 1m) and price trading below 200d average."
+    },
+    {
+      "ticker": "NVDA",
+      "verdict": "Passed due to sharp 25.0% 1m drop below its 200-day moving average and high ongoing volatility."
+    },
+    {
+      "ticker": "USO",
+      "verdict": "Passed due to 7.5% 1m pullback and elevated 43.4% volatility compared to selected options."
+    }
+  ]
+}
