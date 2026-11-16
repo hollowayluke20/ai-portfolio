@@ -440,6 +440,14 @@
       "benchmark_price": 752.09,
       "benchmark_return_pct": null,
       "cash": 23440.83
+    },
+    {
+      "date": "2026-11-16",
+      "portfolio_value": 93644.5,
+      "portfolio_return_pct": null,
+      "benchmark_price": null,
+      "benchmark_return_pct": null,
+      "cash": 10592.82
     }
   ]
 }
