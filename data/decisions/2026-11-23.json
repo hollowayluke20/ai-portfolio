@@ -1,0 +1,386 @@
+{
+  "schema_version": 1,
+  "cycle_id": "2026-11-23-weekly",
+  "decided_at": "2026-11-23T13:01:01Z",
+  "portfolio_value_at_decision": 91997.17,
+  "commentary": "Broad market breadth has dropped to 47.4% with major equity indices like SPY and QQQ experiencing severe drawdowns (-9.7% and -13.6% over 1m) and breaching their 200-day moving averages. In contrast, fixed income sleeve assets (IEF, AGG, TLT) are delivering positive 1-month stability (+0.1% to +0.8%) with low annualized volatility (5.1% to 11.0%). The portfolio is being repositioned by harvesting capital from broken macro and cyclical equity theses (SPY, VEA, DBC, VNQ, JPM) where stated risks have materialised below 200-day averages. Capital is reallocated into non-cyclical, high-margin, low-beta momentum leaders across Consumer Staples and Health Care that remain firmly above their 200-day moving averages. What would change this view is an expansion of universe breadth back above 60% alongside bond yield spikes that break Treasury sleeve stability.",
+  "target_bond_weight": 0.33,
+  "allocation_reason": "Targeting a 0.33 bond sleeve weight places the portfolio 0.08 above the 0.25 minimum floor and 0.42 below the 0.75 maximum cap. This moderate allocation maintains necessary decorrelation and volatility ballast during market-wide equity contraction without over-allocating to long-end rate risk.",
+  "decisions": [
+    {
+      "ticker": "SPY",
+      "action": "SELL",
+      "target_weight": 0.0,
+      "thesis": "Macro contraction pulled index below 200d moving average (-9.7% 1m), breaking stated thesis.",
+      "risks": "N/A - Exiting position.",
+      "reason_for_action": "Selling position because stated thesis risk (price falling below 200d average) has materialised.",
+      "basis": "thesis_change",
+      "notional": 5002.2,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "f6ffb4b3-8978-4efc-9d13-4972df7e1eae"
+    },
+    {
+      "ticker": "VEA",
+      "action": "SELL",
+      "target_weight": 0.0,
+      "thesis": "Developed market slowdown drove price below 200d moving average (-8.1% 1m), breaking stated thesis.",
+      "risks": "N/A - Exiting position.",
+      "reason_for_action": "Selling position because stated thesis risk (price falling below 200d average) has materialised.",
+      "basis": "thesis_change",
+      "notional": 4803.57,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "e6c66b34-5446-468b-91ac-079efc0cfc7b"
+    },
+    {
+      "ticker": "DBC",
+      "action": "SELL",
+      "target_weight": 0.0,
+      "thesis": "Global commodity demand drop broke upward trend (-12.7% 1m) below 200d moving average, breaking stated thesis.",
+      "risks": "N/A - Exiting position.",
+      "reason_for_action": "Selling position because stated thesis risk (price falling below 200d average) has materialised.",
+      "basis": "thesis_change",
+      "notional": 5082.47,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "339c7aac-fd1a-48f7-89fd-7d94f6fcf4a9"
+    },
+    {
+      "ticker": "VNQ",
+      "action": "SELL",
+      "target_weight": 0.0,
+      "thesis": "Rate headwinds pushed real estate valuation below 200d moving average (-0.1% 1m), breaking stated thesis.",
+      "risks": "N/A - Exiting position.",
+      "reason_for_action": "Selling position because stated thesis risk (price falling below 200d average) has materialised.",
+      "basis": "thesis_change",
+      "notional": 4551.2,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "7b702757-1360-4b6e-b044-d4a04d057c11"
+    },
+    {
+      "ticker": "JPM",
+      "action": "SELL",
+      "target_weight": 0.0,
+      "thesis": "Banking stress reduced momentum (-7.7% 1m), pulling stock below 200d moving average and breaking stated thesis.",
+      "risks": "N/A - Exiting position.",
+      "reason_for_action": "Selling position because stated thesis risk (price falling below 200d average) has materialised.",
+      "basis": "thesis_change",
+      "notional": 4841.29,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "54de3d71-54cd-4c53-9c05-9568f9ff925c"
+    },
+    {
+      "ticker": "AGG",
+      "action": "HOLD",
+      "target_weight": 0.11,
+      "thesis": "Low volatility of 5.1% and positive 1m decorrelation (+0.4%) provide effective bond sleeve ballast.",
+      "risks": "Rate volatility pushing price further below 200d average.",
+      "reason_for_action": "Rebalancing bond sleeve to target 0.33 total weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "IEF",
+      "action": "HOLD",
+      "target_weight": 0.11,
+      "thesis": "Intermediate Treasury stability with 6.4% volatility offers core fixed income sleeve decorrelation.",
+      "risks": "Intermediate yield spikes causing price drop.",
+      "reason_for_action": "Rebalancing bond sleeve to target 0.33 total weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "TLT",
+      "action": "HOLD",
+      "target_weight": 0.11,
+      "thesis": "Long duration bond exposure provides tail hedge protection during sharp risk asset market drawdowns.",
+      "risks": "Long end yield volatility accelerating price decline.",
+      "reason_for_action": "Rebalancing bond sleeve to target 0.33 total weight.",
+      "basis": "allocation",
+      "notional": null,
+      "valid": true,
+      "rejection_reason": "hold",
+      "status": "skipped",
+      "order_id": null
+    },
+    {
+      "ticker": "WMT",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 12m return of +28.2% and 1m gain of +5.6% above its 200d average with low volatility of 22.7% demonstrate resilient non-cyclical consumer demand during broader market weakness. Overlaps with consumer staples exposure in COST.",
+      "risks": "Price pullback below the 200d moving average or 1m return turning negative.",
+      "reason_for_action": "Reallocating cash from broken equity index positions into strong defensive staples momentum.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "f13e7634-6936-489b-8341-dab8528543bc"
+    },
+    {
+      "ticker": "KO",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 12m return of +40.0% with low volatility of 17.4% sitting -2.5% off high above its 200d average indicates strong cash flow defensive ballast. Overlaps with consumer staples exposure in COST and WMT.",
+      "risks": "Price decline below 200d moving average or net margin contraction below 20%.",
+      "reason_for_action": "Adding low-beta consumer staples buffer during market breadth deterioration.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": null,
+      "status": "executed",
+      "order_id": "d4efbc8f-becb-4e14-990e-e93d5fe11eb9"
+    },
+    {
+      "ticker": "ABBV",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 12m return of +26.6% and revenue growth of +10.4% y/y above its 200d average with 20.1% volatility show steady pharmaceutical earnings resilience. Overlaps with healthcare exposure in LLY.",
+      "risks": "Revenue growth slowing below 5% or price drop below 200d moving average.",
+      "reason_for_action": "Deploying cash into non-cyclical healthcare earnings growth.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    },
+    {
+      "ticker": "JNJ",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 12m gain of +36.6% and net margin of 21.5% above its 200d average with low volatility of 24.9% reflect dependable health care balance sheet strength. Overlaps with healthcare exposure in LLY and ABBV.",
+      "risks": "Price falling below 200d moving average or net margin contracting below 15%.",
+      "reason_for_action": "Building risk sleeve defensive quality in healthcare.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    },
+    {
+      "ticker": "REGN",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 1m return of +12.5% and 12m return of +31.8% above its 200d average with high net margins of 27.9% highlight top-tier commercial biotech momentum. Overlaps with healthcare exposure in LLY.",
+      "risks": "Clinical pipeline setback pulling price below 200d moving average.",
+      "reason_for_action": "Capturing strong relative strength in biopharmaceuticals.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    },
+    {
+      "ticker": "PG",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 12m return of +18.6% and 1m return of +3.0% sitting -2.1% off high with low 21.2% volatility demonstrate reliable essential product demand above 200d average. Overlaps with consumer staples exposure in COST.",
+      "risks": "Margin compression below 12% or price falling below 200d average.",
+      "reason_for_action": "Replacing broken growth holdings with low-volatility staples equity ballast.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    },
+    {
+      "ticker": "LMT",
+      "action": "BUY",
+      "target_weight": 0.05,
+      "thesis": "A 12m return of +23.5% above its 200d average with 33.8% volatility provides industrial defense contract revenue stability during macro uncertainty. Overlaps with broad industrial exposure.",
+      "risks": "Defense spending cutbacks pushing price below 200d moving average.",
+      "reason_for_action": "Diversifying risk sleeve into stable defense industrial trend.",
+      "basis": "momentum",
+      "notional": 4599.86,
+      "valid": true,
+      "rejection_reason": "insufficient available cash: buy would breach 5% cash floor",
+      "status": "rejected",
+      "order_id": null
+    }
+  ],
+  "review": [
+    {
+      "ticker": "VEA",
+      "rank": 1,
+      "verdict": "Selling: Stated risk materialised as developed market weakness pushed price below its 200d average."
+    },
+    {
+      "ticker": "SPY",
+      "rank": 2,
+      "verdict": "Selling: Stated risk materialised as macro contraction pulled S&P 500 below its 200d average."
+    },
+    {
+      "ticker": "DBC",
+      "rank": 3,
+      "verdict": "Selling: Global commodity demand drop broke upward trend below 200d average."
+    },
+    {
+      "ticker": "JPM",
+      "rank": 4,
+      "verdict": "Selling: Financial sector stress reduced momentum, pulling stock below its 200d average."
+    },
+    {
+      "ticker": "VNQ",
+      "rank": 5,
+      "verdict": "Selling: Interest rate pressure broke real estate valuation below its 200d average."
+    },
+    {
+      "ticker": "VLO",
+      "rank": 6,
+      "verdict": "Holding: Thesis remains intact with stock trading above 200d average and +89.2% 12m return despite refining volatility."
+    },
+    {
+      "ticker": "AMZN",
+      "rank": 7,
+      "verdict": "Holding: E-commerce and AWS growth (+15.8% y/y revenue) support price stability above 200d average."
+    },
+    {
+      "ticker": "AAPL",
+      "rank": 8,
+      "verdict": "Holding: Fundamentals remain resilient with +28.0% 12m return and price holding above 200d average."
+    },
+    {
+      "ticker": "COST",
+      "rank": 9,
+      "verdict": "Holding: Strong non-cyclical consumer demand drove +8.4% 1m gain to near all-time highs above 200d average."
+    },
+    {
+      "ticker": "LLY",
+      "rank": 10,
+      "verdict": "Holding: Exceptional +49.6% y/y revenue growth and 33.5% net margin keep growth thesis firmly intact."
+    },
+    {
+      "ticker": "AGG",
+      "rank": 11,
+      "verdict": "Holding: Core aggregate bond ballast providing 5.1% low volatility and positive 1m returns during equity drawdown."
+    },
+    {
+      "ticker": "IEF",
+      "rank": 12,
+      "verdict": "Holding: Treasury exposure provides crucial intermediate duration stability and low volatility."
+    },
+    {
+      "ticker": "TLT",
+      "rank": 13,
+      "verdict": "Holding: Long-duration bond hedge offers portfolio protection against sharp equity risk sell-offs."
+    }
+  ],
+  "considered": [
+    {
+      "ticker": "VOO",
+      "verdict": "Passed: Below 200-day moving average (-9.5% 1m return)."
+    },
+    {
+      "ticker": "QQQ",
+      "verdict": "Passed: Severely below 200-day moving average (-13.6% 1m return)."
+    },
+    {
+      "ticker": "GLD",
+      "verdict": "Passed: Commodity weakness pulled gold below 200-day moving average (-12.5% 1m return)."
+    },
+    {
+      "ticker": "EFA",
+      "verdict": "Passed: International developed markets equity index sits below 200-day moving average."
+    },
+    {
+      "ticker": "VWO",
+      "verdict": "Passed: Emerging markets ETF sits below 200-day moving average with negative 12m trend."
+    },
+    {
+      "ticker": "EEM",
+      "verdict": "Passed: High volatility and price action below 200-day moving average."
+    },
+    {
+      "ticker": "USO",
+      "verdict": "Passed: Crude oil fund exhibits extreme volatility (43.3%) and sharp 1m pullback (-14.1%)."
+    },
+    {
+      "ticker": "REET",
+      "verdict": "Passed: Global REIT ETF sits below 200-day moving average."
+    },
+    {
+      "ticker": "ADP",
+      "verdict": "Passed: Decent stability above 200d average, but preferred higher relative momentum in WMT and KO."
+    },
+    {
+      "ticker": "AEE",
+      "verdict": "Passed: Utility candidate considered, but prioritised large-cap consumer staples and healthcare."
+    },
+    {
+      "ticker": "AFL",
+      "verdict": "Passed: Financials showing weakness across sector; avoiding new financials buys."
+    },
+    {
+      "ticker": "AIZ",
+      "verdict": "Passed: Strong trend, but sector headwinds in financials prompt caution."
+    },
+    {
+      "ticker": "ALL",
+      "verdict": "Passed: Insurance sector candidate passed over in favour of non-cyclical consumer staples."
+    },
+    {
+      "ticker": "AMGN",
+      "verdict": "Passed: Above 200d average, but ABBV and JNJ offer stronger relative revenue stability."
+    },
+    {
+      "ticker": "BDX",
+      "verdict": "Passed: Health care candidate considered; prioritized higher momentum names LLY and REGN."
+    },
+    {
+      "ticker": "CBOE",
+      "verdict": "Passed: Strong financial momentum, but market-wide financial sector stress suggests waiting for stability."
+    },
+    {
+      "ticker": "CL",
+      "verdict": "Passed: Consumer staple candidate passed in favour of higher market cap staples WMT and KO."
+    },
+    {
+      "ticker": "ED",
+      "verdict": "Passed: Solid utility profile, but cash cap reached with chosen 7 buys."
+    },
+    {
+      "ticker": "EW",
+      "verdict": "Passed: Good 1m momentum (+13.1%), but high volatility relative to selected healthcare ballast."
+    },
+    {
+      "ticker": "GILD",
+      "verdict": "Passed: Positive 1m trend, but negative net margin history requires monitoring."
+    },
+    {
+      "ticker": "MCK",
+      "verdict": "Passed: Healthcare distributor above 200d average; limited slots filled by higher margin peers."
+    },
+    {
+      "ticker": "MSI",
+      "verdict": "Passed: Tech name above 200d average, but overall IT sector volatility favors defensive sectors."
+    },
+    {
+      "ticker": "TGT",
+      "verdict": "Passed: Retail peer above 200d average, but WMT exhibits superior 1m momentum."
+    },
+    {
+      "ticker": "UNP",
+      "verdict": "Passed: Railroad industrial above 200d, but defense name LMT preferred for macro hedging."
+    }
+  ]
+}
