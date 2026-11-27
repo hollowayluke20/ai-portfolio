@@ -1,23 +1,23 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-26T21:25:25Z",
+  "generated_at": "2026-11-27T03:40:19Z",
   "market_data_as_of": "2026-11-25T21:13:15Z",
   "currency": "USD",
   "run": {
-    "id": "151890cf4943",
+    "id": "22b3a9961617",
     "trigger": "schedule",
     "workflow": "run-triggers"
   },
   "account": {
     "cash": 30212.39,
-    "equity": 92422.82,
-    "buying_power": 295038.76,
+    "equity": 92487.92,
+    "buying_power": 295221.05,
     "status": "ACTIVE"
   },
   "totals": {
-    "total_value": 92422.81,
-    "invested_value": 62210.42,
-    "cash_weight": 0.3269,
+    "total_value": 92487.92,
+    "invested_value": 62275.53,
+    "cash_weight": 0.3267,
     "position_count": 10,
     "committed_cash": 0.0,
     "available_cash": 30212.39
@@ -28,15 +28,15 @@
       "name": "Apple Inc. Common Stock",
       "qty": 13.198449695,
       "avg_entry_price": 318.95,
-      "current_price": 355.58,
-      "market_value": 4693.1,
-      "unrealized_pl": 483.51,
-      "unrealized_pl_pct": 0.1149,
+      "current_price": 358.0,
+      "market_value": 4725.04,
+      "unrealized_pl": 515.45,
+      "unrealized_pl_pct": 0.1224,
       "thesis": "Trading at $319.70, 12m +39.2%, -5.9% off high, above 200d average. Overlaps with mega-cap tech exposure in SPY.",
       "risks": "Recent 1m weakness (-4.0%) accelerates into broader trend reversal.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0508
+      "weight": 0.0511
     },
     {
       "ticker": "AGG",
@@ -58,25 +58,25 @@
       "name": "Amazon.com, Inc. Common Stock",
       "qty": 20.685076335,
       "avg_entry_price": 262.02,
-      "current_price": 244.43,
-      "market_value": 5056.05,
-      "unrealized_pl": -363.88,
-      "unrealized_pl_pct": -0.0671,
+      "current_price": 250.0,
+      "market_value": 5171.27,
+      "unrealized_pl": -248.66,
+      "unrealized_pl_pct": -0.0459,
       "thesis": "Trading at $266.43, 1m +13.1%, 12m +16.3%, -6.2% off high, above 200d average. Overlaps with consumer discretionary and tech in SPY.",
       "risks": "Volatility of 44.9% causes pullback below 200d moving average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.0547
+      "weight": 0.0559
     },
     {
       "ticker": "COST",
       "name": "Costco Wholesale Corporation Common Stock",
       "qty": 4.242186379,
       "avg_entry_price": 1115.12,
-      "current_price": 1086.81,
-      "market_value": 4610.45,
-      "unrealized_pl": -120.09,
-      "unrealized_pl_pct": -0.0254,
+      "current_price": 1087.7,
+      "market_value": 4614.23,
+      "unrealized_pl": -116.31,
+      "unrealized_pl_pct": -0.0246,
       "thesis": "A 13.3% 1m gain pushing stock to all-time highs (+0.0% off high) at 20.1% volatility highlights steady non-cyclical consumer demand above 200d average. Overlaps with consumer staples in SPY.",
       "risks": "Consumer spending contraction drives price below 200d moving average.",
       "business": null,
@@ -88,60 +88,60 @@
       "name": "iShares 7-10 Year Treasury Bond ETF",
       "qty": 107.838671411,
       "avg_entry_price": 92.73,
-      "current_price": 92.06,
-      "market_value": 9927.63,
-      "unrealized_pl": -72.25,
-      "unrealized_pl_pct": -0.0072,
+      "current_price": 91.93,
+      "market_value": 9913.61,
+      "unrealized_pl": -86.27,
+      "unrealized_pl_pct": -0.0086,
       "thesis": "Trading at $92.85, 12m return of +0.5% with low volatility of 4.9%. Overlaps with bond sleeve assets AGG and TLT.",
       "risks": "Intermediate Treasury yields rise, causing further price decline below 200d average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.1074
+      "weight": 0.1072
     },
     {
       "ticker": "KO",
       "name": "Coca-Cola Company",
       "qty": 47.940072954,
       "avg_entry_price": 95.95,
-      "current_price": 97.59,
-      "market_value": 4678.47,
-      "unrealized_pl": 78.62,
-      "unrealized_pl_pct": 0.0171,
+      "current_price": 96.95,
+      "market_value": 4647.79,
+      "unrealized_pl": 47.94,
+      "unrealized_pl_pct": 0.0104,
       "thesis": "A 12m return of +40.0% with low volatility of 17.4% sitting -2.5% off high above its 200d average indicates strong cash flow defensive ballast. Overlaps with consumer staples exposure in COST and WMT.",
       "risks": "Price decline below 200d moving average or net margin contraction below 20%.",
       "business": null,
       "opened_at": "2026-11-23T13:01:01Z",
-      "weight": 0.0506
+      "weight": 0.0503
     },
     {
       "ticker": "LLY",
       "name": "Eli Lilly & Co.",
       "qty": 3.250135693,
       "avg_entry_price": 1455.49,
-      "current_price": 1392.22,
-      "market_value": 4524.9,
-      "unrealized_pl": -205.64,
-      "unrealized_pl_pct": -0.0435,
+      "current_price": 1398.89,
+      "market_value": 4546.58,
+      "unrealized_pl": -183.96,
+      "unrealized_pl_pct": -0.0389,
       "thesis": "Revenue growth of +49.6% y/y and 33.5% net margin drive exceptional fundamental performance, pushing price to all-time highs (+0.0% off high) up 15.5% over 1m. Overlaps with healthcare exposure in SPY.",
       "risks": "Deceleration in quarterly revenue growth below 20% or pullback below 200d average.",
       "business": null,
       "opened_at": "2026-11-16T13:01:00Z",
-      "weight": 0.049
+      "weight": 0.0492
     },
     {
       "ticker": "TLT",
       "name": "iShares 20 Year Treasury Bond ETF",
       "qty": 121.275673707,
       "avg_entry_price": 82.46,
-      "current_price": 82.24,
-      "market_value": 9973.71,
-      "unrealized_pl": -26.17,
-      "unrealized_pl_pct": -0.0026,
+      "current_price": 81.74,
+      "market_value": 9913.07,
+      "unrealized_pl": -86.81,
+      "unrealized_pl_pct": -0.0087,
       "thesis": "Trading at $82.88, 1m return of +0.5% and volatility of 9.9%. Overlaps with bond sleeve assets AGG and IEF.",
       "risks": "Long-end rate volatility accelerates price decline below 200d average.",
       "business": null,
       "opened_at": "2026-08-31T09:35:38Z",
-      "weight": 0.1079
+      "weight": 0.1072
     },
     {
       "ticker": "VLO",
@@ -163,22 +163,24 @@
       "name": "Walmart Inc. Common Stock",
       "qty": 36.116912688,
       "avg_entry_price": 127.36,
-      "current_price": 131.94,
-      "market_value": 4765.27,
-      "unrealized_pl": 165.42,
-      "unrealized_pl_pct": 0.036,
+      "current_price": 131.88,
+      "market_value": 4763.1,
+      "unrealized_pl": 163.25,
+      "unrealized_pl_pct": 0.0355,
       "thesis": "A 12m return of +28.2% and 1m gain of +5.6% above its 200d average with low volatility of 22.7% demonstrate resilient non-cyclical consumer demand during broader market weakness. Overlaps with consumer staples exposure in COST.",
       "risks": "Price pullback below the 200d moving average or 1m return turning negative.",
       "business": null,
       "opened_at": "2026-11-23T13:01:01Z",
-      "weight": 0.0516
+      "weight": 0.0515
     }
   ],
   "pending_orders": [],
   "performance": null,
   "benchmark": null,
   "health": {
-    "ok": true,
-    "warnings": []
+    "ok": false,
+    "warnings": [
+      "Market data is 30.5h old (>26h)"
+    ]
   }
 }
